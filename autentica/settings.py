@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from environ import Env
 import os
-
+import dj_database_url
 
 load_dotenv()
 
@@ -82,12 +83,30 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # Backend do PostgreSQL
+        'NAME': os.getenv('DB_NAME', 'meu_banco'),  # Nome do banco de dados
+        'USER': os.getenv('DB_USER', 'meu_usuario'),  # Usuário do banco
+        'PASSWORD': os.getenv('DB_PASSWORD', 'minha_senha'),  # Senha do usuário
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Host do banco
+        'PORT': os.getenv('DB_PORT', '5432'),  # Porta do banco (padrão: 5432)
     }
 }
+
+POSTGRES_LOCALLY = True
+
+
+if os.environ["ENVIRONMENT"] == 'production' or POSTGRES_LOCALLY == True:
+    DATABASES['default'] = dj_database_url.parse(os.environ["DATABASE_URL"])
 
 
 # Password validation
