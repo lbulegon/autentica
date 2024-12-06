@@ -29,7 +29,13 @@ SECRET_KEY = 'django-insecure-lxh3b=6@xx(h#6)uhw++a)cre=^!l##^mf%*lolt*3ge0@4flu
 DEBUG = True
 
 #ALLOWED_HOSTS = ['192.168.0.18','localhost', '127.0.0.1', '192.168.0.30']
-ALLOWED_HOST = ['https://autentica-production.up.railway.app/', 'autentica-production.up.railway.app/']
+ALLOWED_HOSTS = [
+    'autentica-production.up.railway.app',
+    '127.0.0.1',  # Opcional: Para testes locais
+    'localhost',  # Opcional: Para testes locais
+]
+
+DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app']
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
 
