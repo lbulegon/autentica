@@ -15,12 +15,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from api_v01.views  import LoginView
+from django.urls import path, re_path
+from api_v01.views  import LoginView, home_view
+from django.conf import settings
+from django.views.static import serve
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/login/', LoginView.as_view(), name='login'),
     path('login/', LoginView.as_view(), name='login'),
+
+
+    path('home/', home_view),
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+
 ]
 

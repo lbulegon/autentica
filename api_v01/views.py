@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from rest_framework.authtoken.models import Token
+from django.shortcuts import render
 
 class LoginView(APIView):
     """
@@ -21,3 +22,6 @@ class LoginView(APIView):
             return Response({'token': token.key}, status=HTTP_200_OK)
 
         return Response({'error': 'Invalid email or password'}, status=HTTP_401_UNAUTHORIZED)
+
+def home_view(request):
+    return render(request, 'home.html', {})
