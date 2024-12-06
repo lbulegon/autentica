@@ -1,0 +1,1 @@
+web: gunicorn autentica.wsgi  --log--file
