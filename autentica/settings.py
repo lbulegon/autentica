@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     'autentica-production.up.railway.app',
     '127.0.0.1',  # Opcional: Para testes locais
     'localhost',  # Opcional: Para testes locais
+    '192.168.0.30',
 ]
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app']
@@ -105,16 +106,16 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 #}
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'ymApTFcbqBvfpoDBqZLbMZGorEdNHTzbK',
-        'HOST':'junction.proxy.rlwy.net',
-        'PORT':'3306',
-    }
-}
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
+#        'NAME': 'lbulegon',  # Nome do banco de dados
+#        'USER': 'lbulegon',  # Usuário do banco de dados
+#        'PASSWORD': 'ljb#215195',  # Senha do banco de dados
+#        'HOST': 'localhost',  # Host (o container está mapeado para localhost)
+#        'PORT': '5432',  # Porta padrão do PostgreSQL
+#    }
+#}
 
 
 # Password validation
@@ -146,9 +147,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
-
-
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
