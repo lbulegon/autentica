@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',  # Opcional: Para testes locais
     'localhost',  # Opcional: Para testes locais
     '192.168.0.30',
+    'autentica-desenvolvimento.up.railway.app'
 ]
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app']
