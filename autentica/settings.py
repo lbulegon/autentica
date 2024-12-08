@@ -94,16 +94,16 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
-#        'NAME': 'railway',  # Nome do banco de dados
-#        'USER': 'postgres',  # Usuário do banco de dados
-#        'PASSWORD': 'mileSOpXLttGCeoOLBVjWvKJFVtRCget',  # Senha do banco de dados
-#        'HOST': 'postgres.railway.internal',  # Host (o container está mapeado para localhost)
-#        'PORT': '5432',  # Porta padrão do PostgreSQL
-#    }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
+        'NAME': 'railway',  # Nome do banco de dados
+        'USER': 'postgres',  # Usuário do banco de dados
+        'PASSWORD': 'mileSOpXLttGCeoOLBVjWvKJFVtRCget',  # Senha do banco de dados
+        'HOST': 'junction.proxy.rlwy.net',  # Host (o container está mapeado para localhost)
+        'PORT': '5432',  # Porta padrão do PostgreSQL
+    }
+}
 
 
 #DATABASES = {
