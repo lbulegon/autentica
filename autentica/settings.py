@@ -101,7 +101,7 @@ DATABASES = {
         'USER': 'postgres',  # Usuário do banco de dados
         'PASSWORD': 'mileSOpXLttGCeoOLBVjWvKJFVtRCget',  # Senha do banco de dados
         'HOST': 'junction.proxy.rlwy.net',  # Host (o container está mapeado para localhost)
-        'PORT': '5432',  # Porta padrão do PostgreSQL
+        'PORT': '58057',  # Porta padrão do PostgreSQL
     }
 }
 
