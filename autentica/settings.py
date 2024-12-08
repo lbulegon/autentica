@@ -99,7 +99,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
         'NAME': 'railway',  # Nome do banco de dados
         'USER': 'postgres',  # Usuário do banco de dados
-        'PASSWORD': 'mileSOpXLttGCeoOLBVjWvKJFVtRCget',  # Senha do banco de dados
+        'PASSWORD': 'smivcxktjtChwExHSrVbiAFWgfZkmDrS',  # Senha do banco de dados
         'HOST': 'junction.proxy.rlwy.net',  # Host (o container está mapeado para localhost)
         'PORT': '57279',  # Porta padrão do PostgreSQL
     }
