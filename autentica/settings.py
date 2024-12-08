@@ -33,6 +33,7 @@ ALLOWED_HOSTS = [
     'autentica-production.up.railway.app',
     '127.0.0.1',  # Opcional: Para testes locais
     'localhost',  # Opcional: Para testes locais
+    '192.168.0.30',
 ]
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app']
@@ -98,9 +99,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
         'NAME': 'railway',  # Nome do banco de dados
         'USER': 'postgres',  # Usuário do banco de dados
-        'PASSWORD': 'mileSOpXLttGCeoOLBVjWvKJFVtRCget',  # Senha do banco de dados
+        'PASSWORD': 'smivcxktjtChwExHSrVbiAFWgfZkmDrS',  # Senha do banco de dados
         'HOST': 'junction.proxy.rlwy.net',  # Host (o container está mapeado para localhost)
-        'PORT': '28099',  # Porta padrão do PostgreSQL
+        'PORT': '57279',  # Porta padrão do PostgreSQL
     }
 }
 
