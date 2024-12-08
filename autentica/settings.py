@@ -36,8 +36,9 @@ ALLOWED_HOSTS = [
     '192.168.0.30',
     'autentica-desenvolvimento.up.railway.app'
 ]
+CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']
 
-DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app']
+DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvolvimento.up.railway.app']
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
 
