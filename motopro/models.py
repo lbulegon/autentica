@@ -1,11 +1,9 @@
-from django.contrib.auth.models import AbstractUser
+#from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 import datetime
-
-
-
 
 def validate_nota(value):
     if value < 0 or value > 9:
@@ -131,7 +129,7 @@ class avaliacao(models.Model):
 
     avaliado_tipo  = models.CharField(max_length=10, choices=AVALIADO_CHOICES)
     avaliado_id    = models.IntegerField()  # Armazena o ID do Motoboy, Empresa ou Supervisor
-  #  avaliador      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # Quem fez a avaliação
+    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)  # Quem fez a avaliação
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
@@ -140,14 +138,14 @@ class avaliacao(models.Model):
         return f"{self.avaliado_tipo} - Nota: {self.nota}"
 class avaliacaomotoboy(models.Model):
     motoboy        = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name='avaliacoes')
-   # avaliador      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
 
 class avaliacaoempresa(models.Model):
     empresa        = models.ForeignKey(empresa, on_delete=models.CASCADE, related_name='avaliacoes')
-    #avaliador      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
@@ -155,7 +153,7 @@ class avaliacaoempresa(models.Model):
 
 class avaliacaosupervisor(models.Model):
     supervisor     = models.ForeignKey(supervisor, on_delete=models.CASCADE, related_name='avaliacoes')
-    #avaliador      = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
