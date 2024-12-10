@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -9,9 +9,6 @@ def validate_nota(value):
     if value < 0 or value > 9:
         raise ValidationError('A nota deve estar entre 0 e 9.')
  
-class CustomUser(AbstractUser):
-    USER_TYPE_CHOICES = (('empresa', 'Empresa'), ('motoboy', 'Motoboy'), ('gestor', 'Gestor'), )
-    tipo = models.CharField(max_length=10, choices=USER_TYPE_CHOICES)
 
 class estado(models.Model):
     estado_id = models.AutoField(primary_key=True)
