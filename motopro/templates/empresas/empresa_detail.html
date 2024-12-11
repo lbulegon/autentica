@@ -1,0 +1,13 @@
+<h1>Detalhes da Empresa</h1>
+<p><strong>Nome:</strong> {{ object.nome }}</p>
+<p><strong>CEP:</strong> {{ object.cep }}</p>
+<p><strong>Estado:</strong> {{ object.estado_id }}</p>
+<p><strong>Cidade:</strong> {{ object.cidade_id }}</p>
+<p><strong>Bairro:</strong> {{ object.bairro_id }}</p>
+<p><strong>Logradouro:</strong> {{ object.logradouro }}</p>
+<p><strong>Número:</strong> {{ object.numero }}</p>
+<p><strong>Complemento:</strong> {{ object.complemento }}</p>
+<p><strong>Prazo:</strong> {{ object.deadline }}</p>
+<p><strong>Criado em:</strong> {{ object.created_at }}</p>
+<a href="{% url 'empresa-update' object.pk %}">Editar</a> |
+<a href="{% url 'empresa-delete' object.pk %}">Excluir</a>

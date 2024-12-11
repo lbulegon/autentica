@@ -1,0 +1,41 @@
+<h1>Lista de Empresas</h1>
+<table border="1" cellspacing="0" cellpadding="10">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>CEP</th>
+            <th>Estado</th>
+            <th>Cidade</th>
+            <th>Bairro</th>
+            <th>Logradouro</th>
+            <th>Número</th>
+            <th>Complemento</th>
+            <th>Prazo</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empresa in empresas %}
+        <tr>
+            <td>{{ empresa.id }}</td>
+            <td>{{ empresa.nome }}</td>
+            <td>{{ empresa.cep }}</td>
+            <td>{{ empresa.estado_id }}</td>
+            <td>{{ empresa.cidade_id }}</td>
+            <td>{{ empresa.bairro_id }}</td>
+            <td>{{ empresa.logradouro }}</td>
+            <td>{{ empresa.numero }}</td>
+            <td>{{ empresa.complemento }}</td>
+            <td>{{ empresa.deadline }}</td>
+            <td>
+                <a href="{% url 'empresa-detail' empresa.pk %}">Detalhes</a> |
+                <a href="{% url 'empresa-update' empresa.pk %}">Editar</a> |
+                <a href="{% url 'empresa-delete' empresa.pk %}">Excluir</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{% url 'empresa-create' %}">Criar Nova Empresa</a>
