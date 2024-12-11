@@ -8,7 +8,7 @@ import datetime
 def validate_nota(value):
     if value < 0 or value > 9:
         raise ValidationError('A nota deve estar entre 0 e 9.')
- 
+
 
 class estado(models.Model):
     estado_id = models.AutoField(primary_key=True)
