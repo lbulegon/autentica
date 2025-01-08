@@ -1,9 +1,11 @@
 # autentica
-autenticação dos produtos WhereIT
+autenticação dos produtos GlbHash
 
+python -m venv .venv
 .venv\Scripts\activate  
 railway --version  
 pip freeze > requirements.txt
+pip install -r   requirements.txt
 npm i -g @railway/cli
 railway login
 railway link -p 50594409-8ec3-4211-9cf7-6f4ef2f9afc8
