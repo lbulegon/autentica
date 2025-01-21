@@ -25,15 +25,17 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
-   
-class bairro(models.Model):
+class Bairro(models.Model):
     id       = models.AutoField(primary_key=True)
     nome     = models.CharField(max_length=255)
     cidade   = models.ForeignKey(cidade, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ('nome', 'cidade')  # Garante que o mesmo nome de bairro não seja duplicado dentro de uma cidade.
+
     def __str__(self):
         return self.nome
-   
+
 class motoboy(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
