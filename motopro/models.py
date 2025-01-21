@@ -190,7 +190,7 @@ class avaliacao(models.Model):
         return f"{self.avaliado_tipo} - Nota: {self.nota}"
 class avaliacaomotoboy(models.Model):
     motoboy        = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name='avaliacoes')
-    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
+   # avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
