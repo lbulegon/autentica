@@ -24,8 +24,8 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvolvimento.up.railway.app']
-STATICFILES_DIRS     = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT          = os.path.join(BASE_DIR, 'staticfiles')
+#STATICFILES_DIRS     = [os.path.join(BASE_DIR, 'static')]
+#STATIC_ROOT          = os.path.join(BASE_DIR, 'staticfiles')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
