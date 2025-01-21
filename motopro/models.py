@@ -20,7 +20,7 @@ class estado(models.Model):
 class cidade(models.Model):
     id           = models.AutoField(primary_key=True)
     nome         = models.CharField(max_length=255)
-    estado_id    = models.ForeignKey(estado, on_delete=models.CASCADE)
+    estado       = models.ForeignKey(estado, on_delete=models.CASCADE)
     codigo_ibge  = models.CharField(max_length=10, unique=True, null=True, blank=True)
 
     def __str__(self):
@@ -50,9 +50,9 @@ class motoboy(models.Model):
                         )  # Ano de fabricação da moto
    
     cep                = models.CharField(max_length=10)
-    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
-    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
-    bairro_id          = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
@@ -73,9 +73,9 @@ class supervisor(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
     cep                = models.CharField(max_length=10)
-    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
-    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
-    bairro_id          = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    estado         = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade          = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro          = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
@@ -95,9 +95,9 @@ class empresa(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
     cep                = models.CharField(max_length=10)
-    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
-    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
-    bairro_id          = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    estado          = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade          = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro          = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
@@ -116,8 +116,8 @@ class empresa(models.Model):
 class vaga(models.Model):
     
     id            = models.AutoField(primary_key=True)
-    empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
-    motoboy_id    = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    empresa    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
+    motoboy   = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
@@ -166,7 +166,7 @@ class avaliacao(models.Model):
     )
 
     avaliado_tipo  = models.CharField(max_length=10, choices=AVALIADO_CHOICES)
-    avaliado_id    = models.IntegerField()  # Armazena o ID do Motoboy, Empresa ou Supervisor
+    avaliado   = models.IntegerField()  # Armazena o ID do Motoboy, Empresa ou Supervisor
     avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)  # Quem fez a avaliação
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
