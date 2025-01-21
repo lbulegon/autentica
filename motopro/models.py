@@ -31,7 +31,7 @@ class Bairro(models.Model):
     cidade   = models.ForeignKey(cidade, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('nome', 'cidade')  # Garante que o mesmo nome de bairro não seja duplicado dentro de uma cidade.
+        unique_together = ('id', 'cidade')  # Garante que o mesmo nome de bairro não seja duplicado dentro de uma cidade.
 
     def __str__(self):
         return self.nome
