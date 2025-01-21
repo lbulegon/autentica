@@ -25,16 +25,24 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+
+
+
 class bairro(models.Model):
-    id       = models.AutoField(primary_key=True)
-    nome     = models.CharField(max_length=255)
-    cidade   = models.ForeignKey(cidade, on_delete=models.CASCADE)
+    id = models.IntegerField()
+    nome = models.CharField(max_length=255)
+    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('id', 'cidade')  # Garante que o mesmo nome de bairro não seja duplicado dentro de uma cidade.
+        constraints = [
+            models.UniqueConstraint(fields=['id', 'cidade'], name='bairro_primary_key')
+        ]
 
     def __str__(self):
         return self.nome
+
 
 class motoboy(models.Model):
     id                 = models.AutoField(primary_key=True)
