@@ -28,12 +28,10 @@ class cidade(models.Model):
 
 
 
-
-
 class bairro(models.Model):
-    id = models.IntegerField()
-    nome = models.CharField(max_length=255)
-    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
+    id     = models.IntegerField()
+    nome   = models.CharField(max_length=255)
+    cidade = models.ForeignKey (cidade, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -42,6 +40,10 @@ class bairro(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+
+
 
 
 class motoboy(models.Model):
