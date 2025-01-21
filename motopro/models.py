@@ -174,6 +174,18 @@ class avaliacao(models.Model):
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
 
+
+    avaliador   =   models.CharField(
+        max_length=20,
+        choices=[
+           ('motoboy', 'Motoboy'),
+           ('empresa', 'Empresa'),
+           ('supervisor', 'Supervisor'),
+           ('superuser', 'Super usuario'),
+        ],
+        default="superuser"
+    )
+
     def __str__(self):
         return f"{self.avaliado_tipo} - Nota: {self.nota}"
 class avaliacaomotoboy(models.Model):
