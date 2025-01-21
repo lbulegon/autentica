@@ -25,7 +25,7 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
-class Bairro(models.Model):
+class bairro(models.Model):
     id       = models.AutoField(primary_key=True)
     nome     = models.CharField(max_length=255)
     cidade   = models.ForeignKey(cidade, on_delete=models.CASCADE)
