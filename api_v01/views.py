@@ -19,7 +19,18 @@ class LoginView(APIView):
         if user is not None:
             # Retorna ou gera um token para o usuário autenticado
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=HTTP_200_OK)
+
+            # Inclui os campos adicionais do User
+            user_data = {
+                'token': token.key,
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                'date_joined': user.date_joined,
+            }
+            return Response(user_data, status=HTTP_200_OK)
 
         return Response({'error': 'Invalid email or password'}, status=HTTP_401_UNAUTHORIZED)
 
