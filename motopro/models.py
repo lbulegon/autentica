@@ -58,10 +58,10 @@ class motoboy(models.Model):
     complemento        = models.CharField(max_length=100, blank=True)
    
     status             = models.CharField(max_length=20, choices=[
-                        ('ativo', 'Ativo'),
+                        ('alocado', 'Alocado'),
+                        ('livre', 'Livre'),
                         ('inativo', 'Inativo'),
-                        ('indisponível', 'Indisponível'),
-                         ], default='ativo')  # Status do motoboy
+                        ], default='livre')  # Status do motoboy
 
     
     created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
@@ -82,6 +82,12 @@ class supervisor(models.Model):
     created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
     deadline           = models.DateTimeField(null=False, blank=False)
     finished_at        = models.DateTimeField(null=True) 
+    status             = models.CharField(max_length=20, choices=[
+                        ('ativo', 'Ativo'),
+                        ('inativo', 'Inativo'),
+                        ], default='ativo')  # Status do motoboy
+
+
     def __str__(self):
         return self.nome
 
@@ -98,15 +104,20 @@ class empresa(models.Model):
     created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
     deadline           = models.DateTimeField(null=False, blank=False)
     finished_at        = models.DateTimeField(null=True) 
+    status             = models.CharField(max_length=20, choices=[
+                        ('ativo', 'Ativo'),
+                        ('inativo', 'Inativo'),
+                        ], default='ativo')  # Status do motoboy
+
 
     def __str__(self):
         return self.nome
 
 class vaga(models.Model):
     STATUS_CHOICES = (
-        ("A", "Aberto"),
-        ("N", "Em Negociação"),
-        ("P", "Preenchida"),
+        ("aberta", "Aberta"),
+        ("encerrada", "Em Negociação"),
+        ("preenchida", "Preenchida"),
     )
     id            = models.AutoField(primary_key=True)
     empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
@@ -114,11 +125,32 @@ class vaga(models.Model):
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
-    status        = models.CharField(max_length=1, choices=STATUS_CHOICES, blank=False, null=False)
+   
     created_at    = models.DateTimeField(auto_now_add= True, null=False, blank=False)
    
     def __str__(self):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
+
+
+class Candidatura(models.Model):
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("Pendente", "Pendente"),
+            ("Aprovada", "Aprovada"),
+            ("Recusada", "Recusada")
+        ],
+        default="Pendente"
+    )
+    data_candidatura = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
+
+
 
 class avaliacao(models.Model):
     AVALIADO_CHOICES = (
@@ -236,7 +268,7 @@ class categoriamotoboy(models.Model):
         return f"{self.motoboy.nome} - Categoria: {self.categoria.nome}"
 
 
-class Emprestimo(models.Model):
+class emprestimo(models.Model):
     STATUS_CHOICES = (
         ('ativo', 'Ativo'),
         ('quitado', 'Quitado'),
@@ -260,8 +292,8 @@ class Emprestimo(models.Model):
         if self.numero_parcelas <= 0:
             raise ValidationError("O número de parcelas deve ser maior que zero.")
 
-class ParcelaEmprestimo(models.Model):
-    emprestimo      = models.ForeignKey(Emprestimo, on_delete=models.CASCADE, related_name='parcelas')
+class parcelaemprestimo(models.Model):
+    emprestimo      = models.ForeignKey(emprestimo, on_delete=models.CASCADE, related_name='parcelas')
     numero_parcela  = models.PositiveIntegerField(help_text="Número da parcela")
     valor_parcela   = models.DecimalField(max_digits=10, decimal_places=2, help_text="Valor da parcela")
     data_vencimento = models.DateField(help_text="Data de vencimento da parcela")
