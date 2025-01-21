@@ -146,4 +146,3 @@ AUTHENTICATION_BACKENDS = [
     'api_v01.backends.EmailBackend',  # Nosso backend personalizado
     'django.contrib.auth.backends.ModelBackend',  # Backend padrão (opcional)
 ]
-
