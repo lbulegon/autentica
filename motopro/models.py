@@ -197,7 +197,7 @@ class avaliacaomotoboy(models.Model):
 
 class avaliacaoempresa(models.Model):
     empresa        = models.ForeignKey(empresa, on_delete=models.CASCADE, related_name='avaliacoes')
-    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
+  #  avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
@@ -205,7 +205,7 @@ class avaliacaoempresa(models.Model):
 
 class avaliacaosupervisor(models.Model):
     supervisor     = models.ForeignKey(supervisor, on_delete=models.CASCADE, related_name='avaliacoes')
-    avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
+ #   avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
     data_avaliacao = models.DateTimeField(auto_now_add=True)
