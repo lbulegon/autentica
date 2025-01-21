@@ -20,7 +20,7 @@ class estado(models.Model):
 class cidade(models.Model):
     id           = models.AutoField(primary_key=True)
     nome         = models.CharField(max_length=255)
-    estado_is    = models.ForeignKey(estado, on_delete=models.CASCADE)
+    estado_id    = models.ForeignKey(estado, on_delete=models.CASCADE)
     codigo_ibge  = models.CharField(max_length=10, unique=True, null=True, blank=True)
 
     def __str__(self):
