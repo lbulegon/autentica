@@ -114,33 +114,40 @@ class empresa(models.Model):
         return self.nome
 
 class vaga(models.Model):
-    STATUS_CHOICES = (
-        ("aberta", "Aberta"),
-        ("encerrada", "Em Negociação"),
-        ("preenchida", "Preenchida"),
-    )
+    
     id            = models.AutoField(primary_key=True)
     empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
     motoboy_id    = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
-   
     created_at    = models.DateTimeField(auto_now_add= True, null=False, blank=False)
-   
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("aberta", "Aberta"),
+            ("preenchida", "Encerrada"),
+            ("encerrada", "Encerrada"),
+            ("recusada", "Recusada"),
+        ],
+        default="Aberta"
+        )  
+
+
+
     def __str__(self):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
 
 
 class Candidatura(models.Model):
-    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
-    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
-    status = models.CharField(
+    motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
+    status      = models.CharField(
         max_length=20,
         choices=[
-            ("Pendente", "Pendente"),
-            ("Aprovada", "Aprovada"),
-            ("Recusada", "Recusada")
+            ("pendente", "Pendente"),
+            ("aprovada", "Aprovada"),
+            ("recusada", "Recusada")
         ],
         default="Pendente"
     )
