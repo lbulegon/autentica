@@ -30,19 +30,18 @@ class cidade(models.Model):
 
 
 class bairro(models.Model):
-    id      = models.AutoField(primary_key=True)  # Continua sendo chave primária única
-    nome    = models.CharField(max_length=255)
-    cidade  = models.ForeignKey( cidade , on_delete=models.CASCADE)
+    id = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
+    nome = models.CharField(max_length=255)
+    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['id', 'cidade'], name='unique_bairro_per_city'),
+            models.UniqueConstraint(fields=['id', 'cidade'], name='pk_bairro_id_cidade'),
         ]
-        unique_together = ('id', 'cidade')  # Alternativa para compatibilidade#
+        unique_together = ('id', 'cidade')
 
     def __str__(self):
         return self.nome
-
 
 
 
