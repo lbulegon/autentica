@@ -26,21 +26,6 @@ class cidade(models.Model):
     def __str__(self):
         return self.nome
 
-from django.db import models
-
-class bairro(models.Model):
-    id      = models.AutoField(primary_key=True)  # Continua sendo chave primária única
-    nome    = models.CharField(max_length=255)
-    cidade  = models.ForeignKey( cidade , on_delete=models.CASCADE)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['id', 'cidade'], name='unique_bairro_per_city'),
-        ]
-        unique_together = ('id', 'cidade')  # Alternativa para compatibilidade#
-
-    def __str__(self):
-        return self.nome
 
 
 
