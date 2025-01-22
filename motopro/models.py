@@ -27,8 +27,6 @@ class cidade(models.Model):
         return self.nome
 
 
-
-
 class bairro(models.Model):
     id = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
     nome = models.CharField(max_length=255)
