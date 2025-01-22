@@ -42,6 +42,42 @@ class bairro(models.Model):
         return self.nome
 
 
+
+class motoboy(models.Model):
+    id                 = models.AutoField(primary_key=True)
+    nome               = models.CharField(max_length=255, null=False, blank=False)
+    cnh                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
+    telefone           = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    email              = models.EmailField(max_length=255, blank=True)  # Email do motoboy
+    placa_moto         = models.CharField(max_length=10, unique=True)  # Placa da moto
+    modelo_moto        = models.CharField(max_length=100)  # Modelo da moto
+    ano_moto           = models.IntegerField(
+                            validators=[
+                                MinValueValidator(2000),                             # Ano mínimo para a moto
+                                MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
+                            ]
+                        )  # Ano de fabricação da moto
+   
+    cep                = models.CharField(max_length=10)
+    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro_id          = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    logradouro         = models.CharField(max_length=255)
+    numero             = models.CharField(max_length=10)
+    complemento        = models.CharField(max_length=100, blank=True)
+   
+    status             = models.CharField(max_length=20, choices=[
+                        ('alocado', 'Alocado'),
+                        ('livre', 'Livre'),
+                        ('inativo', 'Inativo'),
+                        ], default='livre')  # Status do motoboy
+
+    
+    created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+    def __str__(self):
+        return self.nome
+
 class supervisor(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -90,7 +126,7 @@ class vaga(models.Model):
     
     id            = models.AutoField(primary_key=True)
     empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
- #   motoboy_id    = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    motoboy_id    = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
@@ -113,7 +149,7 @@ class vaga(models.Model):
 
 
 class candidatura(models.Model):
-   # motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
     status      = models.CharField(
         max_length=20,
@@ -160,7 +196,7 @@ class avaliacao(models.Model):
     def __str__(self):
         return f"{self.avaliado_tipo} - Nota: {self.nota}"
 class avaliacaomotoboy(models.Model):
-   # motoboy        = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name='avaliacoes')
+    motoboy        = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name='avaliacoes')
    # avaliador      = models.ForeignKey(User, on_delete=models.CASCADE)
     nota           = models.PositiveSmallIntegerField(validators=[validate_nota])  # Restringe de 0 a 9
     comentario     = models.TextField(null=True, blank=True)
@@ -218,7 +254,7 @@ class contratomotoboy(models.Model):
     )
 
     id              = models.AutoField(primary_key=True)
-  #  motoboy         = models.ForeignKey(motoboy, on_delete=models.PROTECT, related_name='contratos_motoboy')
+    motoboy         = models.ForeignKey(motoboy, on_delete=models.PROTECT, related_name='contratos_motoboy')
     valor           = models.DecimalField(max_digits=10, decimal_places=2)  # Valor do contrato com o motoboy
     data_inicio     = models.DateField()  # Data de início do contrato
     data_termino    = models.DateField()  # Data de término do contrato
@@ -246,7 +282,7 @@ class categoria(models.Model):
 
 
 class categoriamotoboy(models.Model):
- #   motoboy                    = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="categorias")  # Relacionamento com a tabela Motoboy
+    motoboy                    = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="categorias")  # Relacionamento com a tabela Motoboy
     categoria                  = models.ForeignKey(categoria, on_delete=models.CASCADE, related_name="criterios")  # Relacionamento com a tabela Categoria
     pontualidade_minima        = models.DecimalField(max_digits=5, decimal_places=2, help_text="Percentual mínimo de pontualidade, ex: 70%")
     taxa_aceitacao_minima      = models.DecimalField(max_digits=5, decimal_places=2, help_text="Taxa mínima de aceitação, ex: 60%")
@@ -265,7 +301,7 @@ class emprestimo(models.Model):
         ('inadimplente', 'Inadimplente'),
     )
 
- #   motoboy         = models.ForeignKey(motoboy, on_delete=models.PROTECT, related_name='emprestimos')
+    motoboy         = models.ForeignKey(motoboy, on_delete=models.PROTECT, related_name='emprestimos')
     valor_total     = models.DecimalField(max_digits=10, decimal_places=2, help_text="Valor total do empréstimo")
     numero_parcelas = models.PositiveIntegerField(help_text="Número de parcelas")
     juros_mensal    = models.DecimalField(max_digits=5, decimal_places=2, help_text="Taxa de juros mensal em %")
