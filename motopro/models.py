@@ -112,7 +112,7 @@ class empresa(models.Model):
     complemento        = models.CharField(max_length=100, blank=True)
     created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
     deadline           = models.DateTimeField(null=False, blank=False)
-    finished_at        = models.DateTimeField(null=True) 
+   
     status             = models.CharField(max_length=20, choices=[
                         ('ativo', 'Ativo'),
                         ('inativo', 'Inativo'),
