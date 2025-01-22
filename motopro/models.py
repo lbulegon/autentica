@@ -18,7 +18,7 @@ class estado(models.Model):
     def __str__(self):
         return self.nome
 class cidade(models.Model):
-    id           = models.AutoField(primary_key=True)
+    
     nome         = models.CharField(max_length=255)
     estado_id    = models.ForeignKey(estado, on_delete=models.CASCADE)
     codigo_ibge  = models.CharField(max_length=10, unique=True, null=True, blank=True)
@@ -26,6 +26,22 @@ class cidade(models.Model):
     def __str__(self):
         return self.nome
 
+
+
+
+class bairro(models.Model):
+    id      = models.AutoField(primary_key=True)  # Continua sendo chave primária única
+    nome    = models.CharField(max_length=255)
+    cidade  = models.ForeignKey( cidade , on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['id', 'cidade'], name='unique_bairro_per_city'),
+        ]
+        unique_together = ('id', 'cidade')  # Alternativa para compatibilidade#
+
+    def __str__(self):
+        return self.nome
 
 
 
