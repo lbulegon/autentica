@@ -148,24 +148,6 @@ class vaga(models.Model):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
 
 
-class candidatura(models.Model):
-    motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
-    vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
-    status      = models.CharField(
-        max_length=20,
-        choices=[
-            ("pendente", "Pendente"),
-            ("aprovada", "Aprovada"),
-            ("recusada", "Recusada")
-        ],
-        default="Pendente"
-    )
-    data_candidatura = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
-
 class avaliacao(models.Model):
     AVALIADO_CHOICES = (
         ('motoboy', 'Motoboy'),
