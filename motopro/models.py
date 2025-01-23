@@ -75,7 +75,7 @@ class motoboy(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
-    nnumero    = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    bairro_id    = models.ForeignKey(bairro, on_delete=models.PROTECT)
     
     
     def __str__(self):
