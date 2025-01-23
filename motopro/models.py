@@ -66,7 +66,6 @@ class motoboy(models.Model):
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
-   
     status             = models.CharField(max_length=20, choices=[
                         ('alocado', 'Alocado'),
                         ('livre', 'Livre'),
@@ -76,6 +75,9 @@ class motoboy(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+    nnumero             = models.CharField(max_length=10)
+    
+    
     def __str__(self):
         return self.nome
 
