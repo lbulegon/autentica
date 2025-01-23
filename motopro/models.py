@@ -46,6 +46,7 @@ class bairro(models.Model):
 class motoboy(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
+    cpf                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
     cnh                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
     telefone           = models.CharField(max_length=15, blank=True)  # Telefone de contato
     email              = models.EmailField(max_length=255, blank=True)  # Email do motoboy
