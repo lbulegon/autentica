@@ -9,7 +9,6 @@ def validate_nota(value):
     if value < 0 or value > 9:
         raise ValidationError('A nota deve estar entre 0 e 9.')
 
-
 class estado(models.Model):
     estado_id   = models.AutoField(primary_key=True)
     nome        = models.CharField(max_length=100)
@@ -42,7 +41,8 @@ class bairro(models.Model):
         return self.nome
 
 class motoboy(models.Model):
-    nome = models.CharField(max_length=100)
+    id                 = models.AutoField(primary_key=True)
+    nome               = models.CharField(max_length=100)
     # Adicione outros campos necessários aqui
 
 class supervisor(models.Model):
@@ -93,7 +93,7 @@ class vaga(models.Model):
     
     id            = models.AutoField(primary_key=True)
     empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
-   # motoboy      = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    motoboy       = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
