@@ -30,7 +30,7 @@ class cidade(models.Model):
 
 class bairro(models.Model):
     id     = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
-    nome   = models.CharField(max_length=255)
+    nome   = models.CharField(max_length=255,unique=True)
     cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
