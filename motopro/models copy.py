@@ -60,9 +60,9 @@ class motoboy(models.Model):
                         )  # Ano de fabricação da moto
    
     cep                = models.CharField(max_length=10)
-    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
-    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
-    nbairro            = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
