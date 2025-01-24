@@ -91,7 +91,7 @@ class vaga(models.Model):
     
     id            = models.AutoField(primary_key=True)
     empresa_id    = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
-    motoboy_id    = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+   # motoboy      = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes   = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
     valor         = models.FloatField(blank=False, null=False)
@@ -117,7 +117,7 @@ class vaga(models.Model):
 
 
 class candidatura(models.Model):
-    motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+  #  motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
     status      = models.CharField(
         max_length=20,
