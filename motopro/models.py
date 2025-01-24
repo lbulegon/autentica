@@ -62,7 +62,7 @@ class motoboy(models.Model):
     cep                = models.CharField(max_length=10)
     estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
     cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
-  #  bairro_id          = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    nbairro            = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
@@ -75,7 +75,7 @@ class motoboy(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
-    nnumero    = models.ForeignKey(bairro, on_delete=models.PROTECT)
+  
     
     
     def __str__(self):
