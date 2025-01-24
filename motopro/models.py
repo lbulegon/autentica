@@ -130,8 +130,8 @@ class candidatura(models.Model):
     )
     data_candidatura = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+ #   def __str__(self):
+#        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
 
 
 class avaliacao(models.Model):
@@ -233,8 +233,8 @@ class contratomotoboy(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"Contrato Motoboy {self.id} - {self.motoboy.nome} - Status: {self.get_status_display()}"
+   # def __str__(self):
+   #     return f"Contrato Motoboy {self.id} - {self.motoboy.nome} - Status: {self.get_status_display()}"
 
     def clean(self):
         if self.data_termino <= self.data_inicio:
@@ -260,8 +260,8 @@ class categoriamotoboy(models.Model):
     frequencia_uso_minima      = models.IntegerField(help_text="Dias mínimos de uso nos últimos 30 dias")
     entregas_concluidas_minima = models.IntegerField(help_text="Número mínimo de entregas concluídas")
 
-    def __str__(self):
-        return f"{self.motoboy.nome} - Categoria: {self.categoria.nome}"
+    #def __str__(self):
+    #    return f"{self.motoboy.nome} - Categoria: {self.categoria.nome}"
 
 
 class emprestimo(models.Model):
@@ -281,8 +281,8 @@ class emprestimo(models.Model):
     created_at      = models.DateTimeField(auto_now_add=True)
     updated_at      = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"Empréstimo {self.id} - {self.motoboy.nome} - Status: {self.get_status_display()}"
+#    def __str__(self):
+#        return f"Empréstimo {self.id} - {self.motoboy.nome} - Status: {self.get_status_display()}"
 
     def clean(self):
         if self.numero_parcelas <= 0:
