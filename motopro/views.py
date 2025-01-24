@@ -7,33 +7,33 @@ from django.contrib.auth import get_user_model
 #from motopro.forms import VagaForm
 from django.shortcuts import redirect
 
-def home(request):
-    return render(request, 'home.html')
+# def home(request):
+#     return render(request, 'home.html')
 
 # Usando o modelo CustomUser que você criou
-CustomUser = get_user_model()
+# CustomUser = get_user_model()
 
-class UserListView(ListView):
-    model = CustomUser
-    template_name = 'users/user_list.html'
-    context_object_name = 'users'
+# class UserListView(ListView):
+#     model = CustomUser
+#     template_name = 'users/user_list.html'
+#     context_object_name = 'users'
 
-class UserCreateView(CreateView):
-    model = CustomUser
-    form_class = UserCreationForm
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('user-list')
+# class UserCreateView(CreateView):
+#     model = CustomUser
+#     form_class = UserCreationForm
+#     template_name = 'users/user_form.html'
+#     success_url = reverse_lazy('user-list')
 
-class UserUpdateView(UpdateView):
-    model = CustomUser
-    fields = ['username', 'email', 'tipo']  # Defina os campos que você deseja editar
-    template_name = 'users/user_form.html'
-    success_url = reverse_lazy('user-list')
+# class UserUpdateView(UpdateView):
+#     model = CustomUser
+#     fields = ['username', 'email', 'tipo']  # Defina os campos que você deseja editar
+#     template_name = 'users/user_form.html'
+#     success_url = reverse_lazy('user-list')
 
-class UserDeleteView(DeleteView):
-    model = CustomUser
-    template_name = 'users/user_confirm_delete.html'
-    success_url = reverse_lazy('user-list')
+# class UserDeleteView(DeleteView):
+#     model = CustomUser
+#     template_name = 'users/user_confirm_delete.html'
+#     success_url = reverse_lazy('user-list')
 
 
 #####################V a g a ######################
