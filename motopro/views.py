@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 #from motopro.models import vaga, motoboy, empresa
-from motopro.forms import VagaForm
+#from motopro.forms import VagaForm
 from django.shortcuts import redirect
 
 def home(request):
