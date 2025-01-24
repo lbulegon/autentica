@@ -7,8 +7,8 @@ from django.contrib.auth import get_user_model
 #from motopro.forms import VagaForm
 from django.shortcuts import redirect
 
-# def home(request):
-#     return render(request, 'home.html')
+def home(request):
+     return render(request, 'home.html')
 
 # Usando o modelo CustomUser que você criou
 # CustomUser = get_user_model()
