@@ -26,3 +26,18 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
+
+
+
+class Bairro(models.Model):
+    id     = models.AutoField(primary_key=True)  # Usa AutoField, que é o padrão do Django
+    nome   = models.CharField(max_length=255)
+    cidade = models.ForeignKey('Cidade', on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['id', 'cidade'], name='unique_bairro_id_cidade'),
+        ]
+
+    def __str__(self):
+        return self.nome
