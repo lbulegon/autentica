@@ -41,9 +41,45 @@ class bairro(models.Model):
     def __str__(self):
         return self.nome
 
+
 class motoboy(models.Model):
-    nome = models.CharField(max_length=100)
-    # Adicione outros campos necessários aqui
+    id                 = models.AutoField(primary_key=True)
+    nome               = models.CharField(max_length=255, null=False, blank=False)
+    cpf                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
+    cnh                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
+    telefone           = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    email              = models.EmailField(max_length=255, blank=True)  # Email do motoboy
+    placa_moto         = models.CharField(max_length=10, unique=True)  # Placa da moto
+    modelo_moto        = models.CharField(max_length=100)  # Modelo da moto
+    ano_moto           = models.IntegerField(
+                            validators=[
+                                MinValueValidator(2000),                             # Ano mínimo para a moto
+                                MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
+                            ]
+                        )  # Ano de fabricação da moto
+   
+    cep                = models.CharField(max_length=10)
+    estado_id          = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade_id          = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    nbairro            = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    logradouro         = models.CharField(max_length=255)
+    numero             = models.CharField(max_length=10)
+    complemento        = models.CharField(max_length=100, blank=True)
+    status             = models.CharField(max_length=20, choices=[
+                        ('alocado', 'Alocado'),
+                        ('livre', 'Livre'),
+                        ('inativo', 'Inativo'),
+                        ], default='livre')  # Status do motoboy
+
+    
+    created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+     
+    def __str__(self):
+        return self.nome
+
+
+
 
 class supervisor(models.Model):
     id                 = models.AutoField(primary_key=True)
