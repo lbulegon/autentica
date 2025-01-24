@@ -41,7 +41,9 @@ class bairro(models.Model):
     def __str__(self):
         return self.nome
 
-
+class motoboy(models.Model):
+    nome = models.CharField(max_length=100)
+    # Adicione outros campos necessários aqui
 
 class supervisor(models.Model):
     id                 = models.AutoField(primary_key=True)
