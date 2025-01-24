@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
-from django.urls import reverse_lazy
-from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
+#from django.urls import reverse_lazy
+#from django.contrib.auth.forms import UserCreationForm
+#from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 #from motopro.models import vaga, motoboy, empresa
 #from motopro.forms import VagaForm
 from django.shortcuts import redirect
