@@ -101,3 +101,47 @@ class empresa(models.Model):
 
     def __str__(self):
         return self.nome
+    
+
+
+
+class vaga(models.Model):
+    
+    id            = models.AutoField(primary_key=True)
+    empresa       = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
+    motoboy       = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    observacoes   = models.CharField(max_length=300, null=False, blank=False)
+    data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
+    valor         = models.FloatField(blank=False, null=False)
+    created_at    = models.DateTimeField(auto_now_add= True, null=False, blank=False)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ("aberta", "Aberta"),
+            ("preenchida", "Encerrada"),
+            ("encerrada", "Encerrada"),
+            ("recusada", "Recusada"),
+        ],
+        default="Aberta"
+        )  
+    def __str__(self):
+        return f"Vaga {self.id} - Status: {self.get_status_display()}"
+
+
+class candidatura(models.Model):
+    motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
+    status      = models.CharField(
+        max_length=20,
+        choices=[
+            ("pendente", "Pendente"),
+            ("aprovada", "Aprovada"),
+            ("recusada", "Recusada")
+        ],
+        default="Pendente"
+    )
+    data_candidatura = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
