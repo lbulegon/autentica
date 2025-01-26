@@ -25,21 +25,21 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
-
-
 class bairro(models.Model):
-    id           = models.IntegerField(primary_key=True)  
-    nome         = models.CharField(max_length=255)
-    cidade       = models.ForeignKey(cidade, on_delete=models.CASCADE)
+    id = models.IntegerField()
+    nome = models.CharField(max_length=255)
+    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['id', 'cidade'], name='pk_bairro_id_cidade'),
         ]
         unique_together = ('id', 'cidade')
+        managed = False  # O Django não gerenciará esta tabela
 
     def __str__(self):
         return self.nome
+
 
 
 class motoboy(models.Model):
