@@ -27,12 +27,10 @@ class cidade(models.Model):
         return self.nome
 
 
-
-
 class bairro(models.Model):
-    id = models.IntegerField()  # Sem `primary_key=True`
-    nome = models.CharField(max_length=255)
-    cidade = models.ForeignKey(cidade, on_delete=models.CASCADE)
+    id           = models.IntegerField(primary_key=True)  
+    nome         = models.CharField(max_length=255)
+    cidade       = models.ForeignKey(cidade, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
