@@ -26,7 +26,7 @@ class cidade(models.Model):
     def __str__(self):
         return self.nome
 class bairro(models.Model):
-    id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
+    id           = models.IntegerField(primary_key=False)  # Sem `primary_key=True`
     nome = models.CharField(max_length=255)
     cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
