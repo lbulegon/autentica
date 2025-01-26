@@ -10,7 +10,6 @@ def validate_nota(value):
     if value < 0 or value > 9:
         raise ValidationError('A nota deve estar entre 0 e 9.')
 
-
 class estado(models.Model):
     id     = models.AutoField(primary_key=True)
     nome   = models.CharField(max_length=100)
@@ -39,8 +38,6 @@ class bairro(models.Model):
 
     def __str__(self):
         return self.nome
-
-
 
 class motoboy(models.Model):
     id                 = models.AutoField(primary_key=True)
@@ -78,8 +75,6 @@ class motoboy(models.Model):
     def __str__(self):
         return self.nome
 
-
-
 class empresa(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -102,11 +97,7 @@ class empresa(models.Model):
     def __str__(self):
         return self.nome
     
-
-
-
 class vaga(models.Model):
-    
     id            = models.AutoField(primary_key=True)
     empresa       = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
     motoboy       = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
@@ -144,4 +135,3 @@ class candidatura(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
