@@ -2,7 +2,7 @@ from pathlib import Path
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -24,14 +24,15 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvolvimento.up.railway.app']
-STATICFILES_DIRS = [os.path.join(BASE_DIR, '.\static')]
-STATIC_ROOT =  os.path.join(BASE_DIR, '.\staticfiles')
+
+STATICFILES_DIRS     = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT          = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL           = '/static/'
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-
-
 
 # Application definition
 
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api_v01',
     'motopro',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'autentica.urls'
@@ -84,12 +87,12 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
-        'NAME': 'railway',  # Nome do banco de dados
-        'USER': 'postgres',  # Usuário do banco de dados
-        'PASSWORD': 'smivcxktjtChwExHSrVbiAFWgfZkmDrS',  # Senha do banco de dados
-        'HOST': 'junction.proxy.rlwy.net',  # Host (o container está mapeado para localhost)
-        'PORT': '57279',  # Porta padrão do PostgreSQL
+        'ENGINE'   : 'django.db.backends.postgresql',     # Define o backend do PostgreSQL
+        'NAME'     : 'railway',                           # Nome do banco de dados
+        'USER'     : 'postgres',                          # Usuário do banco de dados
+        'PASSWORD' : 'smivcxktjtChwExHSrVbiAFWgfZkmDrS',  # Senha do banco de dados
+        'HOST'     : 'junction.proxy.rlwy.net',           # Host (o container está mapeado para localhost)
+        'PORT'     : '57279',                             # Porta padrão do PostgreSQL
     }
 }
 
@@ -139,11 +142,12 @@ USE_TZ = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD  = 'django.db.models.BigAutoField'
 #AUTH_USER_MODEL     = 'motopro.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
-    'api_v01.backends.EmailBackend',  # Nosso backend personalizado
+    'api_v01.backends.EmailBackend',              # Nosso backend personalizado
     'django.contrib.auth.backends.ModelBackend',  # Backend padrão (opcional)
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True 
