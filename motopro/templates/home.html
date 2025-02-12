@@ -1,25 +1,8 @@
-<header class="header">
-    <a href="#" class="logo">Developer</a>
-    <nav class="nav-items">
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+{% extends "base.html" %}
 
-    <a href="#">motopro\template</a>
+{% block title %}Página Inicial - Home{% endblock %}
 
-
-
-    <ul>
-        <li><a href="/admin/">Admin</a></li>
-        <li><a href="/api/login/">API Login</a></li>
-        <li><a href="/login/">Login</a></li>
-        <li><a href="/home/">Home</a></li>
-        <li><a href="/static/">Arquivos Estáticos</a></li>
-    </ul>
-
-
-
-
-    
-    </nav>
-    </header>
+{% block content %}
+    <h2>Conteúdo Principal</h2>
+    <p>Esta é a página inicial da aplicação.</p>
+{% endblock %}
