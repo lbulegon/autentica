@@ -3,8 +3,14 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import AbstractUser
+
 
 import datetime
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)  # Agora o email será único
+
 
 def validate_nota(value):
     if value < 0 or value > 9:
@@ -40,8 +46,6 @@ class bairro(models.Model):
     def __str__(self):
         return self.nome
 
-
-
 class motoboy(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -70,10 +74,8 @@ class motoboy(models.Model):
                         ('livre', 'Livre'),
                         ('inativo', 'Inativo'),
                         ], default='livre')  # Status do motoboy
-
-    
-    created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
-    updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+    created_at         = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at         = models.DateTimeField(auto_now=True)  # Data da última atualização
      
     def __str__(self):
         return self.nome
@@ -95,8 +97,6 @@ class empresa(models.Model):
                         ('ativo', 'Ativo'),
                         ('inativo', 'Inativo'),
                         ], default='ativo')  # Status do motoboy
-
-
     def __str__(self):
         return self.nome
     
