@@ -3,13 +3,9 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.contrib.auth.models import AbstractUser
 
 
 import datetime
-
-class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)  # Agora o email será único
 
 
 def validate_nota(value):
