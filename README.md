@@ -1,10 +1,5 @@
 # autentica
 
-# COMO INCLUIR CAMPOS NOVOS NO REGISTRO DE USUÁRIOS
-https://www.youtube.com/watch?v=scl1SrmmMDI
-
-- api_v01 - utilizada para fazer a autentucação do usuario
-=======
 Autenticação dos produtos **GlbHash**
 
 Para configurar e rodar o ambiente, siga os passos abaixo:
@@ -21,10 +16,4 @@ Para configurar e rodar o ambiente, siga os passos abaixo:
 - railway up
 - .venv\Scripts\python manage.py migrate
 
-# Montando o ambiente 
-.venv\Scripts\activate  
-railway login
-railway link -p 50594409-8ec3-4211-9cf7-6f4ef2f9afc8
-railway up
-
-
+https://autentica-desenvolvimento.up.railway.app/
