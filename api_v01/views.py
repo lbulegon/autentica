@@ -35,4 +35,4 @@ class LoginView(APIView):
         return Response({'error': 'Invalid email or password'}, status=HTTP_401_UNAUTHORIZED)
 
 def home_view(request):
-    return render(request, 'home.html', {})
+    return render(request, "home.html")  # Ou "motopro/home.html" caso esteja na subpasta
