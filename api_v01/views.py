@@ -5,6 +5,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_401_UNAUTHORIZED
 from rest_framework.authtoken.models import Token
 from django.shortcuts import render
 
+
 class LoginView(APIView):
     """
     API para autenticação usando email e senha.
@@ -13,14 +14,12 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        # Autentica o usuário pelo email
-        user = authenticate(request, email=email, password=password)
+        # Autentica o usuário pelo backend personalizado
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
-            # Retorna ou gera um token para o usuário autenticado
             token, _ = Token.objects.get_or_create(user=user)
 
-            # Inclui os campos adicionais do User
             user_data = {
                 'token': token.key,
                 'username': user.username,
