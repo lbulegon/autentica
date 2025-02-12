@@ -23,10 +23,12 @@ from django.views.static import serve
 
 
 urlpatterns = [
+    
+    path("", home_view, name="home"),  # Defina a home como rota padrão
     path('admin/', admin.site.urls),
     path('api/login/', LoginView.as_view(), name='login'),
     path('login/', LoginView.as_view(), name='login'),
-    path('home/', home_view),
+   
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 
    
