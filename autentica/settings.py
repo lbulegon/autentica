@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api_v01',
     'motopro',
-    'corsheaders',
+   # 'corsheaders',
 ]
 
 MIDDLEWARE = [
