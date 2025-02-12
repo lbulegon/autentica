@@ -142,6 +142,7 @@ DEFAULT_AUTO_FIELD  = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL     = 'motopro.CustomUser'
 
 AUTHENTICATION_BACKENDS = [
-    'seu_app.backends.EmailAuthBackend',  # Substitua 'seu_app' pelo nome do seu app
-    'django.contrib.auth.backends.ModelBackend',  # Mantém o backend padrão
+    'api_v01.backends.EmailBackend',              # Nosso backend personalizado
+    'django.contrib.auth.backends.ModelBackend',  # Backend padrão (opcional)
 ]
+
