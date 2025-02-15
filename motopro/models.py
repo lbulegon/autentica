@@ -41,19 +41,15 @@ class cidade(models.Model):
 #    def __str__(self):
 #        return self.nome
  
-
 class bairro(models.Model):
-    id     = models.AutoField(primary_key=True)  # Deixe o Django gerenciar o ID corretamente
-    nome   = models.CharField(max_length=255, unique=True)  # Garante unicidade do nome
+    id = models.AutoField(primary_key=True)
+    nome = models.CharField(max_length=255, unique=True)
     cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
-        constraints = [ models.UniqueConstraint(fields=['nome', 'cidade'], name='unique_bairro_cidade'), ]
-
-    def __str__(self):
-        return self.nome
-
-
+        constraints = [
+            models.UniqueConstraint(fields=['nome', 'cidade'], name='unique_bairro_cidade'),
+        ]  # ← Aqui pode haver um colchete extra ou faltando
 
 
 
