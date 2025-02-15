@@ -26,33 +26,43 @@ class cidade(models.Model):
         return self.nome
 
 
-#class bairro(models.Model):
-#    id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
-#    nome         = models.CharField(max_length=255)
-#    cidade       = models.ForeignKey('cidade', on_delete=models.CASCADE)
-
-#    class Meta:
-#        constraints = [
-#            models.UniqueConstraint(fields=['id', 'cidade'], name='pk_bairro_id_cidade'),
-#        ]
-#        unique_together = ('id', 'cidade')
-#        managed = False  # O Django não gerenciará esta tabela
-
-#    def __str__(self):
-#        return self.nome
+class bairro(models.Model):
+    id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
+    nome         = models.CharField(max_length=255)
+    cidade       = models.ForeignKey('cidade', on_delete=models.CASCADE)
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['id', 'cidade'], name='pk_bairro_id_cidade'),
+        ]
+        unique_together = ('id', 'cidade')
+        managed = False  # O Django não gerenciará esta tabela
+    def __str__(self):
+        return self.nome
  
 
-class bairro(models.Model):
-    nome   = models.CharField(max_length=255, unique=True)  # Garante unicidade do nome
-    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
+class supervisor(models.Model):
+    id                 = models.AutoField(primary_key=True)
+    nome               = models.CharField(max_length=255, null=False, blank=False)
+    cep                = models.CharField(max_length=10)
+    estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
+  #  bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    logradouro         = models.CharField(max_length=255)
+    numero             = models.CharField(max_length=10)
+    complemento        = models.CharField(max_length=100, blank=True)
+   
+   
+    created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
+    deadline           = models.DateTimeField(null=False, blank=False)
+    finished_at        = models.DateTimeField(null=True) 
+    status             = models.CharField(max_length=20, choices=[
+                        ('ativo', 'Ativo'),
+                        ('inativo', 'Inativo'),
+                        ], default='ativo')  # Status do motoboy
 
-    class Meta:
-        constraints = [ models.UniqueConstraint(fields=['nome', 'cidade'], name='unique_bairro_cidade'), ]
 
     def __str__(self):
         return self.nome
-
-
 
 
 class motoboy(models.Model):
