@@ -5,7 +5,6 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 
-
 def validate_nota(value):
     if value < 0 or value > 9:
         raise ValidationError('A nota deve estar entre 0 e 9.')
@@ -37,6 +36,26 @@ class bairro(models.Model):
         unique_together = ('id', 'cidade')
         managed = False  # O Django não gerenciará esta tabela
 
+    def __str__(self):
+        return self.nome
+    
+class supervisor(models.Model):
+    id                 = models.AutoField(primary_key=True)
+    nome               = models.CharField(max_length=255, null=False, blank=False)
+    cep                = models.CharField(max_length=10)
+    estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    logradouro         = models.CharField(max_length=255)
+    numero             = models.CharField(max_length=10)
+    complemento        = models.CharField(max_length=100, blank=True)
+    created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
+    deadline           = models.DateTimeField(null=False, blank=False)
+    finished_at        = models.DateTimeField(null=True) 
+    status             = models.CharField(max_length=20, choices=[
+                        ('ativo', 'Ativo'),
+                        ('inativo', 'Inativo'),
+                        ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
 
