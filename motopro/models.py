@@ -74,7 +74,7 @@ class motoboy(models.Model):
     def __str__(self):
         return self.nome
 
-class empresa(models.Model):
+class estabeleciomento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
     cep                = models.CharField(max_length=10)
@@ -95,13 +95,13 @@ class empresa(models.Model):
         return self.nome
     
 class vaga(models.Model):
-    id            = models.AutoField(primary_key=True)
-    empresa       = models.ForeignKey(empresa, on_delete=models.PROTECT, related_name='pedidos')
-    motoboy       = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
-    observacoes   = models.CharField(max_length=300, null=False, blank=False)
-    data_da_vaga  = models.DateTimeField(null=True, blank=True)  # Campo editável
-    valor         = models.FloatField(blank=False, null=False)
-    created_at    = models.DateTimeField(auto_now_add= True, null=False, blank=False)
+    id                 = models.AutoField(primary_key=True)
+    estabelecimento    = models.ForeignKey(estabeleciomento, on_delete=models.PROTECT, related_name='pedidos')
+    motoboy            = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    observacoes        = models.CharField(max_length=300, null=False, blank=False)
+    data_da_vaga       = models.DateTimeField(null=True, blank=True)  # Campo editável
+    valor              = models.FloatField(blank=False, null=False)
+    created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
     status = models.CharField(
         max_length=20,
         choices=[
