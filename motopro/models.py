@@ -48,9 +48,7 @@ class bairro(models.Model):
     cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['nome', 'cidade'], name='unique_bairro_cidade'),
-        ]
+        constraints = [ models.UniqueConstraint(fields=['nome', 'cidade'], name='unique_bairro_cidade'), ]
 
     def __str__(self):
         return self.nome
