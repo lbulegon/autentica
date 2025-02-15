@@ -26,8 +26,8 @@ class cidade(models.Model):
         return self.nome
 class bairro(models.Model):
     id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
-    nome = models.CharField(max_length=255)
-    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
+    nome         = models.CharField(max_length=255)
+    cidade       = models.ForeignKey('cidade', on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
@@ -50,7 +50,6 @@ class supervisor(models.Model):
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
     created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
-    deadline           = models.DateTimeField(null=False, blank=False)
     finished_at        = models.DateTimeField(null=True) 
   
     status             = models.CharField(max_length=20, choices=[
