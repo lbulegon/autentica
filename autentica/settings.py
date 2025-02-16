@@ -10,14 +10,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-lxh3b=6@xx(h#6)uhw++a)cre=^!l##^mf%*lolt*3ge0@4flu'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+# SECURITY WARNING: don't run with debug turned on in production! 
 #ALLOWED_HOSTS = ['192.168.0.18','localhost', '127.0.0.1', '192.168.0.30']
 ALLOWED_HOSTS = [
     'autentica-production.up.railway.app',
     '127.0.0.1',  # Opcional: Para testes locais
-    'localhost',  # Opcional: Para testes locais
+    'localhost',  # Opcional: Para testes locais  
     '192.168.0.30',
     'autentica-desenvolvimento.up.railway.app'
 ]
@@ -29,11 +27,8 @@ STATICFILES_DIRS     = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT          = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL           = '/static/'
 
-
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 # Application definition
 
 INSTALLED_APPS = [

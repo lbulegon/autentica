@@ -153,3 +153,26 @@ class candidatura(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
+
+class supervisormotoboy(models.Model):
+    supervisor = models.ForeignKey(supervisor, on_delete=models.CASCADE)
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('supervisor', 'motoboy')
+    
+    def __str__(self):
+        return f"Supervisor {self.supervisor.nome} - Motoboy {self.motoboy.nome}"
+
+class supervisorestabelecimento(models.Model):
+    supervisor = models.ForeignKey(supervisor, on_delete=models.CASCADE)
+    estabelecimento = models.ForeignKey(estabeleciomento, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('supervisor', 'estabelecimento')
+    
+    def __str__(self):
+        return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
