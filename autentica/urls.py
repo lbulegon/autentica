@@ -39,10 +39,10 @@ urlpatterns = [
   #   path('users/delete/<int:pk>/', UserDeleteView.as_view(), name='user-delete'),
    
    ########## vagas ################
-  #   path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
-  #   path('vagas/create/',          VagaCreateView.as_view(), name='vaga-create'),
-  #   path('vagas/update/<int:pk>/', VagaUpdateView.as_view(), name='vaga-update'),
-  #   path('vagas/delete/<int:pk>/', VagaDeleteView.as_view(), name='vaga-delete'),
+     path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
+     path('vagas/create/',          VagaCreateView.as_view(), name='vaga-create'),
+     path('vagas/update/<int:pk>/', VagaUpdateView.as_view(), name='vaga-update'),
+     path('vagas/delete/<int:pk>/', VagaDeleteView.as_view(), name='vaga-delete'),
 
     ########## Empesas ################
   #   path('empresas/',                EmpresaListView.as_view(),   name='empresa-list'),  # Lista de empresas
