@@ -4,6 +4,7 @@ from django.urls import reverse_lazy
 #from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 #from motopro.models import vaga, motoboy, empresa
+from .models import motoboy
 from motopro.forms import VagaForm
 from motopro.models import vaga
 from django.shortcuts import redirect
@@ -40,38 +41,38 @@ def home(request):
 #####################V a g a ######################
 
 # Listar vagas
-#class VagaListView(ListView):
-#    model = vaga
-#    template_name = 'vagas/vaga_list.html'
-#    context_object_name = 'vagas'
+class VagaListView(ListView):
+    model = vaga
+    template_name = 'vagas/vaga_list.html'
+    context_object_name = 'vagas'
 
-#    def get_context_data(self, **kwargs):
-#        context = super().get_context_data(**kwargs)
-#        context['motoboys'] = motoboy.objects.all()  # Passa a lista de motoboys para o template
-#        return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['motoboys'] = motoboy.objects.all()  # Passa a lista de motoboys para o template
+        return context
 
-#    def post(self, request, *args, **kwargs):
-#        vagas = self.get_queryset()
-#        for vaga_obj in vagas:
-#            # Atualizar motoboy
-#            motoboy_id = request.POST.get(f'motoboy_{vaga_obj.id}')
-#            if motoboy_id:  # Se motoboy_id não estiver vazio
-#                try:
-#                    motoboy_obj = motoboy.objects.get(id=motoboy_id)
-###                    vaga_obj.motoboy_id = motoboy_obj  # Atribua a instância do motoboy
- #               except motoboy.DoesNotExist:
-#                    vaga_obj.motoboy_id = None  # Se o motoboy não existir, definir como None
-#            else:
-#                vaga_obj.motoboy_id = None  # Se nenhum motoboy for selecionado, definimos como None
+    def post(self, request, *args, **kwargs):
+        vagas = self.get_queryset()
+        for vaga_obj in vagas:
+            # Atualizar motoboy
+            motoboy_id = request.POST.get(f'motoboy_{vaga_obj.id}')
+            if motoboy_id:  # Se motoboy_id não estiver vazio
+                try:
+                    motoboy_obj = motoboy.objects.get(id=motoboy_id)
+                    vaga_obj.motoboy_id = motoboy_obj  # Atribua a instância do motoboy
+                except motoboy.DoesNotExist:
+                    vaga_obj.motoboy_id = None  # Se o motoboy não existir, definir como None
+            else:
+                vaga_obj.motoboy_id = None  # Se nenhum motoboy for selecionado, definimos como None
 
             # Atualizar status
-#            status = request.POST.get(f'status_{vaga_obj.id}')
-#            if status:
-#                vaga_obj.status = status
+            status = request.POST.get(f'status_{vaga_obj.id}')
+            if status:
+                vaga_obj.status = status
 
-#            vaga_obj.save()  # Persistir a vaga com as novas mudanças
+            vaga_obj.save()  # Persistir a vaga com as novas mudanças
 
-#        return redirect('vaga-list')
+        return redirect('vaga-list')
     
 
 # Criar vaga

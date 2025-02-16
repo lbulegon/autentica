@@ -20,14 +20,14 @@ from api_v01.views  import LoginView, home_view
 from django.conf import settings
 from django.views.static import serve
 
-from motopro.views import home, VagaCreateView, VagaUpdateView, VagaDeleteView
+from motopro.views import home, VagaCreateView, VagaUpdateView, VagaDeleteView,VagaListView
 
 urlpatterns = [
     
     path("", home_view, name="home"),  # Defina a home como rota padrão
-    path('admin/', admin.site.urls),
+    path('admin/',     admin.site.urls),
     path('api/login/', LoginView.as_view(), name='login'),
-    path('login/', LoginView.as_view(), name='login'),
+    path('login/',     LoginView.as_view(), name='login'),
    
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 
@@ -39,7 +39,7 @@ urlpatterns = [
   #   path('users/delete/<int:pk>/', UserDeleteView.as_view(), name='user-delete'),
    
    ########## vagas ################
-   # path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
+     path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
      path('vagas/create/',          VagaCreateView.as_view(), name='vaga-create'),
      path('vagas/update/<int:pk>/', VagaUpdateView.as_view(), name='vaga-update'),
      path('vagas/delete/<int:pk>/', VagaDeleteView.as_view(), name='vaga-delete'),
@@ -50,9 +50,6 @@ urlpatterns = [
  #    path('empresa/create/',          EmpresaCreateView.as_view(), name='empresa-create'),  # Criação de empresa
  #    path('empresa/<int:pk>/update/', EmpresaUpdateView.as_view(), name='empresa-update'),  # Atualização de empresa
  #    path('empresa/<int:pk>/delete/', EmpresaDeleteView.as_view(), name='empresa-delete'),  # Exclusão de empresa
-
-
-
 
 ]
 
