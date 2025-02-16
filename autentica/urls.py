@@ -19,7 +19,6 @@ from django.urls import path, re_path
 from api_v01.views  import LoginView, home_view
 from django.conf import settings
 from django.views.static import serve
-from motopro.views import home, UserListView, UserCreateView, UserUpdateView, UserDeleteView, VagaListView, VagaCreateView, VagaUpdateView, VagaDeleteView, EmpresaCreateView
 
 from motopro.views import home, VagaCreateView, VagaUpdateView, VagaDeleteView
 
