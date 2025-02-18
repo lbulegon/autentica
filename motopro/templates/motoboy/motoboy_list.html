@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Lista de Motoboys</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <h1>Lista de Motoboys</h1>
     <a href="{% url 'motoboy-create' %}">Criar Novo Motoboy</a>
     <ul>
@@ -20,5 +16,4 @@
         {% csrf_token %}
         <button type="submit">Salvar Alterações de Status</button>
     </form>
-</body>
-</html>
+    {% endblock %}

@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Lista de Empresas</h1>
 <table border="1" cellspacing="0" cellpadding="10">
     <thead>
@@ -39,3 +42,5 @@
 </table>
 
 <a href="{% url 'empresa-create' %}">Criar Nova Empresa</a>
+
+{% endblock %}

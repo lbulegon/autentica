@@ -63,8 +63,8 @@ urlpatterns = [
     
     path('motoboy', MotoboyListView.as_view(), name='motoboy-list'),
     path('motoboy/create/', MotoboyCreateView.as_view(), name='motoboy-create'),
-    path('motoboy/<int:pk>/', MotoboyUpdateView.as_view(), name='motoboy-update'),
-    path('motoboy/<int:pk>/', MotoboyDeleteView.as_view(), name='motoboy-delete'),
+    path('motoboy/update/<int:pk>/', MotoboyUpdateView.as_view(), name='motoboy-update'),
+    path('motoboy/delete/<int:pk>/', MotoboyDeleteView.as_view(), name='motoboy-delete'),
 
 ]
 
