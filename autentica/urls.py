@@ -22,6 +22,7 @@ from django.views.static import serve
 
 from motopro.views import home, VagaCreateView, VagaUpdateView, VagaDeleteView,VagaListView
 
+from motopro.views import EstabelecimentoCreateView, EstabelecimentoUpdateView, EstabelecimentoDeleteView, EstabelecimentoListView
 urlpatterns = [
     
     path("", home_view, name="home"),  # Defina a home como rota padrão
@@ -50,6 +51,14 @@ urlpatterns = [
  #    path('empresa/create/',          EmpresaCreateView.as_view(), name='empresa-create'),  # Criação de empresa
  #    path('empresa/<int:pk>/update/', EmpresaUpdateView.as_view(), name='empresa-update'),  # Atualização de empresa
  #    path('empresa/<int:pk>/delete/', EmpresaDeleteView.as_view(), name='empresa-delete'),  # Exclusão de empresa
+
+    # Estabelecimentos
+    path('estabelecimentos/', EstabelecimentoListView.as_view(), name='estabelecimento-list'),
+    path('estabelecimentos/create/', EstabelecimentoCreateView.as_view(), name='estabelecimento-create'),
+    path('estabelecimentos/update/<int:pk>/', EstabelecimentoUpdateView.as_view(), name='estabelecimento-update'),
+    path('estabelecimentos/delete/<int:pk>/', EstabelecimentoDeleteView.as_view(), name='estabelecimento-delete'),
+    
+
 
 ]
 
