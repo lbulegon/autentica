@@ -4,6 +4,31 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
+import re
+
+
+
+
+# Função de validação para CPF
+def validate_cpf(value):
+    cpf_regex = r'^\d{11}$'  # Regex para verificar se o CPF possui 11 dígitos
+    if not re.match(cpf_regex, value):
+        raise ValidationError("CPF deve ter 11 dígitos numéricos.")
+
+# Função de validação para CNH
+def validate_cnh(value):
+    cnh_regex = r'^\d{11}$'  # Regex para verificar se a CNH possui 11 dígitos
+    if not re.match(cnh_regex, value):
+        raise ValidationError("CNH deve ter 11 dígitos numéricos.")
+
+# Função de validação para placa de moto
+def validate_placa(value):
+    placa_regex = r'^[A-Z]{3}-\d{4}$'  # Regex para verificar formato de placa (ex: ABC-1234)
+    if not re.match(placa_regex, value):
+        raise ValidationError("Placa da moto deve seguir o formato ABC-1234.")
+
+
+
 
 def validate_nota(value):
     if value < 0 or value > 9:
@@ -61,40 +86,47 @@ class supervisor(models.Model):
     def __str__(self):
         return self.nome
 
+
+
+
 class motoboy(models.Model):
-    id                 = models.AutoField(primary_key=True)
-    nome               = models.CharField(max_length=255, null=False, blank=False)
-    cpf                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
-    cnh                = models.CharField(max_length=11, unique=True)  # CNH do motoboy
-    telefone           = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    email              = models.EmailField(max_length=255, blank=True)  # Email do motoboy
-    placa_moto         = models.CharField(max_length=10, unique=True)  # Placa da moto
-    modelo_moto        = models.CharField(max_length=100)  # Modelo da moto
-    ano_moto           = models.IntegerField(
-                            validators=[
-                                MinValueValidator(2000),                             # Ano mínimo para a moto
-                                MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
-                            ]
-                        )  # Ano de fabricação da moto
-   
-    cep                = models.CharField(max_length=10)
-    estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
-    cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
-    bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
-    logradouro         = models.CharField(max_length=255)
-    numero             = models.CharField(max_length=10)
-    complemento        = models.CharField(max_length=100, blank=True)
-    status             = models.CharField(max_length=20, choices=[
-                        ('alocado', 'Alocado'),
-                        ('livre', 'Livre'),
-                        ('inativo', 'Inativo'),
-                        ], default='livre')  # Status do motoboy
-    created_at         = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
-    updated_at         = models.DateTimeField(auto_now=True)  # Data da última atualização
-     
+    id           = models.AutoField(primary_key=True)
+    nome         = models.CharField(max_length=255, null=False, blank=False)
+    cpf          = models.CharField(max_length=11, unique=True, validators=[validate_cpf])  # CNH do motoboy
+    cnh          = models.CharField(max_length=11, unique=True, validators=[validate_cnh])  # CNH do motoboy
+    telefone     = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    email        = models.EmailField(max_length=255, blank=True)  # Email do motoboy
+    placa_moto   = models.CharField(max_length=10, unique=True, validators=[validate_placa])  # Placa da moto
+    modelo_moto  = models.CharField(max_length=100)  # Modelo da moto
+    ano_moto     = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),  # Ano mínimo para a moto
+            MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
+        ]
+    )  # Ano de fabricação da moto
+    
+    cep         = models.CharField(max_length=10)
+    estado      = models.ForeignKey('Estado', on_delete=models.PROTECT)
+    cidade      = models.ForeignKey('Cidade', on_delete=models.PROTECT)
+    bairro      = models.ForeignKey('Bairro', on_delete=models.PROTECT)
+    logradouro  = models.CharField(max_length=255)
+    numero      = models.CharField(max_length=10)
+    complemento = models.CharField(max_length=100, blank=True)
+    
+    # Status do motoboy
+    status = models.CharField(max_length=20, choices=[
+        ('alocado', 'Alocado'),
+        ('livre', 'Livre'),
+        ('inativo', 'Inativo'),
+        ('em_viagem', 'Em viagem'),
+    ], default='livre') 
+    
+    created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+    
     def __str__(self):
         return self.nome
-
+    
 class estabeleciomento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
