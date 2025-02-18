@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Lista de Vagas</h1>
 
 <form method="post">
@@ -58,3 +61,5 @@
 <a href="{% url 'vaga-create' %}">Criar Nova Vaga</a>
 <p></p>
 <a href="{% url 'home' %}">Home</a>
+
+{% endblock %}
