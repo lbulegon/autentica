@@ -24,7 +24,7 @@ from motopro.views import home
 from motopro.views import VagaCreateView, VagaUpdateView, VagaDeleteView,VagaListView
 from motopro.views import EstabelecimentoCreateView, EstabelecimentoUpdateView, EstabelecimentoDeleteView, EstabelecimentoListView
 from motopro.views import MotoboyCreateView, MotoboyUpdateView, MotoboyDeleteView, MotoboyListView
-
+from motopro.views import SupervisorCreateView, SupervisorUpdateView, SupervisorDeleteView, SupervisorListView
 
 urlpatterns = [
     
@@ -65,6 +65,11 @@ urlpatterns = [
     path('motoboy/create/', MotoboyCreateView.as_view(), name='motoboy-create'),
     path('motoboy/update/<int:pk>/', MotoboyUpdateView.as_view(), name='motoboy-update'),
     path('motoboy/delete/<int:pk>/', MotoboyDeleteView.as_view(), name='motoboy-delete'),
+
+    path('supervisor/', SupervisorListView.as_view(), name='supervisor-list'),
+    path('supervisor/create/', SupervisorCreateView.as_view(), name='supervisor-create'),
+    path('supervisor/update/<int:pk>/', SupervisorUpdateView.as_view(), name='supervisor-update'),
+    path('supervisor/delete/<int:pk>/', SupervisorDeleteView.as_view(), name='supervisor-delete'),
 
 ]
 

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Lista de Supervisores</h1>
+    <a href="{% url 'supervisor-create' %}">Criar Novo Supervisor</a>
+    <ul>
+        {% for supervisor in supervisores %}
+        <li>
+            {{ supervisor.nome }} - {{ supervisor.status }}
+            <a href="{% url 'supervisor-update' supervisor.pk %}">Editar</a>
+            <a href="{% url 'supervisor-delete' supervisor.pk %}">Deletar</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Salvar Alterações de Status</button>
+    </form>
+{% endblock %}

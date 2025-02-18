@@ -17,6 +17,9 @@ from motopro.forms import EstabelecimentoForm
 from motopro.models import motoboy
 from motopro.forms import MotoboyForm
 
+from motopro.models import supervisor
+from motopro.forms import SupervisorForm
+
 
 def home(request):
      return render(request, 'home.html')
@@ -129,7 +132,6 @@ class EstabelecimentoDeleteView(DeleteView):
 
 
 
-
 class MotoboyListView(ListView):
     model = motoboy
     template_name = 'motoboy/motoboy_list.html'
@@ -171,6 +173,46 @@ class MotoboyDeleteView(DeleteView):
 
 
 
+class SupervisorListView(ListView):
+    model = supervisor
+    template_name = 'supervisor/supervisor_list.html'
+    context_object_name = 'supervisores'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_choices'] = supervisor._meta.get_field('status').choices  # Passa as opções de status para o template
+        return context
+
+    def post(self, request, *args, **kwargs):
+        supervisores = self.get_queryset()
+        for supervisor_obj in supervisores:
+            # Atualizar status
+            status = request.POST.get(f'status_{supervisor_obj.id}')
+            if status:
+                supervisor_obj.status = status
+            supervisor_obj.save()  # Persistir as mudanças
+
+        return redirect('supervisor-list')
+
+
+
+class SupervisorCreateView(CreateView):
+    model = supervisor
+    form_class = SupervisorForm
+    template_name = 'supervisor/supervisor_form.html'
+    success_url = reverse_lazy('supervisor-list')
+
+class SupervisorUpdateView(UpdateView):
+    model = supervisor
+    form_class = SupervisorForm
+    template_name = 'supervisor/supervisor_form.html'
+    success_url = reverse_lazy('supervisor-list')
+
+
+class SupervisorDeleteView(DeleteView):
+    model = supervisor
+    template_name = 'supervisor/supervisor_confirm_delete.html'
+    success_url = reverse_lazy('supervisor-list')
 ##class EmpresaListView(ListView):
 #    model = empresa
 #    template_name = 'empresa/empresa_list.html'
