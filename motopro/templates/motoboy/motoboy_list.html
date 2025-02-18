@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Motoboys</title>
+</head>
+<body>
+    <h1>Lista de Motoboys</h1>
+    <a href="{% url 'motoboy-create' %}">Criar Novo Motoboy</a>
+    <ul>
+        {% for motoboy in motoboys %}
+        <li>
+            {{ motoboy.nome }} - {{ motoboy.status }}
+            <a href="{% url 'motoboy-update' motoboy.pk %}">Editar</a>
+            <a href="{% url 'motoboy-delete' motoboy.pk %}">Deletar</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Salvar Alterações de Status</button>
+    </form>
+</body>
+</html>

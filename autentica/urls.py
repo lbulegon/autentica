@@ -20,9 +20,12 @@ from api_v01.views  import LoginView, home_view
 from django.conf import settings
 from django.views.static import serve
 
-from motopro.views import home, VagaCreateView, VagaUpdateView, VagaDeleteView,VagaListView
-
+from motopro.views import home 
+from motopro.views import VagaCreateView, VagaUpdateView, VagaDeleteView,VagaListView
 from motopro.views import EstabelecimentoCreateView, EstabelecimentoUpdateView, EstabelecimentoDeleteView, EstabelecimentoListView
+from motopro.views import MotoboyCreateView, MotoboyUpdateView, MotoboyDeleteView, MotoboyListView
+
+
 urlpatterns = [
     
     path("", home_view, name="home"),  # Defina a home como rota padrão
@@ -58,7 +61,10 @@ urlpatterns = [
     path('estabelecimentos/update/<int:pk>/', EstabelecimentoUpdateView.as_view(), name='estabelecimento-update'),
     path('estabelecimentos/delete/<int:pk>/', EstabelecimentoDeleteView.as_view(), name='estabelecimento-delete'),
     
-
+    path('motoboy', MotoboyListView.as_view(), name='motoboy-list'),
+    path('motoboy/create/', MotoboyCreateView.as_view(), name='motoboy-create'),
+    path('motoboy/<int:pk>/', MotoboyUpdateView.as_view(), name='motoboy-update'),
+    path('motoboy/<int:pk>/', MotoboyDeleteView.as_view(), name='motoboy-delete'),
 
 ]
 

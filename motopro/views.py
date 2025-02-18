@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 #from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 #from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 #from motopro.models import vaga, motoboy, empresa
 from motopro.models import motoboy
 
@@ -12,6 +12,10 @@ from motopro.models import vaga
 
 from motopro.models import estabeleciomento
 from motopro.forms import EstabelecimentoForm
+
+
+from motopro.models import motoboy
+from motopro.forms import MotoboyForm
 
 
 def home(request):
@@ -122,6 +126,49 @@ class EstabelecimentoDeleteView(DeleteView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url = reverse_lazy('estabelecimento-list')
+
+
+
+
+class MotoboyListView(ListView):
+    model = motoboy
+    template_name = 'motoboy/motoboy_list.html'
+    context_object_name = 'motoboys'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status_choices'] = motoboy._meta.get_field('status').choices  # Passa as opções de status para o template
+        return context
+
+    def post(self, request, *args, **kwargs):
+        motoboys = self.get_queryset()
+        for motoboy_obj in motoboys:
+            # Atualizar status
+            status = request.POST.get(f'status_{motoboy_obj.id}')
+            if status:
+                motoboy_obj.status = status
+            motoboy_obj.save()  # Persistir as mudanças
+
+        return redirect('motoboy-list')
+class MotoboyCreateView(CreateView):
+    model = motoboy
+    form_class = MotoboyForm
+    template_name = 'motoboy/motoboy_form.html'
+    success_url = reverse_lazy('motoboy-list')
+
+class MotoboyUpdateView(UpdateView):
+    model = motoboy
+    form_class = MotoboyForm
+    template_name = 'motoboy/motoboy_form.html'
+    success_url = reverse_lazy('motoboy-list')
+
+class MotoboyDeleteView(DeleteView):
+    model = motoboy
+    template_name = 'motoboy/motoboy_confirm_delete.html'
+    success_url = reverse_lazy('motoboy-list')
+
+
+
 
 
 ##class EmpresaListView(ListView):
