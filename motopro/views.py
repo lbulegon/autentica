@@ -111,8 +111,6 @@ class VagaDeleteView(DeleteView):
     model = vaga
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url = reverse_lazy('vaga-list')
-
-
 @login_required
 class EstabelecimentoListView(ListView):
     model = estabeleciomento
@@ -120,25 +118,25 @@ class EstabelecimentoListView(ListView):
     context_object_name = 'estabelecimentos'
 @login_required
 class EstabelecimentoCreateView(CreateView):
-    model = estabeleciomento
-    form_class = EstabelecimentoForm
-    template_name = 'estabelecimento/estabelecimento_form.html'
-    success_url = reverse_lazy('estabelecimento-list')
+    model          = estabeleciomento
+    form_class     = EstabelecimentoForm
+    template_name  = 'estabelecimento/estabelecimento_form.html'
+    success_url    = reverse_lazy('estabelecimento-list')
 @login_required
 class EstabelecimentoUpdateView(UpdateView):
-    model = estabeleciomento
-    form_class = EstabelecimentoForm
+    model         = estabeleciomento
+    form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
-    success_url = reverse_lazy('estabelecimento-list')
+    success_url   = reverse_lazy('estabelecimento-list')
 @login_required
 class EstabelecimentoDeleteView(DeleteView):
-    model = estabeleciomento
+    model         = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
-    success_url = reverse_lazy('estabelecimento-list')
+    success_url   = reverse_lazy('estabelecimento-list')
 @login_required
 class MotoboyListView(ListView):
-    model = motoboy
-    template_name = 'motoboy/motoboy_list.html'
+    model               = motoboy
+    template_name       = 'motoboy/motoboy_list.html'
     context_object_name = 'motoboys'
 
     def get_context_data(self, **kwargs):
@@ -158,28 +156,25 @@ class MotoboyListView(ListView):
         return redirect('motoboy-list')
 @login_required
 class MotoboyCreateView(CreateView):
-    model = motoboy
-    form_class = MotoboyForm
+    model         = motoboy
+    form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
-    success_url = reverse_lazy('motoboy-list')
-
+    success_url   = reverse_lazy('motoboy-list')
 @login_required
 class MotoboyUpdateView(UpdateView):
-    model = motoboy
-    form_class = MotoboyForm
+    model         = motoboy
+    form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
-    success_url = reverse_lazy('motoboy-list')
+    success_url   = reverse_lazy('motoboy-list')
 @login_required
 class MotoboyDeleteView(DeleteView):
-    model = motoboy
+    model         = motoboy
     template_name = 'motoboy/motoboy_confirm_delete.html'
-    success_url = reverse_lazy('motoboy-list')
-
-
+    success_url   = reverse_lazy('motoboy-list')
 @login_required
 class SupervisorListView(ListView):
-    model = supervisor
-    template_name = 'supervisor/supervisor_list.html'
+    model               = supervisor
+    template_name       = 'supervisor/supervisor_list.html'
     context_object_name = 'supervisores'
 
     def get_context_data(self, **kwargs):
@@ -201,23 +196,25 @@ class SupervisorListView(ListView):
 
 @login_required
 class SupervisorCreateView(CreateView):
-    model = supervisor
-    form_class = SupervisorForm
+    model         = supervisor
+    form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
-    success_url = reverse_lazy('supervisor-list')
+    success_url   = reverse_lazy('supervisor-list')
 
 @login_required
 class SupervisorUpdateView(UpdateView):
-    model = supervisor
-    form_class = SupervisorForm
+    model         = supervisor
+    form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
-    success_url = reverse_lazy('supervisor-list')
+    success_url   = reverse_lazy('supervisor-list')
 
 @login_required
 class SupervisorDeleteView(DeleteView):
-    model = supervisor
+    model         = supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
-    success_url = reverse_lazy('supervisor-list')
+    success_url   = reverse_lazy('supervisor-list')
+
+
 ##class EmpresaListView(ListView):
 #    model = empresa
 #    template_name = 'empresa/empresa_list.html'
