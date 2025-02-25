@@ -116,13 +116,13 @@ class EstabelecimentoListView(ListView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
-@login_required
+
 class EstabelecimentoCreateView(CreateView):
     model          = estabeleciomento
     form_class     = EstabelecimentoForm
     template_name  = 'estabelecimento/estabelecimento_form.html'
     success_url    = reverse_lazy('estabelecimento-list')
-@login_required
+
 class EstabelecimentoUpdateView(UpdateView):
     model         = estabeleciomento
     form_class    = EstabelecimentoForm
