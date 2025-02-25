@@ -133,7 +133,7 @@ class EstabelecimentoDeleteView(DeleteView):
     model         = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url   = reverse_lazy('estabelecimento-list')
-@login_required
+
 class MotoboyListView(ListView):
     model               = motoboy
     template_name       = 'motoboy/motoboy_list.html'
@@ -154,24 +154,24 @@ class MotoboyListView(ListView):
             motoboy_obj.save()  # Persistir as mudanças
 
         return redirect('motoboy-list')
-@login_required
+
 class MotoboyCreateView(CreateView):
     model         = motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
-@login_required
+
 class MotoboyUpdateView(UpdateView):
     model         = motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
-@login_required
+
 class MotoboyDeleteView(DeleteView):
     model         = motoboy
     template_name = 'motoboy/motoboy_confirm_delete.html'
     success_url   = reverse_lazy('motoboy-list')
-@login_required
+
 class SupervisorListView(ListView):
     model               = supervisor
     template_name       = 'supervisor/supervisor_list.html'
@@ -194,21 +194,21 @@ class SupervisorListView(ListView):
         return redirect('supervisor-list')
 
 
-@login_required
+
 class SupervisorCreateView(CreateView):
     model         = supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
-@login_required
+
 class SupervisorUpdateView(UpdateView):
     model         = supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
-@login_required
+
 class SupervisorDeleteView(DeleteView):
     model         = supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
