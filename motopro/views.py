@@ -128,7 +128,7 @@ class EstabelecimentoUpdateView(UpdateView):
     form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url   = reverse_lazy('estabelecimento-list')
-@login_required
+
 class EstabelecimentoDeleteView(DeleteView):
     model         = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
