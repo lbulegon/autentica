@@ -111,7 +111,7 @@ class VagaDeleteView(DeleteView):
     model = vaga
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url = reverse_lazy('vaga-list')
-@login_required
+
 class EstabelecimentoListView(ListView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_list.html'
