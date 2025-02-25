@@ -90,29 +90,29 @@ class VagaListView(ListView):
 # Criar vaga
 
 class VagaCreateView(CreateView):
-    model = vaga
-    form_class = VagaForm
+    model         = vaga
+    form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
-    success_url = reverse_lazy('vaga-list')
+    success_url   = reverse_lazy('vaga-list')
 
 # Atualizar vaga
 
 class VagaUpdateView(UpdateView):
-    model = vaga
-    form_class = VagaForm
+    model         = vaga
+    form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
-    success_url = reverse_lazy('vaga-list')
+    success_url   = reverse_lazy('vaga-list')
 
 # Excluir vaga
 
 class VagaDeleteView(DeleteView):
-    model = vaga
+    model         = vaga
     template_name = 'vagas/vaga_confirm_delete.html'
-    success_url = reverse_lazy('vaga-list')
+    success_url   = reverse_lazy('vaga-list')
 
 class EstabelecimentoListView(LoginRequiredMixin,ListView):
-    model = estabeleciomento
-    template_name = 'estabelecimento/estabelecimento_list.html'
+    model               = estabeleciomento
+    template_name       = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
 
 class EstabelecimentoCreateView(CreateView):
@@ -190,8 +190,6 @@ class SupervisorListView(ListView):
             supervisor_obj.save()  # Persistir as mudanças
 
         return redirect('supervisor-list')
-
-
 
 class SupervisorCreateView(CreateView):
     model         = supervisor
