@@ -111,15 +111,9 @@ class VagaDeleteView(DeleteView):
     success_url = reverse_lazy('vaga-list')
 
 class EstabelecimentoListView(LoginRequiredMixin,ListView):
-   
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
-    login_url = "/api/login/"  # Substitua pelo caminho correto
-    redirect_field_name = "next"  # Redireciona para a página original após login
-   
-   
-
 
 class EstabelecimentoCreateView(CreateView):
     model          = estabeleciomento
