@@ -54,7 +54,7 @@ def home(request):
 #####################V a g a ######################
 
 # Listar vagas
-@login_required
+
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
@@ -90,7 +90,7 @@ class VagaListView(ListView):
     
 
 # Criar vaga
-@login_required
+
 class VagaCreateView(CreateView):
     model = vaga
     form_class = VagaForm
@@ -98,7 +98,7 @@ class VagaCreateView(CreateView):
     success_url = reverse_lazy('vaga-list')
 
 # Atualizar vaga
-@login_required
+
 class VagaUpdateView(UpdateView):
     model = vaga
     form_class = VagaForm
@@ -106,7 +106,7 @@ class VagaUpdateView(UpdateView):
     success_url = reverse_lazy('vaga-list')
 
 # Excluir vaga
-@login_required
+
 class VagaDeleteView(DeleteView):
     model = vaga
     template_name = 'vagas/vaga_confirm_delete.html'
