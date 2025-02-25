@@ -42,8 +42,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api_v01',
     'motopro',
-    'django.contrib.staticfiles',
-   # 'corsheaders',
+  # 'corsheaders',
 ]
 
 MIDDLEWARE = [
