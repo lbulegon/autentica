@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 #from django.contrib.auth import get_user_model
 from django.urls import reverse_lazy
 #from django.contrib.auth.forms import UserCreationForm
@@ -53,6 +54,7 @@ def home(request):
 #####################V a g a ######################
 
 # Listar vagas
+@login_required
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
@@ -88,6 +90,7 @@ class VagaListView(ListView):
     
 
 # Criar vaga
+@login_required
 class VagaCreateView(CreateView):
     model = vaga
     form_class = VagaForm
@@ -95,6 +98,7 @@ class VagaCreateView(CreateView):
     success_url = reverse_lazy('vaga-list')
 
 # Atualizar vaga
+@login_required
 class VagaUpdateView(UpdateView):
     model = vaga
     form_class = VagaForm
@@ -102,36 +106,36 @@ class VagaUpdateView(UpdateView):
     success_url = reverse_lazy('vaga-list')
 
 # Excluir vaga
+@login_required
 class VagaDeleteView(DeleteView):
     model = vaga
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url = reverse_lazy('vaga-list')
 
 
+@login_required
 class EstabelecimentoListView(ListView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
-
+@login_required
 class EstabelecimentoCreateView(CreateView):
     model = estabeleciomento
     form_class = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url = reverse_lazy('estabelecimento-list')
-
+@login_required
 class EstabelecimentoUpdateView(UpdateView):
     model = estabeleciomento
     form_class = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url = reverse_lazy('estabelecimento-list')
-
+@login_required
 class EstabelecimentoDeleteView(DeleteView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url = reverse_lazy('estabelecimento-list')
-
-
-
+@login_required
 class MotoboyListView(ListView):
     model = motoboy
     template_name = 'motoboy/motoboy_list.html'
@@ -152,27 +156,27 @@ class MotoboyListView(ListView):
             motoboy_obj.save()  # Persistir as mudanças
 
         return redirect('motoboy-list')
+@login_required
 class MotoboyCreateView(CreateView):
     model = motoboy
     form_class = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url = reverse_lazy('motoboy-list')
 
+@login_required
 class MotoboyUpdateView(UpdateView):
     model = motoboy
     form_class = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url = reverse_lazy('motoboy-list')
-
+@login_required
 class MotoboyDeleteView(DeleteView):
     model = motoboy
     template_name = 'motoboy/motoboy_confirm_delete.html'
     success_url = reverse_lazy('motoboy-list')
 
 
-
-
-
+@login_required
 class SupervisorListView(ListView):
     model = supervisor
     template_name = 'supervisor/supervisor_list.html'
@@ -195,20 +199,21 @@ class SupervisorListView(ListView):
         return redirect('supervisor-list')
 
 
-
+@login_required
 class SupervisorCreateView(CreateView):
     model = supervisor
     form_class = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url = reverse_lazy('supervisor-list')
 
+@login_required
 class SupervisorUpdateView(UpdateView):
     model = supervisor
     form_class = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url = reverse_lazy('supervisor-list')
 
-
+@login_required
 class SupervisorDeleteView(DeleteView):
     model = supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
