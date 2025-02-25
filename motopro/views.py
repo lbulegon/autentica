@@ -4,16 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 #from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-#from motopro.models import vaga, motoboy, empresa
-from motopro.models import motoboy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from motopro.forms import VagaForm
 from motopro.models import vaga
+from motopro.forms import VagaForm
 
 
 from motopro.models import estabeleciomento
 from motopro.forms import EstabelecimentoForm
-
 
 from motopro.models import motoboy
 from motopro.forms import MotoboyForm
@@ -112,7 +110,7 @@ class VagaDeleteView(DeleteView):
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url = reverse_lazy('vaga-list')
 
-class EstabelecimentoListView(ListView):
+class EstabelecimentoListView(LoginRequiredMixin,ListView):
     model = estabeleciomento
     template_name = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
