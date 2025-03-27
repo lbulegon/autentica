@@ -33,8 +33,9 @@ urlpatterns = [
     path('admin/',     admin.site.urls),
     path('api/login/', LoginView.as_view(), name='login'),
     path('login/',     LoginView.as_view(), name='login'),
-   
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+
+    re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
 
 ########## vagas ################
     path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),

@@ -1,0 +1,16 @@
+
+C:\Users\Liandro\Documents\Github\autentica\.venv
+C:\Users\Liandro\Documents\Github\autentica\api_v01
+C:\Users\Liandro\Documents\Github\autentica\autentica
+C:\Users\Liandro\Documents\Github\autentica\inicia.bat
+C:\Users\Liandro\Documents\Github\autentica\manage.py
+C:\Users\Liandro\Documents\Github\autentica\motopro
+C:\Users\Liandro\Documents\Github\autentica\pastas.txt
+C:\Users\Liandro\Documents\Github\autentica\Procfile
+C:\Users\Liandro\Documents\Github\autentica\README.md
+C:\Users\Liandro\Documents\Github\autentica\requirements.txt
+C:\Users\Liandro\Documents\Github\autentica\resultado.txt
+C:\Users\Liandro\Documents\Github\autentica\runtime.txt
+C:\Users\Liandro\Documents\Github\autentica\script.txt
+C:\Users\Liandro\Documents\Github\autentica\static
+C:\Users\Liandro\Documents\Github\autentica\staticfiles
