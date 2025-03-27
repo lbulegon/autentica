@@ -6,9 +6,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 import re
 
-
-
-
 # Função de validação para CPF
 def validate_cpf(value):
     cpf_regex = r'^\d{11}$'  # Regex para verificar se o CPF possui 11 dígitos
@@ -26,9 +23,6 @@ def validate_placa(value):
     placa_regex = r'^[A-Z]{3}-\d{4}$'  # Regex para verificar formato de placa (ex: ABC-1234)
     if not re.match(placa_regex, value):
         raise ValidationError("Placa da moto deve seguir o formato ABC-1234.")
-
-
-
 
 def validate_nota(value):
     if value < 0 or value > 9:
@@ -49,7 +43,6 @@ class cidade(models.Model):
 
     def __str__(self):
         return self.nome
-
 
 class bairro(models.Model):
     id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
@@ -81,8 +74,6 @@ class supervisor(models.Model):
                         ('ativo', 'Ativo'),
                         ('inativo', 'Inativo'),
                         ], default='ativo')  # Status do motoboy
-
-
     def __str__(self):
         return self.nome
 
@@ -165,7 +156,6 @@ class vaga(models.Model):
     def __str__(self):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
 
-
 class candidatura(models.Model):
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
@@ -182,7 +172,6 @@ class candidatura(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
 
 class supervisormotoboy(models.Model):
     supervisor  = models.ForeignKey(supervisor, on_delete=models.CASCADE)

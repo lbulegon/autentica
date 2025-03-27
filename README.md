@@ -4,6 +4,7 @@ Autenticação dos produtos **GlbHash**
 
 Para configurar e rodar o ambiente, siga os passos abaixo:
 
+
 ```bash
 - python -m venv .venv
 - .venv\Scripts\activate  
