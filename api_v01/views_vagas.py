@@ -4,6 +4,6 @@ from motopro.models import vaga
 from .serializers import VagaSerializer
 
 class VagaViewSet(viewsets.ModelViewSet):
-    queryset = Vaga.objects.all()
+    queryset = vaga.objects.all()
     serializer_class = VagaSerializer
     permission_classes = [IsAuthenticated]  # Exige login para acessar
