@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from motopro.models import Vaga
+from motopro.models import vaga
 from .serializers import VagaSerializer
 
 class VagaViewSet(viewsets.ModelViewSet):

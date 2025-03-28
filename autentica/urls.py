@@ -1,19 +1,3 @@
-"""
-URL configuration for setup project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path, re_path
 from api_v01.views  import LoginView, home_view
@@ -28,14 +12,18 @@ from motopro.views import SupervisorCreateView, SupervisorUpdateView, Supervisor
 from motopro.views import VagaListView  # Certifique-se de que está importando a classe corretamente
 
 urlpatterns = [
-    
     path("", home_view, name="home"),  # Defina a home como rota padrão
     path('admin/',     admin.site.urls),
     path('api/login/', LoginView.as_view(), name='login'),
-    path('login/',     LoginView.as_view(), name='login'),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
 
+    
+    path('login/',     LoginView.as_view(), name='login'),
     re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
+  
+   
+
+
 
 ########## vagas ################
     path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
