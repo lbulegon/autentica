@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('estabelecimento', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='motopro.estabeleciomento')),
+                ('estabelecimento', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='motopro.estabelecimento')),
                 ('supervisor', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='motopro.supervisor')),
             ],
             options={

@@ -115,7 +115,7 @@ class motoboy(models.Model):
     def __str__(self):
         return self.nome
     
-class estabeleciomento(models.Model):
+class estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
     cep                = models.CharField(max_length=10)
@@ -137,7 +137,7 @@ class estabeleciomento(models.Model):
     
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
-    estabelecimento    = models.ForeignKey(estabeleciomento, on_delete=models.PROTECT, related_name='pedidos')
+    estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
     motoboy            = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
     observacoes        = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga       = models.DateTimeField(null=True, blank=True)  # Campo editável
@@ -173,6 +173,7 @@ class candidatura(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
 
+
 class supervisormotoboy(models.Model):
     supervisor  = models.ForeignKey(supervisor, on_delete=models.CASCADE)
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE)
@@ -186,7 +187,7 @@ class supervisormotoboy(models.Model):
 
 class supervisorestabelecimento(models.Model):
     supervisor      = models.ForeignKey(supervisor, on_delete=models.CASCADE)
-    estabelecimento = models.ForeignKey(estabeleciomento, on_delete=models.CASCADE)
+    estabelecimento = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
     created_at      = models.DateTimeField(auto_now_add=True)
     
     class Meta:

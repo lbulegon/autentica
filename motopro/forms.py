@@ -1,6 +1,6 @@
 from django import forms
 from motopro.models import vaga
-from motopro.models import estabeleciomento
+from motopro.models import estabelecimento
 from motopro.models import motoboy
 from motopro.models import supervisor
 
@@ -11,7 +11,7 @@ class VagaForm(forms.ModelForm):
 
 class EstabelecimentoForm(forms.ModelForm):
     class Meta:
-        model = estabeleciomento
+        model = estabelecimento
         fields = '__all__'
 
 

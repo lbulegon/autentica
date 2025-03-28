@@ -8,7 +8,7 @@ from motopro.models import vaga
 from motopro.forms import VagaForm
 
 
-from motopro.models import estabeleciomento
+from motopro.models import estabelecimento
 from motopro.forms import EstabelecimentoForm
 
 from motopro.models import motoboy
@@ -109,24 +109,24 @@ class VagaDeleteView(DeleteView):
     success_url   = reverse_lazy('vaga-list')
 
 class EstabelecimentoListView(LoginRequiredMixin,ListView):
-    model               = estabeleciomento
+    model               = estabelecimento
     template_name       = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
 
 class EstabelecimentoCreateView(CreateView):
-    model          = estabeleciomento
+    model          = estabelecimento
     form_class     = EstabelecimentoForm
     template_name  = 'estabelecimento/estabelecimento_form.html'
     success_url    = reverse_lazy('estabelecimento-list')
 
 class EstabelecimentoUpdateView(UpdateView):
-    model         = estabeleciomento
+    model         = estabelecimento
     form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
 class EstabelecimentoDeleteView(DeleteView):
-    model         = estabeleciomento
+    model         = estabelecimento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
