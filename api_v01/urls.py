@@ -4,6 +4,7 @@ from .views_vagas import VagaViewSet
 
 router = DefaultRouter()
 router.register(r'vagas', VagaViewSet, basename='vaga')
+router.register(r'estabelecimentos', EstabelecimentoViewSet, basename='estabelecimento')
 
 urlpatterns = [
     path('', include(router.urls)),
