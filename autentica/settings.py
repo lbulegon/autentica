@@ -31,6 +31,11 @@ STATIC_URL           = '/static/'
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 # Application definition
 
+'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.AllowAny',
+]
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
