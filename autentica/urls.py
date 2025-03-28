@@ -18,6 +18,7 @@ urlpatterns = [
    
     path('admin/',     admin.site.urls),
     path('login/',     LoginView.as_view(), name='login'),
+  
     re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
   
    
