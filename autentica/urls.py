@@ -13,18 +13,14 @@ from motopro.views import VagaListView  # Certifique-se de que está importando 
 
 urlpatterns = [
     path("", home_view, name="home"),  # Defina a home como rota padrão
-    path('admin/',     admin.site.urls),
-    path('api/login/', LoginView.as_view(), name='login'),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
-
-
+    path('api/login/', LoginView.as_view(), name='login'),
+   
+    path('admin/',     admin.site.urls),
     path('login/',     LoginView.as_view(), name='login'),
     re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
   
    
-
-
-
 ########## vagas ################
     path('vagas/',                 VagaListView.as_view(),   name='vaga-list'),
     path('vagas/create/',          VagaCreateView.as_view(), name='vaga-create'),

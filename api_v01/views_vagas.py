@@ -6,4 +6,4 @@ from .serializers import VagaSerializer
 class VagaViewSet(viewsets.ModelViewSet):
     queryset = vaga.objects.all()
     serializer_class = VagaSerializer
-    permission_classes = [IsAuthenticated]  # Exige login para acessar
+    #permission_classes = [IsAuthenticated]  # Exige login para acessar
