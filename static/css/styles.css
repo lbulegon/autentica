@@ -4,7 +4,6 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 /* Fonte limpa e moderna */
 body {
     font-family: 'Poppins', Arial, sans-serif;
@@ -14,7 +13,6 @@ body {
     flex-direction: column;
     min-height: 100vh;
 }
-
 /* Cabeçalho */
 header {
     background: #2c3e50;
@@ -22,9 +20,6 @@ header {
     padding: 20px;
     text-align: center;
 }
-
-
-
 /* Corpo principal */
 main {
     flex: 1;
@@ -33,7 +28,6 @@ main {
     justify-content: center;
     align-items: center;
 }
-
 /* Conteúdo */
 .content {
     max-width: 800px;
@@ -43,7 +37,6 @@ main {
     box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
     color: #2c3e50;
 }
-
 /* Rodapé */
 footer {
     background: #2c3e50;
