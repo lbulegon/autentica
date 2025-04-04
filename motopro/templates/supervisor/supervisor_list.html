@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Lista de Supervisores</h1>
-    <a href="{% url 'supervisor-create' %}">Criar Novo Supervisor</a>
-    <ul>
+<h1>Lista de Supervisores</h1>
+
+<a href="{% url 'supervisor-create' %}" class="btn btn-primary mb-3">Criar Novo Supervisor</a>
+
+<table border="1" cellspacing="0" cellpadding="10">
+    <thead class="thead-dark">
+        <tr class="table-secondary">
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for supervisor in supervisores %}
-        <li>
-            {{ supervisor.nome }} - {{ supervisor.status }}
-            <a href="{% url 'supervisor-update' supervisor.pk %}">Editar</a>
-            <a href="{% url 'supervisor-delete' supervisor.pk %}">Deletar</a>
-        </li>
+        <tr>
+            <td class="border-dark">{{ supervisor.nome }}</td>
+            <td class="border-dark">{{ supervisor.status }}</td>
+            <td class="border-dark">
+                <a href="{% url 'supervisor-update' supervisor.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                <a href="{% url 'supervisor-delete' supervisor.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3" class="text-center border-dark">Nenhum supervisor cadastrado.</td>
+        </tr>
         {% endfor %}
-    </ul>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Salvar Alterações de Status</button>
-    </form>
+    </tbody>
+</table>
+
+
 {% endblock %}

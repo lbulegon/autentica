@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Lista de Estabelecimentos</h2>
+<h1>Lista de Estabelecimentos</h1>
+
 <a href="{% url 'estabelecimento-create' %}" class="btn btn-primary">Novo Estabelecimento</a>
-<table class="table">
+
+<table border="1" cellspacing="0" cellpadding="10">
     <thead>
         <tr>
             <th>Nome</th>
@@ -23,11 +25,12 @@
             <td>{{ estabelecimento.estado }}</td>
             <td>{{ estabelecimento.status }}</td>
             <td>
-                <a href="{% url 'estabelecimento-update' estabelecimento.id %}" class="btn btn-warning">Editar</a>
+                <a href="{% url 'estabelecimento-update' estabelecimento.id %}" class="btn btn-warning">Editar</a> | 
                 <a href="{% url 'estabelecimento-delete' estabelecimento.id %}" class="btn btn-danger">Excluir</a>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+
 {% endblock %}

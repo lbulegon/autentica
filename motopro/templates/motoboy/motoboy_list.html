@@ -1,19 +1,35 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Lista de Motoboys</h1>
-    <a href="{% url 'motoboy-create' %}">Criar Novo Motoboy</a>
-    <ul>
+<h1>Lista de Motoboys</h1>
+
+<a href="{% url 'motoboy-create' %}" class="btn btn-primary">Criar Novo Motoboy</a>
+
+<table border="1" cellspacing="0" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for motoboy in motoboys %}
-        <li>
-            {{ motoboy.nome }} - {{ motoboy.status }}
-            <a href="{% url 'motoboy-update' motoboy.pk %}">Editar</a>
-            <a href="{% url 'motoboy-delete' motoboy.pk %}">Deletar</a>
-        </li>
+        <tr>
+            <td>{{ motoboy.nome }}</td>
+            <td>{{ motoboy.status }}</td>
+            <td>
+                <a href="{% url 'motoboy-update' motoboy.pk %}" class="btn btn-warning">Editar</a> | 
+                <a href="{% url 'motoboy-delete' motoboy.pk %}" class="btn btn-danger">Deletar</a>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit">Salvar Alterações de Status</button>
-    </form>
-    {% endblock %}
+    </tbody>
+</table>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-success">Salvar Alterações de Status</button>
+</form>
+
+{% endblock %}

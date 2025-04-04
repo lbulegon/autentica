@@ -1,11 +1,8 @@
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-lxh3b=6@xx(h#6)uhw++a)cre=^!l##^mf%*lolt*3ge0@4flu'
@@ -14,18 +11,23 @@ SECRET_KEY = 'django-insecure-lxh3b=6@xx(h#6)uhw++a)cre=^!l##^mf%*lolt*3ge0@4flu
 #ALLOWED_HOSTS = ['192.168.0.18','localhost', '127.0.0.1', '192.168.0.30']
 ALLOWED_HOSTS = [
     'autentica-production.up.railway.app',
+    'autentica-desenvolvimento.up.railway.app',
     '127.0.0.1',  # Opcional: Para testes locais
     'localhost',  # Opcional: Para testes locais  
     '192.168.0.30',
-    'autentica-desenvolvimento.up.railway.app'
+  
 ]
 CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvolvimento.up.railway.app']
 
-STATICFILES_DIRS     = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT          = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL           = '/static/'
+# Se você estiver em ambiente de produção e precisar servir arquivos estáticos, use esta configuração:
+STATICFILES_DIRS = [ BASE_DIR / "static",]  # Se estiver usando o caminho BASE_DIR
+
+# Para produção, você também pode precisar de:
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -47,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'api_v01',
     'motopro',
+    'accounts', 
   
   # 'corsheaders',
 ]
@@ -67,7 +70,7 @@ ROOT_URLCONF = 'autentica.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +88,7 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+"""
 DATABASES = {
     'default': {
         'ENGINE'   : 'django.db.backends.postgresql',     # Define o backend do PostgreSQL
@@ -97,17 +100,21 @@ DATABASES = {
     }
 }
 
+"""
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
-#        'NAME': 'lbulegon',  # Nome do banco de dados
-#        'USER': 'lbulegon',  # Usuário do banco de dados
-#        'PASSWORD': 'ljb#215195',  # Senha do banco de dados
-#        'HOST': 'localhost',  # Host (o container está mapeado para localhost)
-#        'PORT': '5432',  # Porta padrão do PostgreSQL
-#    }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
+        'NAME': 'motopro',  # Nome do banco de dados
+        'USER': 'postgres',  # Usuário do banco de dados
+        'PASSWORD': '1234',  # Senha do banco de dados
+        'HOST': 'localhost',  # Host (o container está mapeado para localhost)
+        'PORT': '5432',  # Porta padrão do PostgreSQL
+    }
+}
+
+
+
 
 
 # Password validation
@@ -132,12 +139,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
+LANGUAGE_CODE = 'pt-br'
+TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
-
 USE_TZ = True
 
 # Default primary key field type
@@ -151,3 +155,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Backend padrão (opcional)
 ]
 
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+
+# No settings.py
+DEBUG = True

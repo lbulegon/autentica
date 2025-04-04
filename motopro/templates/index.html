@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página Inicial</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+   
+</head>
+<body>
+
+    <header>
+    
+
+        <h1>M o t o P r o - Logística Ágil.</h1>
+        <h4>Um lugar de habilidade, rapidez e segurança!</h4>
+       
+             <a href="{% url 'login' %}">Login</a>
+         
+       
+    </header>
+
+    <main>
+        <div class="content">
+            <div>
+                <h2 style="text-align: center; color: #333;">Bem-vindo à <strong>MotoPro</strong></h2>
+                <br>
+                <p>A <strong>MotoPro</strong> é mais do que uma plataforma de entregas: é um ponto de convergência onde motoboys, estabelecimentos e clientes se conectam de maneira simples e eficiente, criando um ciclo completo de sinergia na cadeia de entregas.</p>
+                <br>
+                <h3 style="color: #444;">Para o motoboy:</h3>
+                <p>É a maneira de se conectar com estabelecimentos em busca de oportunidades, otimizando o tempo, garantindo mais agilidade na contratação e segurança no acerto das contas.</p>
+                <br>
+                <h3 style="color: #444;">Para o estabelecimento:</h3>
+                <p>Uma solução prática e flexível na gestão das entregas ao contar com uma rede de profissionais qualificados e prontos para atender à demanda de forma rápida, eficiente e segura.</p>
+                <br>
+                <h3 style="color: #444;">Para o cliente:</h3>
+                <p>Um serviço ágil, confiável e com a certeza de que as entregas serão realizadas com a máxima eficiência.</p>
+                <br>
+                <p>Na <strong>MotoPro</strong>, a cadeia de entregas é mais do que um processo logístico: é um ecossistema colaborativo que traz benefícios para todos os envolvidos, conectando pessoas e negócios, gerando valor e facilitando o dia a dia de quem entrega e de quem recebe.</p>
+            </div>
+        </div>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 MotoPro. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

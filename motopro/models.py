@@ -57,13 +57,16 @@ class bairro(models.Model):
     def __str__(self):
         return self.nome
  
+
+
+
 class supervisor(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
     cep                = models.CharField(max_length=10)
     estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
     cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
- #   bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
+    bairro             = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro         = models.CharField(max_length=255)
     numero             = models.CharField(max_length=10)
     complemento        = models.CharField(max_length=100, blank=True)
@@ -111,6 +114,27 @@ class motoboy(models.Model):
     
     created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
+       # Atributos adicionais para o sistema de ranking
+    ranking          = models.CharField(max_length=20, choices=[
+        ('Novato', 'Novato'),
+        ('Aspirante', 'Aspirante'),
+        ('Bronze I', 'Bronze I'),
+        ('Bronze II', 'Bronze II'),
+        ('Prata I', 'Prata I'),
+        ('Prata II', 'Prata II'),
+        ('Ouro I', 'Ouro I'),
+        ('Ouro II', 'Ouro II'),
+        ('Platina I', 'Platina I'),
+        ('Platina II', 'Platina II'),
+        ('Diamante I', 'Diamante I'),
+        ('Diamante II', 'Diamante II'),
+    ], default='Novato')
+    
+    aceitacao        = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
+    cancelamento     = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
+    
+    # Supervisor deve aprovar a mudança de nível
+    supervisor_aprovado = models.BooleanField(default=False)
     
     def __str__(self):
         return self.nome
@@ -127,7 +151,6 @@ class estabelecimento(models.Model):
     complemento        = models.CharField(max_length=100, blank=True)
     created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
     deadline           = models.DateTimeField(null=False, blank=False)
-   
     status             = models.CharField(max_length=20, choices=[
                         ('ativo', 'Ativo'),
                         ('inativo', 'Inativo'),
@@ -138,23 +161,42 @@ class estabelecimento(models.Model):
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
     estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
-    motoboy            = models.OneToOneField(motoboy, on_delete=models.PROTECT, null=True, blank=True, related_name='vaga')  # O campo pode ser NULL e deixado em branco
+    motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
     observacoes        = models.CharField(max_length=300, null=False, blank=False)
-    data_da_vaga       = models.DateTimeField(null=True, blank=True)  # Campo editável
+    data_da_vaga       = models.DateTimeField(null=True, blank=True)
     valor              = models.FloatField(blank=False, null=False)
-    created_at         = models.DateTimeField(auto_now_add= True, null=False, blank=False)
-    status = models.CharField(
+    created_at         = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    hora_inicio        = models.TimeField(null=True, blank=True)
+    hora_fim           = models.TimeField(null=True, blank=True)
+    turno              = models.CharField(
         max_length=20,
-        choices=[
-            ("aberta", "Aberta"),
-            ("preenchida", "Encerrada"),
-            ("encerrada", "Encerrada"),
-            ("recusada", "Recusada"),
-        ],
-        default="Aberta"
-        )  
+        choices=[("manhã", "Manhã"), ("tarde", "Tarde"), ("noite", "Noite")],
+        null=True,
+        blank=True
+    )
+    status             = models.CharField(
+        max_length=20,
+        choices=[("aberta", "Aberta"), ("preenchida", "Preenchida"), ("encerrada", "Encerrada"), ("recusada", "Recusada")],
+        default="aberta"
+    )
+
+    def save(self, *args, **kwargs):
+        if self.motoboy:
+            if self.motoboy.status != "alocado":  # Verifica se o motoboy não está alocado
+                self.motoboy.status = "alocado"
+                self.motoboy.save()
+        elif self.pk:  # Se não houver motoboy e a vaga já foi salva
+            old_vaga = vaga.objects.get(pk=self.pk)
+            if old_vaga.motoboy:  # Verifica se havia um motoboy antes
+                old_vaga.motoboy.status = "livre"
+                old_vaga.motoboy.save()
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
+
+
 
 class candidatura(models.Model):
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
@@ -172,6 +214,8 @@ class candidatura(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
+
 
 
 class supervisormotoboy(models.Model):
@@ -195,3 +239,47 @@ class supervisorestabelecimento(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
+
+
+"""
+Essa tabela vai armazenar as entregas feitas pelos motoboys e permitir calcular o valor pago a cada motoboy.
+"""
+class entrega(models.Model):
+    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    valor_pago = models.DecimalField(max_digits=8, decimal_places=2)
+    data_entrega = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Entrega {self.id} - Motoboy: {self.motoboy.nome} - Vaga {self.vaga.id}"
+
+
+
+"""  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
+class rankingMotoboy(models.Model):
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    nivel = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
+                                                      ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
+                                                      ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
+                                                      ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
+                                                      ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
+                                                      ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
+                                                      default='Novato')
+    aceitação = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
+    
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.nivel}"
+
+
+
+"""Essa tabela armazena a comissão da MotoPro por cada vaga."""
+
+class comissaomotopro(models.Model):
+    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    comissao = models.DecimalField(max_digits=8, decimal_places=2)  # Exemplo: 15% da vaga
+    data_pagamento = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
