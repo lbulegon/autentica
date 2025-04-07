@@ -89,7 +89,6 @@ WSGI_APPLICATION = 'autentica.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-"""
 DATABASES = {
     'default': {
         'ENGINE'   : 'django.db.backends.postgresql',     # Define o backend do PostgreSQL
@@ -100,8 +99,8 @@ DATABASES = {
         'PORT'     : '57279',                             # Porta padrão do PostgreSQL
     }
 }
-"""
 
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # Define o backend do PostgreSQL
@@ -113,7 +112,7 @@ DATABASES = {
     }
 }
 
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
