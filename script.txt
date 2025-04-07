@@ -131,7 +131,7 @@ INSERT INTO motopro_bairro (id, nome, cidade_id) VALUES
 
 
 
-INSERT INTO motopro_vaga (empresa_id, motoboy_id, observacoes, data_da_vaga, valor, created_at, status)
+INSERT INTO motopro_vaga (estabelecimento_id, motoboy_id, observacoes, data_da_vaga, valor, created_at, status)
 VALUES 
 (1, NULL, 'Vaga para entregas rápidas na região central', '2025-01-23 10:00:00', 100.00, NOW(), 'aberta'),
 (1, NULL, 'Entrega de documentos urgentes', '2025-01-24 11:30:00', 120.00, NOW(), 'aberta'),
