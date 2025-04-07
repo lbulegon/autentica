@@ -17,4 +17,8 @@ Para configurar e rodar o ambiente, siga os passos abaixo:
 - railway up
 - .venv\Scripts\python manage.py migrate
 
+- python manage.py createsuperuser
+
+
+
 https://autentica-desenvolvimento.up.railway.app/
