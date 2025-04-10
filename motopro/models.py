@@ -71,15 +71,24 @@ class supervisor(models.Model):
         return self.nome
 
 class motoboy(models.Model):
-    id           = models.AutoField(primary_key=True)
-    nome         = models.CharField(max_length=255, null=False, blank=False)
-    cpf          = models.CharField(max_length=11, unique=True, validators=[validate_cpf])  # CNH do motoboy
-    cnh          = models.CharField(max_length=11, unique=True, validators=[validate_cnh])  # CNH do motoboy
-    telefone     = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    email        = models.EmailField(max_length=255, blank=True)  # Email do motoboy
-    placa_moto   = models.CharField(max_length=10, unique=True, validators=[validate_placa])  # Placa da moto
-    modelo_moto  = models.CharField(max_length=100)  # Modelo da moto
-    ano_moto     = models.IntegerField(
+    id                = models.AutoField(primary_key=True)
+    nome              = models.CharField(max_length=255, null=False, blank=False)
+    segundonome       = models.CharField(max_length=255, null=True, blank=True)
+    sobrenome         = models.CharField(max_length=255, null=True, blank=True)
+    empresa           = models.CharField(max_length=255, null=True, blank=True)
+    cpf               = models.CharField(max_length=11, unique=True, validators=[validate_cpf])  # CNH do motoboy
+    cnh               = models.CharField(max_length=11, unique=True, validators=[validate_cnh])  # CNH do motoboy
+    telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    telefone1         = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    telefone2         = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    telefone3         = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    telefone4         = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    outrotelefone     = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    outrotelefone2    = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    email             = models.EmailField(max_length=255, blank=True)  # Email do motoboy
+    placa_moto        = models.CharField(max_length=10, unique=True, validators=[validate_placa])  # Placa da moto
+    modelo_moto       = models.CharField(max_length=100)  # Modelo da moto
+    ano_moto          = models.IntegerField(
         validators=[
             MinValueValidator(2000),  # Ano mínimo para a moto
             MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
