@@ -282,3 +282,31 @@ class comissaomotopro(models.Model):
     
     def __str__(self):
         return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
+
+
+
+
+
+
+from django.db import models
+
+class MotoboyTemp(models.Model):
+    grupo = models.CharField(max_length=100, blank=True, null=True)
+    nome = models.CharField(max_length=100)
+    segundo_nome = models.CharField(max_length=100, blank=True, null=True)
+    sobrenome = models.CharField(max_length=100, blank=True, null=True)
+    apelido = models.CharField(max_length=100, blank=True, null=True)
+    empresa = models.CharField(max_length=150, blank=True, null=True)
+    departamento = models.CharField(max_length=150, blank=True, null=True)
+    celular = models.CharField(max_length=20, blank=True, null=True)
+    celular2 = models.CharField(max_length=20, blank=True, null=True)
+    celular3 = models.CharField(max_length=20, blank=True, null=True)
+    celular4 = models.CharField(max_length=20, blank=True, null=True)
+    outro_telefone = models.CharField(max_length=20, blank=True, null=True)
+    outro_telefone2 = models.CharField(max_length=20, blank=True, null=True)
+    antigo_telefone = models.CharField(max_length=20, blank=True, null=True)
+    versao_antiga_telefone = models.CharField(max_length=20, blank=True, null=True)
+    notas = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.nome} {self.sobrenome or ''}".strip()
