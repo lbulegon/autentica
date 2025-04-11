@@ -119,14 +119,19 @@ class motoboy(models.Model):
         ('Aspirante', 'Aspirante'),
         ('Bronze I', 'Bronze I'),
         ('Bronze II', 'Bronze II'),
+        ('Bronze III', 'Bronze III'),
         ('Prata I', 'Prata I'),
         ('Prata II', 'Prata II'),
+        ('Prata III', 'Prata III'),
         ('Ouro I', 'Ouro I'),
         ('Ouro II', 'Ouro II'),
+        ('Ouro III', 'Ouro III'),
         ('Platina I', 'Platina I'),
         ('Platina II', 'Platina II'),
+        ('Platina III', 'Platina III'),
         ('Diamante I', 'Diamante I'),
         ('Diamante II', 'Diamante II'),
+        ('Diamante III', 'Diamante III'),
     ], default='Novato')
     
     aceitacao        = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
