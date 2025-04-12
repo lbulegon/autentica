@@ -153,4 +153,15 @@ LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = 'home'  # Redireciona para a página 'home' após o login
 LOGOUT_REDIRECT_URL = 'login'  # Redireciona para a página de login após o logout
 
+
+# settings.py
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_TASK_TRACK_STARTED = True    
+
+
+
 DEBUG = True

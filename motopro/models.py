@@ -169,6 +169,7 @@ class estabelecimentocontrato(models.Model):
     ]   
     estabelecimento  = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
     turno            = models.CharField(max_length=10, choices=TURNO_CHOICES)
+    valor_atribuido    = models.FloatField(blank=False, null=False)
     horario_inicio   = models.TimeField()
     horario_fim      = models.TimeField()
     quantidade_vagas = models.PositiveIntegerField()
@@ -180,9 +181,6 @@ class vaga(models.Model):
     motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
     observacao         = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga       = models.DateTimeField(null=True, blank=True)
-    valor_atribuido    = models.FloatField(blank=False, null=False)
-    hora_inicio        = models.TimeField(null=True, blank=True)
-    hora_fim           = models.TimeField(null=True, blank=True)
     status             = models.CharField(
         max_length=20,
         choices=[("aberta", "Aberta"), ("preenchida", "Preenchida"), ("encerrada", "Encerrada"), ("recusada", "Recusada")],
@@ -256,7 +254,7 @@ class entrega(models.Model):
         return f"Entrega {self.id} - Motoboy: {self.motoboy.nome} - Vaga {self.vaga.id}"
 
 """  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
-class rankingMotoboy(models.Model):
+class rankingmotoboy(models.Model):
     motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
     nivel = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
                                                       ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
