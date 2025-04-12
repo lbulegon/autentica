@@ -10,12 +10,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from motopro.models import vaga, estabelecimento, motoboy, supervisor
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm  
 
-
-
-def dashboard(request):
-    return render(request, 'login/dashboard.html')
-
-
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -33,17 +27,18 @@ def login_view(request):
 
     return render(request, 'login/login.html', {'form': form})
 
-
 def logout_view(request):
     logout(request)
     return redirect('login')  # Redireciona após logout
 
+def home_view(request):
+    return render(request, 'home.html')  # Renderiza o arquivo 'home.html'
+
 def index(request):
     return render(request, 'index.html')
 
-@login_required
-def home_view(request):
-    return render(request, 'home.html')  # Renderiza o arquivo 'home.html'
+def dashboard(request):
+    return render(request, 'login/dashboard.html')
 
 # Usando o modelo CustomUser que você criou
 # CustomUser = get_user_model()

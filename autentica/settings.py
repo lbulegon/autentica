@@ -4,7 +4,6 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-lxh3b=6@xx(h#6)uhw++a)cre=^!l##^mf%*lolt*3ge0@4flu'
 
@@ -18,6 +17,7 @@ ALLOWED_HOSTS = [
     '192.168.0.30',
   
 ]
+
 CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']
 
 DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvolvimento.up.railway.app']
@@ -25,19 +25,10 @@ DJANGO_ALLOWED_HOSTS = ['autentica-production.up.railway.app','autentica-desenvo
 STATIC_URL           = '/static/'
 # Se você estiver em ambiente de produção e precisar servir arquivos estáticos, use esta configuração:
 STATICFILES_DIRS = [ BASE_DIR / "static",]  # Se estiver usando o caminho BASE_DIR
-
 # Para produção, você também pode precisar de:
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-# Application definition
-
-DEFAULT_PERMISSION_CLASSES: [
-    'rest_framework.permissions.AllowAny',
-]
-
+DEFAULT_PERMISSION_CLASSES: [ 'rest_framework.permissions.AllowAny',]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,8 +42,6 @@ INSTALLED_APPS = [
     'api_v01',
     'motopro',
     'accounts', 
-  
-  # 'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +52,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
- 
 ]
 
 ROOT_URLCONF = 'autentica.urls'
@@ -85,7 +73,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'autentica.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -149,31 +136,24 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD  = 'django.db.models.BigAutoField'
 #AUTH_USER_MODEL     = 'motopro.CustomUser'
-
 AUTHENTICATION_BACKENDS = [
     'api_v01.backends.EmailBackend',              # Nosso backend personalizado
     'django.contrib.auth.backends.ModelBackend',  # Backend padrão (opcional)
 ]
 
-LOGIN_URL = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/dashboard/'
-LOGOUT_REDIRECT_URL = '/accounts/login/'
+LOGIN_URL           = '/accounts/login/'
+LOGIN_REDIRECT_URL  = 'home'  # Redireciona para a página 'home' após o login
+LOGOUT_REDIRECT_URL = 'login'  # Redireciona para a página de login após o logout
 
-
-# No settings.py
 DEBUG = True

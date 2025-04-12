@@ -17,22 +17,16 @@ from motopro.views import login_view, logout_view
 
 from django.contrib.auth import views as auth_views
 
-
-
-
-
-
 urlpatterns = [
     path("", index, name="index"),  # Defina a home como rota padrão
-   
     path('home/', home_view, name='home'),
-   
-    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
     re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
-   
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+       
     path('login/',   login_view, name='login'),
     path('logout/',  logout_view, name='logout'),
     path('admin/',   admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  # Inclui URLs de login, logout, etc.
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
 
 ########## vagas ################

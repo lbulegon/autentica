@@ -2,11 +2,21 @@
     <h1>M o t o P r o - Logística Ágil.</h1>
     <h3>Um lugar de habilidade, rapidez e segurança!</h3>
     <nav>
+        {% if user.is_authenticated %}
         <a href="/">Home</a>
         <a href="/vagas/">Vagas</a>
         <a href="/motoboy">Motoboys</a>
         <a href="/estabelecimentos">Estabelecimentos</a>
         <a href="/supervisor">Supervisor</a>
-        <a href="/logout/">Logout</a>
+        <p>Bem-vindo, {{ user.username }} |
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Sair</button>
+        </form>
+        </p>
+        {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+
     </nav>
 </header>
