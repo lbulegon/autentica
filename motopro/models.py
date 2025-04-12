@@ -161,23 +161,28 @@ class estabelecimento(models.Model):
                         ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
-    
+
+class estabelecimentocontrato(models.Model):
+    TURNO_CHOICES = [
+        ('dia', 'Turno do Dia'),
+        ('noite', 'Turno da Noite'),
+    ]   
+    estabelecimento  = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
+    turno            = models.CharField(max_length=10, choices=TURNO_CHOICES)
+    horario_inicio   = models.TimeField()
+    horario_fim      = models.TimeField()
+    quantidade_vagas = models.PositiveIntegerField()
+    def __str__(self):
+        return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
     estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
     motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
-    observacoes        = models.CharField(max_length=300, null=False, blank=False)
+    observacao         = models.CharField(max_length=300, null=False, blank=False)
     data_da_vaga       = models.DateTimeField(null=True, blank=True)
-    valor              = models.FloatField(blank=False, null=False)
-    created_at         = models.DateTimeField(auto_now_add=True, null=False, blank=False)
+    valor_atribuido    = models.FloatField(blank=False, null=False)
     hora_inicio        = models.TimeField(null=True, blank=True)
     hora_fim           = models.TimeField(null=True, blank=True)
-    turno              = models.CharField(
-        max_length=20,
-        choices=[("manhã", "Manhã"), ("tarde", "Tarde"), ("noite", "Noite")],
-        null=True,
-        blank=True
-    )
     status             = models.CharField(
         max_length=20,
         choices=[("aberta", "Aberta"), ("preenchida", "Preenchida"), ("encerrada", "Encerrada"), ("recusada", "Recusada")],
@@ -200,8 +205,6 @@ class vaga(models.Model):
     def __str__(self):
         return f"Vaga {self.id} - Status: {self.get_status_display()}"
 
-
-
 class candidatura(models.Model):
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
@@ -219,12 +222,10 @@ class candidatura(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
 
-
 class supervisormotoboy(models.Model):
     supervisor  = models.ForeignKey(supervisor, on_delete=models.CASCADE)
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE)
     created_at  = models.DateTimeField(auto_now_add=True)
-    
     class Meta:
         unique_together = ('supervisor', 'motoboy')
     
@@ -235,7 +236,6 @@ class supervisorestabelecimento(models.Model):
     supervisor      = models.ForeignKey(supervisor, on_delete=models.CASCADE)
     estabelecimento = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
     created_at      = models.DateTimeField(auto_now_add=True)
-    
     class Meta:
         unique_together = ('supervisor', 'estabelecimento')
     
@@ -255,8 +255,6 @@ class entrega(models.Model):
     def __str__(self):
         return f"Entrega {self.id} - Motoboy: {self.motoboy.nome} - Vaga {self.vaga.id}"
 
-
-
 """  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
 class rankingMotoboy(models.Model):
     motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
@@ -274,10 +272,7 @@ class rankingMotoboy(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} - {self.nivel}"
 
-
-
 """Essa tabela armazena a comissão da MotoPro por cada vaga."""
-
 class comissaomotopro(models.Model):
     vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
     comissao = models.DecimalField(max_digits=8, decimal_places=2)  # Exemplo: 15% da vaga
@@ -285,4 +280,3 @@ class comissaomotopro(models.Model):
     
     def __str__(self):
         return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
-
