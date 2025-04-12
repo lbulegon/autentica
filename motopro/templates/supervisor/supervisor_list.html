@@ -1,10 +1,7 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1>Lista de Supervisores</h1>
-
 <a href="{% url 'supervisor-create' %}" class="btn btn-primary mb-3">Criar Novo Supervisor</a>
-
 <table border="1" cellspacing="0" cellpadding="10">
     <thead class="thead-dark">
         <tr class="table-secondary">
@@ -30,6 +27,4 @@
         {% endfor %}
     </tbody>
 </table>
-
-
 {% endblock %}

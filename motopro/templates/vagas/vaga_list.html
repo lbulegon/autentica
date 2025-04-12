@@ -6,24 +6,21 @@
 
 <!-- 🔹 Exibição de mensagens de erro -->
 {% if messages %}
-    {% for message in messages %}
-        <script>
-            alert("{{ message }}");
-        </script>
-    {% endfor %}
+{% for message in messages %}
+<script>
+    alert("{{ message }}");
+</script>
+{% endfor %}
 {% endif %}
-
 <!-- Filtro de Vagas -->
 <form method="get">
     <select name="filtro" onchange="this.form.submit()">
-        <option value="todas" {% if request.GET.filtro == "todas" %}selected{% endif %}>Todas as Vagas</option>
-        <option value="abertas" {% if request.GET.filtro == "abertas" %}selected{% endif %}>Vagas em Aberto</option>
-        <option value="alocadas" {% if request.GET.filtro == "alocadas" %}selected{% endif %}>Vagas Alocadas</option>
+        <option value="todas" {% if request.GET.filtro=="todas" %}selected{% endif %}>Todas as Vagas</option>
+        <option value="abertas" {% if request.GET.filtro=="abertas" %}selected{% endif %}>Vagas em Aberto</option>
+        <option value="alocadas" {% if request.GET.filtro=="alocadas" %}selected{% endif %}>Vagas Alocadas</option>
     </select>
 </form>
-
 <br>
-
 <!-- Formulário para editar múltiplas vagas de uma vez -->
 <form method="post">
     {% csrf_token %}
@@ -31,7 +28,7 @@
         <thead>
             <tr>
                 <th>Estabelecimento</th>
-                
+
                 <th>Observações</th>
                 <th>Data da Vaga</th>
                 <th>Início</th>
@@ -44,7 +41,7 @@
             {% for vaga in vagas %}
             <tr>
                 <td>{{ vaga.estabelecimento }}</td>
-                
+
                 <td>{{ vaga.observacoes }}</td>
                 <td>{{ vaga.data_da_vaga }}</td>
                 <td>{{ vaga.hora_inicio }}</td>
@@ -53,9 +50,9 @@
                     <select name="motoboy_{{ vaga.id }}">
                         <option value="">Nenhum</option>
                         {% for motoboy in motoboys %}
-                            <option value="{{ motoboy.id }}" {% if vaga.motoboy_id == motoboy.id %}selected{% endif %}>
-                                {{ motoboy }}
-                            </option>
+                        <option value="{{ motoboy.id }}" {% if vaga.motoboy_id==motoboy.id %}selected{% endif %}>
+                            {{ motoboy }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>
@@ -64,9 +61,8 @@
             {% endfor %}
         </tbody>
     </table>
-    
+
     <!-- Botão para salvar todas as alterações de uma vez -->
     <button type="submit" name="save_all">Salvar Todos</button>
 </form>
-
 {% endblock %}

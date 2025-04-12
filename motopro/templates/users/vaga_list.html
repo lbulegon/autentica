@@ -25,9 +25,9 @@
                     <select name="motoboy_{{ vaga.id }}">
                         <option value="">Nenhum</option>
                         {% for motoboy in motoboys %}
-                            <option value="{{ motoboy.id }}" {% if vaga.motoboy_id == motoboy.id %}selected{% endif %}>
-                                {{ motoboy }}
-                            </option>
+                        <option value="{{ motoboy.id }}" {% if vaga.motoboy_id==motoboy.id %}selected{% endif %}>
+                            {{ motoboy }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>
@@ -38,14 +38,14 @@
                 <td>
                     <select name="status_{{ vaga.id }}">
                         {% for key, value in vaga.STATUS_CHOICES %}
-                            <option value="{{ key }}" {% if vaga.status == key %}selected{% endif %}>
-                                {{ value }}
-                            </option>
+                        <option value="{{ key }}" {% if vaga.status==key %}selected{% endif %}>
+                            {{ value }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>
                 <td>
-                    <button type="submit" name="save_{{ vaga.id }}">Salvar</button> | 
+                    <button type="submit" name="save_{{ vaga.id }}">Salvar</button> |
                     <a href="{% url 'vaga-delete' vaga.pk %}">Excluir</a>
                 </td>
             </tr>
