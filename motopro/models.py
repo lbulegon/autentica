@@ -166,13 +166,19 @@ class estabelecimentocontrato(models.Model):
     TURNO_CHOICES = [
         ('dia', 'Turno do Dia'),
         ('noite', 'Turno da Noite'),
+        ('madrugada', 'Turno da Madrugada'),
     ]   
-    estabelecimento  = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
-    turno            = models.CharField(max_length=10, choices=TURNO_CHOICES)
+    estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.CASCADE)
+    turno              = models.CharField(max_length=10, choices=TURNO_CHOICES)
     valor_atribuido    = models.FloatField(blank=False, null=False)
-    horario_inicio   = models.TimeField()
-    horario_fim      = models.TimeField()
-    quantidade_vagas = models.PositiveIntegerField()
+    horario_inicio     = models.TimeField()
+    horario_fim        = models.TimeField()
+    quantidade_vagas   = models.PositiveIntegerField()
+    status             = models.CharField(
+        max_length=20,
+        choices=[("vigente", "Vigente"), ("vencido", "Vencido"), ("encerrada", "Encerrada"), ("blqueado", "Bloqueado")],
+        default="vigente"
+    )
     def __str__(self):
         return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
 
@@ -279,3 +285,24 @@ class comissaomotopro(models.Model):
     
     def __str__(self):
         return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
+
+
+
+
+# models.py
+
+class configuracao(models.Model):
+    turno_padrao = models.CharField(max_length=10, choices=[
+        ('dia', 'Turno do Dia'),
+        ('noite', 'Turno da Noite'),
+    ], default='dia')
+
+    horario_inicio_padrao = models.TimeField(default='08:00')
+    horario_fim_padrao    = models.TimeField(default='18:00')
+    valor_padrao_por_vaga = models.DecimalField(max_digits=6, decimal_places=2, default=50.00)
+    sistema_ativo         = models.BooleanField(default=True)
+    ultima_atualizacao    = models.DateTimeField(auto_now=True)
+    versao                = models.CharField(max_length=20, default='1.0.0')
+
+    def __str__(self):
+        return "Configurações do Sistema"
