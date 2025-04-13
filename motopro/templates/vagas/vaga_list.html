@@ -13,53 +13,52 @@
 {% endfor %}
 {% endif %}
 <!-- Filtro de Vagas -->
-<form method="get">
-
-</form>
 <br>
 <!-- Formulário para editar múltiplas vagas de uma vez -->
-<form method="post">
-    {% csrf_token %}
-    <table border="1" cellspacing="0" cellpadding="10">
-        <thead>
-            <tr>
-                <th>Estabelecimento</th>
-
-                <th>Observações</th>
-                <th>Data da Vaga</th>
-                <th>Início</th>
-                <th>Fim</th>
-                <th>Motoboy</th>
-                <th>Valor</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for vaga in vagas %}
-            <tr>
+{% csrf_token %}
+<table border="1" cellspacing="0" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Estabelecimento</th>
+            <th>Observações</th>
+            <th>Data da Vaga</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Motoboy</th>
+            <th>Valor</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for vaga in vagas %}
+        <tr>
+            <form method="post" action="{% url 'vaga-list' %}">
+                {% csrf_token %}
+                <input type="hidden" name="vaga_id" value="{{ vaga.id }}">
                 <td>{{ vaga.estabelecimento }}</td>
-
                 <td>{{ vaga.observacoes }}</td>
                 <td>{{ vaga.data_da_vaga }}</td>
                 <td>{{ vaga.hora_inicio }}</td>
                 <td>{{ vaga.hora_fim }}</td>
                 <td>
-                    <select name="motoboy_{{ vaga.id }}">
+                    <select name="motoboy_id">
                         <option value="">Nenhum</option>
                         {% for motoboy in motoboys %}
-                            <option value="{{ motoboy.id }}" {% if vaga.motoboy and vaga.motoboy.id == motoboy.id %}selected{% endif %}>
-                                {{ motoboy }}
-                            </option>
+                        <option value="{{ motoboy.id }}" {% if vaga.motoboy and vaga.motoboy.id==motoboy.id %}selected{%
+                            endif %}>
+                            {{ motoboy }}
+                        </option>
                         {% endfor %}
                     </select>
                 </td>
-                
                 <td>R$ {{ vaga.valor }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                <td>
+                    <button type="submit" name="salvar_vaga">Salvar</button>
+                </td>
+            </form>
+        </tr>
+        {% endfor %}
+    </tbody>
 
-    <!-- Botão para salvar todas as alterações de uma vez -->
-    <button type="submit" name="save_all">Salvar Todos</button>
-</form>
+</table>
+
 {% endblock %}

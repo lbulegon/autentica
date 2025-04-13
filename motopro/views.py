@@ -10,6 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from motopro.models import vaga, estabelecimento, motoboy, supervisor
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm  
 
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -69,6 +70,8 @@ def dashboard(request):
 #####################V a g a ######################
 
 # Listar vagas
+
+
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
@@ -83,26 +86,35 @@ class VagaListView(ListView):
         return context
 
     def post(self, request, *args, **kwargs):
-        if 'save_all' in request.POST:
-            for vaga in self.get_queryset():
-                motoboy_id = request.POST.get(f"motoboy_{vaga.id}")
+        if 'salvar_vaga' in request.POST:
+            vaga_id = request.POST.get("vaga_id")
+            motoboy_id = request.POST.get("motoboy_id")
 
-                if motoboy_id:
-                    try:
-                        motoboy_selecionado = motoboy.objects.get(id=motoboy_id)
-                        if motoboy_selecionado.status == "livre":
-                            vaga.motoboy = motoboy_selecionado
-                            vaga.save()
+            try:
+                vaga_obj = vaga.objects.get(id=vaga_id)
+            except vaga.DoesNotExist:
+                messages.error(request, "Vaga não encontrada.")
+                return redirect('vaga-list')
 
-                            motoboy_selecionado.status = "alocado"
-                            motoboy_selecionado.save()
-                        else:
-                            messages.error(request, f"O motoboy {motoboy_selecionado} já está alocado em outra vaga.")
-                    except motoboy.DoesNotExist:
-                        messages.error(request, f"Motoboy com ID {motoboy_id} não encontrado.")
-                else:
-                    vaga.motoboy = None
-                    vaga.save()
+            if motoboy_id:
+                try:
+                    motoboy_selecionado = motoboy.objects.get(id=motoboy_id)
+                    if motoboy_selecionado.status == "livre":
+                        vaga_obj.motoboy = motoboy_selecionado
+                        vaga_obj.save()
+
+                        motoboy_selecionado.status = "alocado"
+                        motoboy_selecionado.save()
+
+                        messages.success(request, f"Motoboy {motoboy_selecionado} alocado com sucesso!")
+                    else:
+                        messages.error(request, f"Motoboy {motoboy_selecionado} já está alocado.")
+                except motoboy.DoesNotExist:
+                    messages.error(request, "Motoboy não encontrado.")
+            else:
+                vaga_obj.motoboy = None
+                vaga_obj.save()
+                messages.success(request, "Motoboy removido da vaga.")
 
             return redirect('vaga-list')
 
