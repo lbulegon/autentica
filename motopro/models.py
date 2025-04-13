@@ -175,6 +175,7 @@ class estabelecimentocontrato(models.Model):
     quantidade_vagas = models.PositiveIntegerField()
     def __str__(self):
         return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
+
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
     estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')

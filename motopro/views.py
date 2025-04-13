@@ -7,9 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from motopro.models import vaga, estabelecimento, motoboy, supervisor
-from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm  
-
+from motopro.models import vaga, estabelecimento, motoboy, supervisor,estabelecimentocontrato
+from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
 
 def login_view(request):
     if request.method == 'POST':
@@ -72,16 +71,27 @@ def dashboard(request):
 # Listar vagas
 
 
+from .models import vaga, motoboy, estabelecimentocontrato  # ajuste se o nome for diferente
+
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
     context_object_name = 'vagas'
 
     def get_queryset(self):
-        return vaga.objects.all()
+        return vaga.objects.select_related('estabelecimento').all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        vagas = context['vagas']
+
+        # Anexa o contrato do estabelecimento a cada vaga
+        for v in vagas:
+            v.contrato = estabelecimentocontrato.objects.filter(
+                estabelecimento=v.estabelecimento
+            ).first()
+
+        context['vagas'] = vagas
         context['motoboys'] = motoboy.objects.all()
         return context
 
@@ -112,6 +122,9 @@ class VagaListView(ListView):
                 except motoboy.DoesNotExist:
                     messages.error(request, "Motoboy não encontrado.")
             else:
+                if vaga_obj.motoboy:
+                    vaga_obj.motoboy.status = "livre"
+                    vaga_obj.motoboy.save()
                 vaga_obj.motoboy = None
                 vaga_obj.save()
                 messages.success(request, "Motoboy removido da vaga.")
@@ -120,7 +133,6 @@ class VagaListView(ListView):
 
         return super().post(request, *args, **kwargs)
 
-# Criar vaga
 
 class VagaCreateView(CreateView):
     model         = vaga
