@@ -69,47 +69,31 @@ def dashboard(request):
 #####################V a g a ######################
 
 # Listar vagas
-
-
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
     context_object_name = 'vagas'
 
     def get_queryset(self):
-        filtro = self.request.GET.get('filtro', 'todas')
-
-        if filtro == 'abertas':
-            return vaga.objects.filter(motoboy__isnull=True)
-        elif filtro == 'alocadas':
-            return vaga.objects.filter(motoboy__isnull=False)
-        else:
-            return vaga.objects.all()
+        return vaga.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['motoboys'] = motoboy.objects.all()
-   
-    
         return context
-    
-    
+
     def post(self, request, *args, **kwargs):
-        # Verifica se o botão "Salvar Todos" foi pressionado
         if 'save_all' in request.POST:
             for vaga in self.get_queryset():
                 motoboy_id = request.POST.get(f"motoboy_{vaga.id}")
-                
+
                 if motoboy_id:
                     try:
                         motoboy_selecionado = motoboy.objects.get(id=motoboy_id)
-                        # Verificar se o motoboy está livre antes de alocar
                         if motoboy_selecionado.status == "livre":
-                            # Alocar motoboy à vaga
                             vaga.motoboy = motoboy_selecionado
                             vaga.save()
 
-                            # Atualizar o status do motoboy para "alocado"
                             motoboy_selecionado.status = "alocado"
                             motoboy_selecionado.save()
                         else:
@@ -117,11 +101,9 @@ class VagaListView(ListView):
                     except motoboy.DoesNotExist:
                         messages.error(request, f"Motoboy com ID {motoboy_id} não encontrado.")
                 else:
-                    # Se não houver motoboy selecionado, deixar a vaga sem motoboy
                     vaga.motoboy = None
                     vaga.save()
 
-            # Após a atualização, redireciona para a mesma página
             return redirect('vaga-list')
 
         return super().post(request, *args, **kwargs)
