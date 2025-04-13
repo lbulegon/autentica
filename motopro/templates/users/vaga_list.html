@@ -1,26 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <h1>Lista de Vagas</h1>
 
+<!-- 🔹 Exibição de mensagens de erro -->
+{% if messages %}
+{% for message in messages %}
+<script>
+    alert("{{ message }}");
+</script>
+{% endfor %}
+{% endif %}
+<br>
+<!-- Formulário para editar múltiplas vagas de uma vez -->
 <form method="post">
     {% csrf_token %}
     <table border="1" cellspacing="0" cellpadding="10">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Empresa</th>
-                <th>Motoboy</th>
+                <th>Estabelecimento</th>
                 <th>Observações</th>
                 <th>Data da Vaga</th>
-                <th>Data Editável</th>
+                <th>Motoboy</th>
                 <th>Valor</th>
-                <th>Status</th>
-                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
             {% for vaga in vagas %}
             <tr>
-                <td>{{ vaga.id }}</td>
-                <td>{{ vaga.estabelecimento_id }}</td>
+                <td>{{ vaga.estabelecimento }}</td>
+                <td>{{ vaga.observacoes }}</td>
+                <td>{{ vaga.data_da_vaga }}</td>
                 <td>
                     <select name="motoboy_{{ vaga.id }}">
                         <option value="">Nenhum</option>
@@ -31,30 +42,13 @@
                         {% endfor %}
                     </select>
                 </td>
-                <td>{{ vaga.observacoes }}</td>
-                <td>{{ vaga.data_vaga }}</td>
-                <td>{{ vaga.data_editavel }}</td>
-                <td>{{ vaga.valor }}</td>
-                <td>
-                    <select name="status_{{ vaga.id }}">
-                        {% for key, value in vaga.STATUS_CHOICES %}
-                        <option value="{{ key }}" {% if vaga.status==key %}selected{% endif %}>
-                            {{ value }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </td>
-                <td>
-                    <button type="submit" name="save_{{ vaga.id }}">Salvar</button> |
-                    <a href="{% url 'vaga-delete' vaga.pk %}">Excluir</a>
-                </td>
+                <td>R$ {{ vaga.valor }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-</form>
 
-<br>
-<a href="{% url 'vaga-create' %}">Criar Nova Vaga</a>
-<p></p>
-<a href="{% url 'home' %}">Home</a>
+    <!-- Botão para salvar todas as alterações de uma vez -->
+    <button type="submit" name="save_all">Salvar Todos</button>
+</form>
+{% endblock %}
