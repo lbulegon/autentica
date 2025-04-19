@@ -37,3 +37,6 @@ class Command(BaseCommand):
             self.stdout.write(
                 f'{vagas_para_criar} vaga(s) criada(s) para {contrato.estabelecimento.nome} - {contrato.get_turno_display()}'
             )
+
+
+
