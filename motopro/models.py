@@ -214,12 +214,10 @@ class vaga(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        turno = self.contrato.get_turno_display() if self.contrato else "Sem contrato"
-        return (
-        f"Vaga {self.id} - {self.estabelecimento.nome} | Turno: {turno} | "
-        f"Data: {self.data_da_vaga.strftime('%d/%m/%Y %H:%M') if self.data_da_vaga else 'Sem data'} | "
-        f"Status: {self.get_status_display()}"
- )
+        empresa_nome = self.empresa.nome if self.empresa else "Sem empresa"
+        turno_nome = self.contrato.turno.nome if self.contrato and self.contrato.turno else "Sem turno"
+        return f"{empresa_nome} - {turno_nome}"
+
 class candidatura(models.Model):
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(vaga, on_delete=models.CASCADE, related_name="candidaturas")
