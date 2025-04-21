@@ -214,7 +214,9 @@ class vaga(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{estabelecimento.nome} - {estabelecimentocontrato.turno}"
+        estabelecimento_nome = self.estabelecimento.nome if self.estabelecimento else "Sem Estabelecimento"
+        turno_nome = self.contrato.turno.nome if self.contrato and self.contrato.turno else "Sem turno"
+        return f"{estabelecimento_nome} - {turno_nome}"
 
 class candidatura(models.Model):
     motoboy     = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name="candidaturas")
