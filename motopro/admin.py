@@ -5,10 +5,9 @@ from .models import  supervisorestabelecimento, supervisormotoboy
 
 admin.site.register(estabelecimento)
 admin.site.register(estabelecimentocontrato)
-admin.site.register(motoboy)
 admin.site.register(supervisor)
 admin.site.register(supervisorestabelecimento)
 admin.site.register(supervisormotoboy)
-admin.site.register(estabelecimentocontrato)
+admin.site.register(motoboy)
 admin.site.register(vaga)
 
