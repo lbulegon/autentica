@@ -214,9 +214,9 @@ class vaga(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-       return (
+        return (
         f"Vaga {self.id} - {self.estabelecimento.nome} | "
-        f"Turno: {self.contrato.turno.nome if self.contrato and self.contrato.turno else 'Sem turno'} | "
+        f"Turno: {self.contrato.turno if self.contrato and self.contrato.turno else 'Sem turno'} | "
         f"Data: {self.data_da_vaga.strftime('%d/%m/%Y %H:%M') if self.data_da_vaga else 'Sem data'} | "
         f"Status: {self.get_status_display()}"
     )
