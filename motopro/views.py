@@ -78,7 +78,7 @@ class VagaListView(ListView):
     context_object_name = 'vagas'
 
     def get_queryset(self):
-       return vaga.objects.select_related('estabelecimento', 'motoboy').all()
+       return vaga.objects.select_related('estabelecimento', 'motoboy','estabelecimentocontrato').all()
 
 
     def get_context_data(self, **kwargs):
