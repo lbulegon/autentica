@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import estabelecimento, supervisorestabelecimento,supervisormotoboy # ou o caminho correto se estiver em outro lugar
-from .models import motoboy, vaga, supervisor, estabelecimentocontrato, alocacaomotoboy
+from .models import motoboy, vaga, supervisor, estabelecimentocontrato,  alocacaomotoboy
 
 admin.site.register(estabelecimento)
 admin.site.register(estabelecimentocontrato)
