@@ -10,6 +10,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from motopro.models import vaga, estabelecimento, motoboy, supervisor,estabelecimentocontrato
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
 
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -71,15 +72,14 @@ def dashboard(request):
 # Listar vagas
 
 
-from .models import vaga, motoboy, estabelecimentocontrato  # ajuste se o nome for diferente
-
 class VagaListView(ListView):
     model = vaga
     template_name = 'vagas/vaga_list.html'
     context_object_name = 'vagas'
 
     def get_queryset(self):
-        return vaga.objects.select_related('estabelecimento').all()
+       return vaga.objects.select_related('estabelecimento', 'motoboy').all()
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -122,11 +122,18 @@ class VagaListView(ListView):
                 except motoboy.DoesNotExist:
                     messages.error(request, "Motoboy não encontrado.")
             else:
-                if vaga_obj.motoboy:
-                    vaga_obj.motoboy.status = "livre"
-                    vaga_obj.motoboy.save()
+                motoboy_anterior = vaga_obj.motoboy
+                print("Motoboy anterior:", motoboy_anterior)
+
+                if motoboy_anterior:
+                    motoboy_anterior.status = "livre"
+                    motoboy_anterior.save()
+                    print(f"Status do motoboy {motoboy_anterior} após save:", motoboy_anterior.status)
+
                 vaga_obj.motoboy = None
                 vaga_obj.save()
+                print("Motoboy removido da vaga:", vaga_obj.id)
+
                 messages.success(request, "Motoboy removido da vaga.")
 
             return redirect('vaga-list')

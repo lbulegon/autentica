@@ -46,7 +46,7 @@ class cidade(models.Model):
 class bairro(models.Model):
     id     = models.AutoField(primary_key=True)  # Ou IntegerField, se você quiser controlar os valores manualmente
     nome   = models.CharField(max_length=255)
-    cidade = models.ForeignKey('cidade', on_delete=models.CASCADE)
+    cidade = models.ForeignKey(cidade, on_delete=models.CASCADE)
     def __str__(self):
         return self.nome
 
@@ -75,7 +75,7 @@ class motoboy(models.Model):
     nome              = models.CharField(max_length=255, null=False, blank=False)
     segundonome       = models.CharField(max_length=255, null=True, blank=True)
     sobrenome         = models.CharField(max_length=255, null=True, blank=True)
-    empresa           = models.CharField(max_length=255, null=True, blank=True)
+    apelido           = models.CharField(max_length=255, null=True, blank=True)
     cpf               = models.CharField(max_length=11, unique=False, validators=[validate_cpf])  # CNH do motoboy
     cnh               = models.CharField(max_length=11, unique=False, validators=[validate_cnh])  # CNH do motoboy
     telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
@@ -96,9 +96,9 @@ class motoboy(models.Model):
     )  # Ano de fabricação da moto
     
     cep         = models.CharField(max_length=10)
-    estado      = models.ForeignKey('Estado', on_delete=models.PROTECT)
-    cidade      = models.ForeignKey('Cidade', on_delete=models.PROTECT)
-    bairro      = models.ForeignKey('Bairro', on_delete=models.PROTECT)
+    estado      = models.ForeignKey(estado, on_delete=models.PROTECT)
+    cidade      = models.ForeignKey(cidade, on_delete=models.PROTECT)
+    bairro      = models.ForeignKey(bairro, on_delete=models.PROTECT)
     logradouro  = models.CharField(max_length=255)
     numero      = models.CharField(max_length=10)
     complemento = models.CharField(max_length=100, blank=True)
@@ -185,8 +185,9 @@ class estabelecimentocontrato(models.Model):
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
     estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
+    contrato           = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE, null=True, blank=True)
     motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
-    observacao         = models.CharField(max_length=300, null=False, blank=False)
+    observacao         = models.CharField(max_length=300, null=True, blank=True)
     data_da_vaga       = models.DateTimeField(null=True, blank=True)
     status             = models.CharField(
         max_length=20,
@@ -195,15 +196,20 @@ class vaga(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if self.motoboy:
-            if self.motoboy.status != "alocado":  # Verifica se o motoboy não está alocado
-                self.motoboy.status = "alocado"
-                self.motoboy.save()
-        elif self.pk:  # Se não houver motoboy e a vaga já foi salva
+        if self.pk:
+            # Obtemos a versão antiga da vaga antes de salvar
             old_vaga = vaga.objects.get(pk=self.pk)
-            if old_vaga.motoboy:  # Verifica se havia um motoboy antes
+
+            if old_vaga.motoboy and old_vaga.motoboy != self.motoboy:
+                # Libera o antigo motoboy, se ele foi trocado ou removido
                 old_vaga.motoboy.status = "livre"
                 old_vaga.motoboy.save()
+
+        if self.motoboy:
+            # Aloca o novo motoboy
+            if self.motoboy.status != "alocado":
+                self.motoboy.status = "alocado"
+                self.motoboy.save()
 
         super().save(*args, **kwargs)
 
@@ -252,9 +258,9 @@ class supervisorestabelecimento(models.Model):
 Essa tabela vai armazenar as entregas feitas pelos motoboys e permitir calcular o valor pago a cada motoboy.
 """
 class entrega(models.Model):
-    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
-    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
-    valor_pago = models.DecimalField(max_digits=8, decimal_places=2)
+    vaga         = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    motoboy      = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    valor_pago   = models.DecimalField(max_digits=8, decimal_places=2)
     data_entrega = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -262,16 +268,16 @@ class entrega(models.Model):
 
 """  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
 class rankingmotoboy(models.Model):
-    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
-    nivel = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
+    motoboy           = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
                                                       ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
                                                       ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
                                                       ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
                                                       ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
                                                       ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
                                                       default='Novato')
-    aceitação = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    aceitação         = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cancelamento      = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
     bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
     
     def __str__(self):
@@ -279,17 +285,12 @@ class rankingmotoboy(models.Model):
 
 """Essa tabela armazena a comissão da MotoPro por cada vaga."""
 class comissaomotopro(models.Model):
-    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
-    comissao = models.DecimalField(max_digits=8, decimal_places=2)  # Exemplo: 15% da vaga
+    vaga           = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    comissao       = models.DecimalField(max_digits=8, decimal_places=2)  # Exemplo: 15% da vaga
     data_pagamento = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
-
-
-
-
-# models.py
 
 class configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[
