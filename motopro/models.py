@@ -296,6 +296,28 @@ class comissaomotopro(models.Model):
     def __str__(self):
         return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
 
+
+
+class alocacaomotoboy(models.Model):
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    turno = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE)  # onde o turno está definido
+    status = models.CharField(
+        max_length=20,
+        choices=[('livre', 'Livre'), ('alocado', 'Alocado')],
+        default='livre'
+    )
+
+    class Meta:
+        unique_together = ('motoboy', 'vaga', 'turno')
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.turno} - {self.status}"
+
+
+
+
+
 class configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[
         ('dia', 'Turno do Dia'),
@@ -311,3 +333,5 @@ class configuracao(models.Model):
 
     def __str__(self):
         return "Configurações do Sistema"
+
+
