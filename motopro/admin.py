@@ -7,7 +7,12 @@ admin.site.register(estabelecimentocontrato)
 admin.site.register(supervisor)
 admin.site.register(supervisorestabelecimento)
 admin.site.register(supervisormotoboy)
-admin.site.register(motoboy)
+@admin.register(motoboy)
+class MotoboyAdmin(admin.ModelAdmin):
+    search_fields = ["nome", "cpf", "telefone"]  # Campo de busca no topo
+    list_display = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
+    list_filter = [ "status"]  # Filtros laterais
+    ordering = ["nome"]  # Ordenação padrão
 #admin.site.register(alocacaomotoboy)
 
 #@admin.register(alocacaomotoboy)
