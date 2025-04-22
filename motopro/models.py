@@ -184,40 +184,23 @@ class estabelecimentocontrato(models.Model):
 
 class vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
-    estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
+   # estabelecimento    = models.ForeignKey(estabelecimento, on_delete=models.PROTECT, related_name='pedidos')
     contrato           = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE, null=True, blank=True)
-    motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
+    # motoboy            = models.OneToOneField(motoboy, on_delete=models.SET_NULL, null=True, blank=True, related_name='vaga')
     observacao         = models.CharField(max_length=300, null=True, blank=True)
-    data_da_vaga       = models.DateTimeField(null=True, blank=True)
+    data_da_vaga       = models.DateField(null=True, blank=True)
     status             = models.CharField(
         max_length=20,
         choices=[("aberta", "Aberta"), ("preenchida", "Preenchida"), ("encerrada", "Encerrada"), ("recusada", "Recusada")],
         default="aberta"
     )
-
-    def save(self, *args, **kwargs):
-        if self.pk:
-            # Obtemos a versão antiga da vaga antes de salvar
-            old_vaga = vaga.objects.get(pk=self.pk)
-
-            if old_vaga.motoboy and old_vaga.motoboy != self.motoboy:
-                # Libera o antigo motoboy, se ele foi trocado ou removido
-                old_vaga.motoboy.status = "livre"
-                old_vaga.motoboy.save()
-
-        if self.motoboy:
-            # Aloca o novo motoboy
-            if self.motoboy.status != "alocado":
-                self.motoboy.status = "alocado"
-                self.motoboy.save()
-
-        super().save(*args, **kwargs)
-
+    
     def __str__(self):
         return (
-        f"Vaga {self.id} - {self.estabelecimento.nome} | "
+        f"Vaga {self.id} - "
+        f"{self.contrato.estabelecimento.nome if self.contrato and self.contrato.estabelecimento else 'Sem estabelecimento'} | "
         f"Turno: {self.contrato.turno if self.contrato and self.contrato.turno else 'Sem turno'} | "
-        f"Data: {self.data_da_vaga.strftime('%d/%m/%Y %H:%M') if self.data_da_vaga else 'Sem data'} | "
+        f"Data: {self.data_da_vaga.strftime('%d/%m/%Y') if self.data_da_vaga else 'Sem data'} | "
         f"Status: {self.get_status_display()}"
     )
 class candidatura(models.Model):
@@ -299,9 +282,9 @@ class comissaomotopro(models.Model):
 
 
 class alocacaomotoboy(models.Model):
-    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
     vaga = models.ForeignKey(vaga, on_delete=models.CASCADE)
     turno = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE)  # onde o turno está definido
+    motoboy = models.ForeignKey(motoboy, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=20,
         choices=[('livre', 'Livre'), ('alocado', 'Alocado')],

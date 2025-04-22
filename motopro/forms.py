@@ -8,7 +8,7 @@ from django.contrib.auth.forms import AuthenticationForm
 class VagaForm(forms.ModelForm):
     class Meta:
         model = vaga
-        fields = ['estabelecimento', 'observacao','data_da_vaga',  'status']
+        fields = [ 'observacao','data_da_vaga',  'status']
 
 class EstabelecimentoForm(forms.ModelForm):
     class Meta:

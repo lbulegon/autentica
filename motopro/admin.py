@@ -8,7 +8,19 @@ admin.site.register(supervisor)
 admin.site.register(supervisorestabelecimento)
 admin.site.register(supervisormotoboy)
 admin.site.register(motoboy)
-admin.site.register(alocacaomotoboy)
+#admin.site.register(alocacaomotoboy)
+
+#@admin.register(alocacaomotoboy)
+class AlocacaoMotoboyAdmin(admin.ModelAdmin):
+    fields = ['vaga', 'motoboy', 'status']  # Exibe só o que você quer
+
+    def save_model(self, request, obj, form, change):
+        # Preenche o campo 'turno' automaticamente a partir da vaga
+        if obj.vaga and obj.vaga.contrato:
+            obj.turno = obj.vaga.contrato
+        super().save_model(request, obj, form, change)
+
+admin.site.register(alocacaomotoboy,AlocacaoMotoboyAdmin)
 
 class VagaAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
@@ -50,16 +62,6 @@ class VagaAdmin(admin.ModelAdmin):
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-
-        # Cria ou atualiza a alocação
-        if obj.motoboy and obj.contrato:
-            alocacaomotoboy.objects.update_or_create(
-                motoboy=obj.motoboy,
-                vaga=obj,
-                turno=obj.contrato,
-                defaults={'status': 'alocado'}
-            )
+    
 
 admin.site.register(vaga, VagaAdmin)
