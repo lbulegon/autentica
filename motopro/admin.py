@@ -17,16 +17,28 @@ class MotoboyAdmin(admin.ModelAdmin):
 #admin.site.register(alocacaomotoboy)
 
 #@admin.register(alocacaomotoboy)
+from django.contrib import admin
+from motopro.models import alocacaomotoboy, motoboy
+
 class AlocacaoMotoboyAdmin(admin.ModelAdmin):
-    fields = ['vaga', 'motoboy', 'entregas_realizadas' ,'status']  # Exibe só o que você quer
+    fields = ['vaga', 'motoboy', 'entregas_realizadas', 'status']
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "motoboy":
+            user = request.user
+            # Aqui assumimos que o supervisor está relacionado a estabelecimentos
+            kwargs["queryset"] = motoboy.objects.filter(
+                estabelecimento__supervisor=user
+            ).distinct()
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
     def save_model(self, request, obj, form, change):
-        # Preenche o campo 'turno' automaticamente a partir da vaga
         if obj.vaga and obj.vaga.contrato:
             obj.turno = obj.vaga.contrato
         super().save_model(request, obj, form, change)
 
-admin.site.register(alocacaomotoboy,AlocacaoMotoboyAdmin)
+admin.site.register(alocacaomotoboy, AlocacaoMotoboyAdmin)
+
 
 class VagaAdmin(admin.ModelAdmin):
     list_filter = [
