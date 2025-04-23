@@ -3,15 +3,20 @@ from django.utils import timezone
 from motopro.models import estabelecimentocontrato, vaga
 
 class Command(BaseCommand):
-    help = 'Cria vagas individuais para motoboys com base nos contratos dos estabelecimentos'
+    help = 'Cria vagas diárias com base nos contratos vigentes dos estabelecimentos'
 
     def handle(self, *args, **kwargs):
         hoje = timezone.localdate()
-        contratos = estabelecimentocontrato.objects.all()
+        contratos = estabelecimentocontrato.objects.filter(status="vigente")
 
         for contrato in contratos:
+            # Verifica se a data atual está dentro do período de vigência do contrato (se houver)
+            if contrato.data_inicio and contrato.data_inicio > hoje:
+                continue
+            if contrato.data_fim and contrato.data_fim < hoje:
+                continue
+
             vagas_existentes = vaga.objects.filter(
-                estabelecimento=contrato.estabelecimento,
                 contrato=contrato,
                 data_da_vaga=hoje
             ).count()
@@ -26,10 +31,8 @@ class Command(BaseCommand):
 
             for _ in range(vagas_para_criar):
                 vaga.objects.create(
-                    estabelecimento=contrato.estabelecimento,
                     contrato=contrato,
-                    data_da_vaga=hoje,
-                  
+                    data_da_vaga=hoje
                 )
 
             self.stdout.write(
