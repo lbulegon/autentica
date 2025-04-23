@@ -78,6 +78,7 @@ class motoboy(models.Model):
     apelido           = models.CharField(max_length=255, null=True, blank=True)
     cpf               = models.CharField(max_length=11, unique=False, validators=[validate_cpf])  # CNH do motoboy
     cnh               = models.CharField(max_length=11, unique=False, validators=[validate_cnh])  # CNH do motoboy
+    categoria         = models.CharField(max_length=3, null=True, blank=True)
     telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
     telefone1         = models.CharField(max_length=15, blank=True)  # Telefone de contato
     telefone2         = models.CharField(max_length=15, blank=True)  # Telefone de contato
