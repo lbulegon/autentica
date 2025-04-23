@@ -18,7 +18,7 @@ class MotoboyAdmin(admin.ModelAdmin):
 
 #@admin.register(alocacaomotoboy)
 class AlocacaoMotoboyAdmin(admin.ModelAdmin):
-    fields = ['vaga', 'motoboy', 'status']  # Exibe só o que você quer
+    fields = ['vaga', 'motoboy', 'entregas_realizadas' ,'status']  # Exibe só o que você quer
 
     def save_model(self, request, obj, form, change):
         # Preenche o campo 'turno' automaticamente a partir da vaga
