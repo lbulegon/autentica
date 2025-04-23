@@ -240,10 +240,11 @@ class supervisorestabelecimento(models.Model):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
 
 class alocacaomotoboy(models.Model):
-    vaga     = models.ForeignKey(vaga, on_delete=models.CASCADE)
-    turno    = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE)  # onde o turno está definido
-    motoboy  = models.ForeignKey(motoboy, on_delete=models.CASCADE)
-    status   = models.CharField(
+    vaga                = models.ForeignKey(vaga, on_delete=models.CASCADE)
+    turno               = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE)  # onde o turno está definido
+    motoboy             = models.ForeignKey(motoboy, on_delete=models.CASCADE)
+    entregas_realizadas = models.PositiveIntegerField(default=0)
+    status              = models.CharField(
         max_length=20,
         choices=[('livre', 'Livre'), ('alocado', 'Alocado')],
         default='livre'
