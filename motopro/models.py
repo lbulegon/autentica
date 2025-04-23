@@ -20,9 +20,9 @@ def validate_cnh(value):
 
 # Função de validação para placa de moto
 def validate_placa(value):
-    placa_regex = r'^[A-Z]{3}-\d{4}$'  # Regex para verificar formato de placa (ex: ABC-1234)
+    placa_regex = r'^[A-Z]{3}-[A-Z0-9]{4}$'  # Regex para verificar formato de placa (ex: ABC-1234 ou ABC-1A2B)
     if not re.match(placa_regex, value):
-        raise ValidationError("Placa da moto deve seguir o formato ABC-1234.")
+        raise ValidationError("Placa da moto deve seguir o formato ABC-1234 ou ABC-1A2B.")
 
 def validate_nota(value):
     if value < 0 or value > 9:
