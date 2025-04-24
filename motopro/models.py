@@ -140,7 +140,7 @@ class motoboy(models.Model):
 class estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
-    cnpj               = models.CharField(max_length=18, unique=False)
+    cnpj               = models.CharField(max_length=18)
     cep                = models.CharField(max_length=10)
     estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
     cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)

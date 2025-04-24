@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='estabelecimento',
             name='cnpj',
-            field=models.CharField(default=99, max_length=18, unique=True),
+            field=models.CharField(default=99, max_length=18, unique=False),
             preserve_default=False,
         ),
     ]
