@@ -73,19 +73,12 @@ class supervisor(models.Model):
 class motoboy(models.Model):
     id                = models.AutoField(primary_key=True)
     nome              = models.CharField(max_length=255, null=False, blank=False)
-    segundonome       = models.CharField(max_length=255, null=True, blank=True)
-    sobrenome         = models.CharField(max_length=255, null=True, blank=True)
     apelido           = models.CharField(max_length=255, null=True, blank=True)
     cpf               = models.CharField(max_length=11, unique=False, validators=[validate_cpf])  # CNH do motoboy
     cnh               = models.CharField(max_length=11, unique=False, validators=[validate_cnh])  # CNH do motoboy
     categoria         = models.CharField(max_length=3, null=True, blank=True)
     telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
     telefone1         = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    telefone2         = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    telefone3         = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    telefone4         = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    outrotelefone     = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    outrotelefone2    = models.CharField(max_length=15, blank=True)  # Telefone de contato
     email             = models.EmailField(max_length=255, blank=True)  # Email do motoboy
     placa_moto        = models.CharField(max_length=10, unique=False, validators=[validate_placa])  # Placa da moto
     modelo_moto       = models.CharField(max_length=100)  # Modelo da moto
@@ -147,6 +140,7 @@ class motoboy(models.Model):
 class estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
+    cnpj               = models.CharField(max_length=18, unique=False)
     cep                = models.CharField(max_length=10)
     estado             = models.ForeignKey(estado, on_delete=models.PROTECT)
     cidade             = models.ForeignKey(cidade, on_delete=models.PROTECT)
