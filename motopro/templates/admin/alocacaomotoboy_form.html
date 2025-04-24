@@ -1,0 +1,28 @@
+{% extends "admin/change_form.html" %}
+{% block extrahead %}
+    {{ block.super }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const vagaSelect = $('#id_vaga');
+            const motoboySelect = $('#id_motoboy');
+            
+            // Função que será acionada quando a vaga for selecionada
+            vagaSelect.change(function () {
+                const vagaId = $(this).val();
+                
+                // Limpa o campo de motoboy
+                motoboySelect.html('<option value="">---------</option>');
+                
+                if (vagaId) {
+                    // Faz a requisição AJAX para pegar os motoboys do supervisor
+                    $.getJSON("/admin/motoboys-por-supervisor/?vaga_id=" + vagaId, function (data) {
+                        $.each(data, function (index, motoboy) {
+                            motoboySelect.append(new Option(motoboy.nome, motoboy.id));
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}

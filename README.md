@@ -17,10 +17,9 @@ Para configurar e rodar o ambiente, siga os passos abaixo:
 - python manage.py migrate
 - python manage.py createsuperuser
 
+ - python manage.py escanear_portas --host 127.0.0.1 --inicio 31400 --fim 31409
+
 https://autentica-desenvolvimento.up.railway.app/
-
-
-
 
 
 ## 🏢 Persona: Estabelecimento
