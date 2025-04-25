@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 import re
+from django.utils import timezone
 
 # Função de validação para CPF
 def validate_cpf(value):
@@ -308,3 +309,52 @@ class configuracao(models.Model):
 
     def __str__(self):
         return "Configurações do Sistema"
+
+class Slot(models.Model):
+    TIPO_SLOT_CHOICES = [
+        ('previsto', 'Previsto'),
+        ('extra', 'Extra'),
+        ('urgente', 'Urgente'),
+    ]
+
+    STATUS_CHOICES = [
+        ('ativo', 'Ativo'),
+        ('preenchido', 'Preenchido'),
+        ('cancelado', 'Cancelado'),
+    ]
+
+    estabelecimento     = models.ForeignKey(estabelecimento, on_delete=models.CASCADE, related_name='slots')
+    data                = models.DateField()
+    hora_inicio         = models.TimeField()
+    hora_fim            = models.TimeField()
+    quantidade_motoboys = models.PositiveIntegerField()
+    tipo_slot           = models.CharField(max_length=10, choices=TIPO_SLOT_CHOICES, default='previsto')
+    status              = models.CharField(max_length=12, choices=STATUS_CHOICES, default='ativo')
+    criado_em           = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(check=models.Q(quantidade_motoboys__gt=0), name='quantidade_motoboys_positiva')
+        ]
+
+    def __str__(self):
+        return f"{self.estabelecimento.nome} | {self.data} | {self.hora_inicio}-{self.hora_fim}"
+
+class CandidaturaSlot(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('confirmado', 'Confirmado'),
+        ('recusado', 'Recusado'),
+        ('cancelado', 'Cancelado'),
+    ]
+
+    slot             = models.ForeignKey(Slot, on_delete=models.CASCADE, related_name='candidaturas')
+    motoboy          = models.ForeignKey(motoboy, on_delete=models.CASCADE, related_name='candidaturas_slot')
+    status           = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
+    data_candidatura = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ('slot', 'motoboy')
+
+    def __str__(self):
+        return f"{self.motoboy.nome} → {self.slot}"
