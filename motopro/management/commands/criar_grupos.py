@@ -7,8 +7,9 @@ django.setup()
 
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
-from motopro.models import Vaga, Motoboy, Empresa, Candidatura  # Ajuste conforme os modelos reais do seu projeto
+from django.core.management.base import BaseCommand
 
+from motopro.models import vaga, estabelecimentofatura, estabelecimento, motoboy, 
 # Criando os grupos de usuários
 grupos = {
     "Admin": ["add_vaga", "change_vaga", "delete_vaga", "view_vaga",
