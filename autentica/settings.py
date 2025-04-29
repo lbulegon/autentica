@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'api_v01',
     'motopro',
     'accounts', 
+    'django_cron',
 ]
 
 MIDDLEWARE = [

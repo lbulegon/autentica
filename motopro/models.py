@@ -358,3 +358,21 @@ class CandidaturaSlot(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} → {self.slot}"
+
+class VagaSlot(models.Model):
+    contrato    = models.ForeignKey(estabelecimentocontrato, on_delete=models.CASCADE)
+    data        = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fim    = models.TimeField()
+    motoboy     = models.ForeignKey(motoboy, null=True, blank=True, on_delete=models.SET_NULL)
+    status      = models.CharField(
+        max_length=20,
+        choices=[("disponivel", "Disponível"), ("ocupada", "Ocupada"), ("cancelada", "Cancelada")],
+        default="disponivel"
+    )
+
+    class Meta:
+        unique_together = ('contrato', 'data', 'hora_inicio')
+
+    def __str__(self):
+        return f'{self.contrato.estabelecimento.nome} | {self.data} | {self.hora_inicio} - {self.hora_fim}'
