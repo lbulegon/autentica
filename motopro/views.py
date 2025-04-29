@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from motopro.models import vaga, estabelecimento, motoboy, supervisor,estabelecimentocontrato
+from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, EstabelecimentoContrato
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
 
 
@@ -73,7 +73,7 @@ def dashboard(request):
 
 
 class VagaListView(ListView):
-    model = vaga
+    model = Vaga
     template_name = 'vagas/vaga_list.html'
     context_object_name = 'vagas'
 
@@ -142,7 +142,7 @@ class VagaListView(ListView):
 
 
 class VagaCreateView(CreateView):
-    model         = vaga
+    model         = Vaga
     form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
     success_url   = reverse_lazy('vaga-list')
@@ -150,7 +150,7 @@ class VagaCreateView(CreateView):
 # Atualizar vaga
 
 class VagaUpdateView(UpdateView):
-    model         = vaga
+    model         = Vaga
     form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
     success_url   = reverse_lazy('vaga-list')
@@ -158,7 +158,7 @@ class VagaUpdateView(UpdateView):
 # Excluir vaga
 
 class VagaDeleteView(DeleteView):
-    model         = vaga
+    model         = Vaga
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url   = reverse_lazy('vaga-list')
 
@@ -166,32 +166,32 @@ class VagaDeleteView(DeleteView):
 #class EstabelecimentoListView(LoginRequiredMixin,ListView):
 
 class EstabelecimentoListView(ListView):
-    model               = estabelecimento
+    model               = Estabelecimento
     template_name       = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
 
 
 class EstabelecimentoCreateView(CreateView):
-    model          = estabelecimento
+    model          = Estabelecimento
     form_class     = EstabelecimentoForm
     template_name  = 'estabelecimento/estabelecimento_form.html'
     success_url    = reverse_lazy('estabelecimento-list')
 
 
 class EstabelecimentoUpdateView(UpdateView):
-    model         = estabelecimento
+    model         = Estabelecimento
     form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
 
 class EstabelecimentoDeleteView(DeleteView):
-    model         = estabelecimento
+    model         = Estabelecimento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
 class MotoboyListView(ListView):
-    model               = motoboy
+    model               = Motoboy
     template_name       = 'motoboy/motoboy_list.html'
     context_object_name = 'motoboys'
 
@@ -212,30 +212,30 @@ class MotoboyListView(ListView):
         return redirect('motoboy-list')
 
 class MotoboyCreateView(CreateView):
-    model         = motoboy
+    model         = Motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
 
 class MotoboyUpdateView(UpdateView):
-    model         = motoboy
+    model         = Motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
 
 class MotoboyDeleteView(DeleteView):
-    model         = motoboy
+    model         = Motoboy
     template_name = 'motoboy/motoboy_confirm_delete.html'
     success_url   = reverse_lazy('motoboy-list')
 
 class SupervisorListView(ListView):
-    model               = supervisor
+    model               = Supervisor
     template_name       = 'supervisor/supervisor_list.html'
     context_object_name = 'supervisores'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['status_choices'] = supervisor._meta.get_field('status').choices  # Passa as opções de status para o template
+        context['status_choices'] = Supervisor._meta.get_field('status').choices  # Passa as opções de status para o template
         return context
 
     def post(self, request, *args, **kwargs):
@@ -250,21 +250,21 @@ class SupervisorListView(ListView):
         return redirect('supervisor-list')
 
 class SupervisorCreateView(CreateView):
-    model         = supervisor
+    model         = Supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
 
 class SupervisorUpdateView(UpdateView):
-    model         = supervisor
+    model         = Supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
 
 class SupervisorDeleteView(DeleteView):
-    model         = supervisor
+    model         = Supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
     success_url   = reverse_lazy('supervisor-list')
 

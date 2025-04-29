@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from motopro.models import vaga
-from motopro.models import estabelecimento
+from motopro.models import Vaga
+from motopro.models import Estabelecimento
 
 class VagaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = vaga
+        model = Vaga
         fields = '__all__'
 
 class EstabelecimentoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = estabelecimento
+        model = Estabelecimento
         fields = '__all__'

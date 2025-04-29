@@ -1,27 +1,27 @@
 from django import forms
-from motopro.models import vaga
-from motopro.models import estabelecimento
-from motopro.models import motoboy
-from motopro.models import supervisor
+from motopro.models import Vaga
+from motopro.models import Estabelecimento
+from motopro.models import Motoboy
+from motopro.models import Supervisor
 from django.contrib.auth.forms import AuthenticationForm
 
 class VagaForm(forms.ModelForm):
     class Meta:
-        model = vaga
+        model = Vaga
         fields = [ 'observacao','data_da_vaga',  'status']
 
 class EstabelecimentoForm(forms.ModelForm):
     class Meta:
-        model = estabelecimento
+        model = Estabelecimento
         fields = '__all__'
 class MotoboyForm(forms.ModelForm):
     class Meta:
-        model = motoboy
+        model = Motoboy
         fields = '__all__'        
 
 class SupervisorForm(forms.ModelForm):
     class Meta:
-        model = supervisor
+        model = Supervisor
         fields = '__all__'                
        
 class LoginForm(forms.Form):

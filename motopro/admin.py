@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
-from .models import estabelecimento, supervisorestabelecimento,supervisormotoboy # ou o caminho correto se estiver em outro lugar
-from .models import motoboy, vaga, supervisor, estabelecimentocontrato,  alocacaomotoboy
+from .models import Estabelecimento, SupervisorEstabelecimento,SupervisorMotoboy # ou o caminho correto se estiver em outro lugar
+from .models import Motoboy, Vaga, Supervisor, EstabelecimentoContrato,  AlocacaoMotoboy
 
-admin.site.register(estabelecimento)
-admin.site.register(estabelecimentocontrato)
-admin.site.register(supervisor)
-admin.site.register(supervisorestabelecimento)
-admin.site.register(supervisormotoboy)
-@admin.register(motoboy)
+admin.site.register(Estabelecimento)
+admin.site.register(EstabelecimentoContrato)
+admin.site.register(Supervisor)
+admin.site.register(SupervisorEstabelecimento)
+admin.site.register(SupervisorMotoboy)
+@admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     search_fields = ["nome", "cpf", "telefone"]  # Campo de busca no topo
     list_display = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
@@ -26,7 +26,7 @@ class AlocacaoMotoboyAdmin(admin.ModelAdmin):
             obj.turno = obj.vaga.contrato
         super().save_model(request, obj, form, change)
 
-admin.site.register(alocacaomotoboy,AlocacaoMotoboyAdmin)
+admin.site.register(AlocacaoMotoboy,AlocacaoMotoboyAdmin)
 
 class VagaAdmin(admin.ModelAdmin):
     list_filter = [
@@ -70,4 +70,4 @@ class VagaAdmin(admin.ModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-admin.site.register(vaga, VagaAdmin)
+admin.site.register(Vaga, VagaAdmin)
