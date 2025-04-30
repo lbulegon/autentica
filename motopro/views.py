@@ -11,7 +11,13 @@ from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelec
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
 
 
-def login_view(request):
+def View_Index_Abertura(request):
+    return render(request, 'index.html')  # /motopro/templates/index.html
+
+def View_Home(request):
+    return render(request, 'home.html')  # Renderiza o arquivo 'home.html'
+
+def View_Login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -28,17 +34,12 @@ def login_view(request):
 
     return render(request, 'login/login.html', {'form': form})
 
-def logout_view(request):
+def View_Logout(request):
     logout(request)
     return redirect('login')  # Redireciona após logout
 
-def home_view(request):
-    return render(request, 'home.html')  # Renderiza o arquivo 'home.html'
 
-def index(request):
-    return render(request, 'index.html')
-
-def dashboard(request):
+def View_Dashboard(request):
     return render(request, 'login/dashboard.html')
 
 # Usando o modelo CustomUser que você criou
@@ -71,14 +72,13 @@ def dashboard(request):
 
 # Listar vagas
 
-
-class VagaListView(ListView):
+class View_VagaList(ListView):
     model = Vaga
     template_name = 'vagas/vaga_list.html'
     context_object_name = 'vagas'
 
     def get_queryset(self):
-       return vaga.objects.select_related('estabelecimento', 'motoboy','estabelecimentocontrato').all()
+        return Vaga.objects.select_related('estabelecimento', 'motoboy').all()
 
 
     def get_context_data(self, **kwargs):
@@ -87,12 +87,12 @@ class VagaListView(ListView):
 
         # Anexa o contrato do estabelecimento a cada vaga
         for v in vagas:
-            v.contrato = estabelecimentocontrato.objects.filter(
+            v.contrato = EstabelecimentoContrato.objects.filter(
                 estabelecimento=v.estabelecimento
             ).first()
 
         context['vagas'] = vagas
-        context['motoboys'] = motoboy.objects.all()
+        context['motoboys'] = Motoboy.objects.all()
         return context
 
     def post(self, request, *args, **kwargs):
@@ -101,14 +101,14 @@ class VagaListView(ListView):
             motoboy_id = request.POST.get("motoboy_id")
 
             try:
-                vaga_obj = vaga.objects.get(id=vaga_id)
-            except vaga.DoesNotExist:
+                vaga_obj = Vaga.objects.get(id=vaga_id)
+            except Vaga.DoesNotExist:
                 messages.error(request, "Vaga não encontrada.")
                 return redirect('vaga-list')
 
             if motoboy_id:
                 try:
-                    motoboy_selecionado = motoboy.objects.get(id=motoboy_id)
+                    motoboy_selecionado = Motoboy.objects.get(id=motoboy_id)
                     if motoboy_selecionado.status == "livre":
                         vaga_obj.motoboy = motoboy_selecionado
                         vaga_obj.save()
@@ -119,7 +119,7 @@ class VagaListView(ListView):
                         messages.success(request, f"Motoboy {motoboy_selecionado} alocado com sucesso!")
                     else:
                         messages.error(request, f"Motoboy {motoboy_selecionado} já está alocado.")
-                except motoboy.DoesNotExist:
+                except Motoboy.DoesNotExist:
                     messages.error(request, "Motoboy não encontrado.")
             else:
                 motoboy_anterior = vaga_obj.motoboy
@@ -141,7 +141,7 @@ class VagaListView(ListView):
         return super().post(request, *args, **kwargs)
 
 
-class VagaCreateView(CreateView):
+class View_VagaCreate(CreateView):
     model         = Vaga
     form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
@@ -149,7 +149,7 @@ class VagaCreateView(CreateView):
 
 # Atualizar vaga
 
-class VagaUpdateView(UpdateView):
+class View_VagaUpdate(UpdateView):
     model         = Vaga
     form_class    = VagaForm
     template_name = 'vagas/vaga_form.html'
@@ -157,7 +157,7 @@ class VagaUpdateView(UpdateView):
 
 # Excluir vaga
 
-class VagaDeleteView(DeleteView):
+class View_VagaDelete(DeleteView):
     model         = Vaga
     template_name = 'vagas/vaga_confirm_delete.html'
     success_url   = reverse_lazy('vaga-list')
@@ -165,39 +165,39 @@ class VagaDeleteView(DeleteView):
 
 #class EstabelecimentoListView(LoginRequiredMixin,ListView):
 
-class EstabelecimentoListView(ListView):
+class View_EstabelecimentoList(ListView):
     model               = Estabelecimento
     template_name       = 'estabelecimento/estabelecimento_list.html'
     context_object_name = 'estabelecimentos'
 
 
-class EstabelecimentoCreateView(CreateView):
+class View_EstabelecimentoCreate(CreateView):
     model          = Estabelecimento
     form_class     = EstabelecimentoForm
     template_name  = 'estabelecimento/estabelecimento_form.html'
     success_url    = reverse_lazy('estabelecimento-list')
 
 
-class EstabelecimentoUpdateView(UpdateView):
+class View_EstabelecimentoUpdate(UpdateView):
     model         = Estabelecimento
     form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
 
-class EstabelecimentoDeleteView(DeleteView):
+class View_EstabelecimentoDelete(DeleteView):
     model         = Estabelecimento
     template_name = 'estabelecimento/estabelecimento_confirm_delete.html'
     success_url   = reverse_lazy('estabelecimento-list')
 
-class MotoboyListView(ListView):
+class View_MotoboyList(ListView):
     model               = Motoboy
     template_name       = 'motoboy/motoboy_list.html'
     context_object_name = 'motoboys'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['status_choices'] = motoboy._meta.get_field('status').choices  # Passa as opções de status para o template
+        context['status_choices'] = Motoboy._meta.get_field('status').choices  # Passa as opções de status para o template
         return context
 
     def post(self, request, *args, **kwargs):
@@ -211,24 +211,24 @@ class MotoboyListView(ListView):
 
         return redirect('motoboy-list')
 
-class MotoboyCreateView(CreateView):
+class View_MotoboyCreate(CreateView):
     model         = Motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
 
-class MotoboyUpdateView(UpdateView):
+class View_MotoboyUpdate(UpdateView):
     model         = Motoboy
     form_class    = MotoboyForm
     template_name = 'motoboy/motoboy_form.html'
     success_url   = reverse_lazy('motoboy-list')
 
-class MotoboyDeleteView(DeleteView):
+class View_MotoboyDelete(DeleteView):
     model         = Motoboy
     template_name = 'motoboy/motoboy_confirm_delete.html'
     success_url   = reverse_lazy('motoboy-list')
 
-class SupervisorListView(ListView):
+class View_SupervisorList(ListView):
     model               = Supervisor
     template_name       = 'supervisor/supervisor_list.html'
     context_object_name = 'supervisores'
@@ -249,21 +249,21 @@ class SupervisorListView(ListView):
 
         return redirect('supervisor-list')
 
-class SupervisorCreateView(CreateView):
+class View_SupervisorCreate(CreateView):
     model         = Supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
 
-class SupervisorUpdateView(UpdateView):
+class View_SupervisorUpdate(UpdateView):
     model         = Supervisor
     form_class    = SupervisorForm
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
 
-class SupervisorDeleteView(DeleteView):
+class View_SupervisorDelete(DeleteView):
     model         = Supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
     success_url   = reverse_lazy('supervisor-list')

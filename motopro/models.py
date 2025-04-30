@@ -25,9 +25,6 @@ def validate_placa(value):
     if not re.match(placa_regex, value):
         raise ValidationError("Placa da moto deve seguir o formato ABC-1234 ou ABC-1A2B.")
 
-def validate_nota(value):
-    if value < 0 or value > 9:
-        raise ValidationError('A nota deve estar entre 0 e 9.')
 
 class Estado(models.Model):
     id     = models.AutoField(primary_key=True)
@@ -37,7 +34,7 @@ class Estado(models.Model):
     def __str__(self):
         return self.nome
 class Cidade(models.Model):
-    id           = models.IntegerField(primary_key=True)  # Sem `primary_key=True`
+    id           = models.AutoField(primary_key=True)
     nome         = models.CharField(max_length=255)
     estado       = models.ForeignKey(Estado, on_delete=models.CASCADE)
     codigo_ibge  = models.CharField(max_length=10, unique=True, null=True, blank=True)
@@ -70,6 +67,19 @@ class Supervisor(models.Model):
                         ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
+
+
+class NivelMotoboy(models.Model):
+    nome      = models.CharField(max_length=20, unique=True)
+    descricao = models.TextField(blank=True)
+    ordem     = models.PositiveIntegerField(unique=True)  # Para ordenação dos rankings
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        ordering = ['ordem']
+
 
 class Motoboy(models.Model):
     id                = models.AutoField(primary_key=True)
@@ -106,31 +116,11 @@ class Motoboy(models.Model):
         ('em_viagem', 'Em viagem'),
     ], default='livre') 
     
-    created_at = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
-    updated_at = models.DateTimeField(auto_now=True)  # Data da última atualização
-       # Atributos adicionais para o sistema de ranking
-    ranking          = models.CharField(max_length=20, choices=[
-        ('Novato', 'Novato'),
-        ('Aspirante', 'Aspirante'),
-        ('Bronze I', 'Bronze I'),
-        ('Bronze II', 'Bronze II'),
-        ('Bronze III', 'Bronze III'),
-        ('Prata I', 'Prata I'),
-        ('Prata II', 'Prata II'),
-        ('Prata III', 'Prata III'),
-        ('Ouro I', 'Ouro I'),
-        ('Ouro II', 'Ouro II'),
-        ('Ouro III', 'Ouro III'),
-        ('Platina I', 'Platina I'),
-        ('Platina II', 'Platina II'),
-        ('Platina III', 'Platina III'),
-        ('Diamante I', 'Diamante I'),
-        ('Diamante II', 'Diamante II'),
-        ('Diamante III', 'Diamante III'),
-    ], default='Novato')
-    
-    aceitacao        = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
-    cancelamento     = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
+    created_at   = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at   = models.DateTimeField(auto_now=True)  # Data da última atualização
+    nivel        = models.ForeignKey(NivelMotoboy, on_delete=models.PROTECT)
+    aceitacao    = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
+    cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
     
     # Supervisor deve aprovar a mudança de nível
     supervisor_aprovado = models.BooleanField(default=False)
@@ -174,7 +164,7 @@ class EstabelecimentoContrato(models.Model):
     data_fim           = models.DateField(null=True, blank=True)
     status             = models.CharField(
         max_length=20,
-        choices=[("vigente", "Vigente"), ("vencido", "Vencido"), ("encerrada", "Encerrada"), ("blqueado", "Bloqueado")],
+        choices=[("vigente", "Vigente"), ("vencido", "Vencido"), ("encerrada", "Encerrada"), ("bloqueado", "Bloqueado")],
         default="vigente"
     )
     def __str__(self):
@@ -200,12 +190,17 @@ class Vaga(models.Model):
     contrato           = models.ForeignKey(EstabelecimentoContrato, on_delete=models.CASCADE, null=True, blank=True)
     observacao         = models.CharField(max_length=300, null=True, blank=True)
     data_da_vaga       = models.DateField(null=True, blank=True)
-    status             = models.CharField(
+    status = models.CharField(
         max_length=20,
-        choices=[("aberta", "Aberta"), ("preenchida", "Preenchida"), ("encerrada", "Encerrada"), ("recusada", "Recusada")],
-        default="aberta"
+        choices=[
+            ("disponivel", "Disponível"),
+            ("reservada", "Reservada"),
+            ("ocupada", "Ocupada"),
+            ("finalizada", "Finalizada"),
+            ("cancelada", "Cancelada")
+        ],
+        default="disponivel"
     )
-    
     def __str__(self):
         return (
         f"Vaga {self.id} - "
