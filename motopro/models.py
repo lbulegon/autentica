@@ -149,7 +149,6 @@ class Motoboy_Contrato(models.Model):
 
     def __str__(self):
         return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
-
     
 class Contrato_Item(models.Model):
     TIPO_DADO_CHOICES = [
@@ -159,15 +158,14 @@ class Contrato_Item(models.Model):
         ('float', 'Decimal'),
     ]
 
-    nome = models.CharField(max_length=100)
+    nome          = models.CharField(max_length=100)
     chave_sistema = models.SlugField(unique=True, help_text="Chave usada pelo sistema para leitura do item")
-    tipo_dado = models.CharField(max_length=10, choices=TIPO_DADO_CHOICES)
-    valor_padrao = models.CharField(max_length=100, blank=True, null=True)
-    obrigatorio = models.BooleanField(default=False)
+    tipo_dado     = models.CharField(max_length=10, choices=TIPO_DADO_CHOICES)
+    valor_padrao  = models.CharField(max_length=100, blank=True, null=True)
+    obrigatorio   = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nome
-
 class Estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -207,9 +205,9 @@ class Estabelecimento_Contrato(models.Model):
         return f'{self.estabelecimento.nome} '
 
 class Estabelecimento_Contrato_Item(models.Model):
-    contrato = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')
-    item = models.ForeignKey(Contrato_Item, on_delete=models.CASCADE)
-    valor = models.CharField(max_length=100)
+    contrato  = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')
+    item      = models.ForeignKey(Contrato_Item, on_delete=models.CASCADE)
+    valor     = models.CharField(max_length=100)
 
     class Meta:
         unique_together = ('contrato', 'item')
@@ -218,16 +216,16 @@ class Estabelecimento_Contrato_Item(models.Model):
         return f"{self.item.nome} = {self.valor}" 
 
 class Estabelecimento_Fatura(models.Model):
-    estabelecimento = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
-    data_referencia = models.DateField()
-    valor_total = models.DecimalField(max_digits=10, decimal_places=2)
+    estabelecimento      = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
+    data_referencia      = models.DateField()
+    valor_total          = models.DecimalField(max_digits=10, decimal_places=2)
     quantidade_alocacoes = models.PositiveIntegerField(default=0)  
-    status = models.CharField(
+    status               = models.CharField(
         max_length=20,
         choices=[("aberta", "Aberta"), ("paga", "Paga"), ("vencida", "Vencida")],
         default="aberta"
     )
-    gerada_em = models.DateTimeField(auto_now_add=True)
+    gerada_em            = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Fatura - ({self.estabelecimento.nome}) {self.data_referencia.strftime("%m/%Y")}'
@@ -237,7 +235,7 @@ class Vaga(models.Model):
     contrato           = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, null=True, blank=True)
     observacao         = models.CharField(max_length=300, null=True, blank=True)
     data_da_vaga       = models.DateField(null=True, blank=True)
-    status = models.CharField(
+    status             = models.CharField(
         max_length=20,
         choices=[
             ("disponivel", "Disponível"),
