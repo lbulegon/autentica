@@ -1,13 +1,23 @@
 from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
-from .models import Estabelecimento, SupervisorEstabelecimento,SupervisorMotoboy # ou o caminho correto se estiver em outro lugar
-from .models import Motoboy, Vaga, Supervisor, EstabelecimentoContrato,  AlocacaoMotoboy
+from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
+from .models import Motoboy, Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item, Motoboy_Alocacao,Motoboy_Ranking
+from .models import Slot, Slot_Candidatura, Slot_Vaga
+from .models import Configuracao,  Contrato_Item 
 
+
+admin.site.register(Motoboy_Ranking)
+admin.site.register(Contrato_Item) 
+admin.site.register(Configuracao)
+admin.site.register(Slot)
+admin.site.register(Slot_Candidatura)
+admin.site.register(Slot_Vaga)
 admin.site.register(Estabelecimento)
-admin.site.register(EstabelecimentoContrato)
+admin.site.register(Estabelecimento_Contrato)
+admin.site.register(Estabelecimento_Contrato_Item)
 admin.site.register(Supervisor)
-admin.site.register(SupervisorEstabelecimento)
-admin.site.register(SupervisorMotoboy)
+admin.site.register(Supervisor_Estabelecimento)
+admin.site.register(Supervisor_Motoboy)
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     search_fields = ["nome", "cpf", "telefone"]  # Campo de busca no topo
@@ -26,7 +36,7 @@ class AlocacaoMotoboyAdmin(admin.ModelAdmin):
             obj.turno = obj.vaga.contrato
         super().save_model(request, obj, form, change)
 
-admin.site.register(AlocacaoMotoboy,AlocacaoMotoboyAdmin)
+admin.site.register(Motoboy_Alocacao,AlocacaoMotoboyAdmin)
 
 class VagaAdmin(admin.ModelAdmin):
     list_filter = [
@@ -39,26 +49,26 @@ class VagaAdmin(admin.ModelAdmin):
             object_id = request.resolver_match.kwargs.get("object_id")
             if object_id:
                 try:
-                    vvaga = vaga.objects.get(pk=object_id)
+                    vvaga = Vaga.objects.get(pk=object_id)
                     estabelecimento = vvaga.contrato.estabelecimento
 
-                    supervisor_rel = supervisorestabelecimento.objects.filter(estabelecimento=estabelecimento).first()
+                    supervisor_rel = Supervisor_Estabelecimento.objects.filter(estabelecimento=estabelecimento).first()
                     if supervisor_rel:
                         supervisor = supervisor_rel.supervisor
 
-                        motoboy_ids = supervisormotoboy.objects.filter(
+                        motoboy_ids = Supervisor_Motoboy.objects.filter(
                             supervisor=supervisor).values_list('motoboy_id', flat=True)
 
                         data_vaga = vvaga.data_da_vaga.date() if vvaga.data_da_vaga else None
                         turno = vvaga.contrato
 
-                        motoboys_alocados = alocacaomotoboy.objects.filter(
+                        motoboys_alocados = Motoboy_Alocacao.objects.filter(
                             turno=turno,
                             vaga__data_da_vaga__date=data_vaga,
                             status='alocado'
                         ).values_list('motoboy_id', flat=True)
 
-                        kwargs["queryset"] = motoboy.objects.filter(
+                        kwargs["queryset"] = Motoboy.objects.filter(
                             id__in=motoboy_ids
                         ).exclude(
                             id__in=motoboys_alocados

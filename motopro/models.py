@@ -69,7 +69,7 @@ class Supervisor(models.Model):
         return self.nome
 
 
-class NivelMotoboy(models.Model):
+class Motoboy_Nivel(models.Model):
     nome      = models.CharField(max_length=20, unique=True)
     descricao = models.TextField(blank=True)
     ordem     = models.PositiveIntegerField(unique=True)  # Para ordenação dos rankings
@@ -118,7 +118,7 @@ class Motoboy(models.Model):
     
     created_at   = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at   = models.DateTimeField(auto_now=True)  # Data da última atualização
-    nivel        = models.ForeignKey(NivelMotoboy, on_delete=models.PROTECT)
+    nivel        = models.ForeignKey(Motoboy_Nivel, on_delete=models.PROTECT)
     aceitacao    = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
     cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
     
@@ -128,6 +128,27 @@ class Motoboy(models.Model):
     def __str__(self):
         return self.nome
     
+
+
+
+
+class Contrato_Item(models.Model):
+    TIPO_DADO_CHOICES = [
+        ('boolean', 'Booleano'),
+        ('integer', 'Inteiro'),
+        ('string', 'Texto'),
+        ('float', 'Decimal'),
+    ]
+
+    nome = models.CharField(max_length=100)
+    chave_sistema = models.SlugField(unique=True, help_text="Chave usada pelo sistema para leitura do item")
+    tipo_dado = models.CharField(max_length=10, choices=TIPO_DADO_CHOICES)
+    valor_padrao = models.CharField(max_length=100, blank=True, null=True)
+    obrigatorio = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.nome
+
 class Estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -148,13 +169,14 @@ class Estabelecimento(models.Model):
     def __str__(self):
         return self.nome
 
-class EstabelecimentoContrato(models.Model):
+class Estabelecimento_Contrato(models.Model):
     TURNO_CHOICES = [
         ('dia', 'Turno do Dia'),
         ('noite', 'Turno da Noite'),
         ('madrugada', 'Turno da Madrugada'),
     ]   
-    estabelecimento    = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
+
+    estabelecimento    = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)  # MUDANÇA AQUI
     turno              = models.CharField(max_length=10, choices=TURNO_CHOICES)
     valor_atribuido    = models.FloatField(blank=False, null=False)
     horario_inicio     = models.TimeField()
@@ -164,13 +186,30 @@ class EstabelecimentoContrato(models.Model):
     data_fim           = models.DateField(null=True, blank=True)
     status             = models.CharField(
         max_length=20,
-        choices=[("vigente", "Vigente"), ("vencido", "Vencido"), ("encerrada", "Encerrada"), ("bloqueado", "Bloqueado")],
+        choices=[
+            ("vigente", "Vigente"),
+            ("vencido", "Vencido"),
+            ("encerrada", "Encerrada"),
+            ("bloqueado", "Bloqueado")
+        ],
         default="vigente"
     )
-    def __str__(self):
-       return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
 
-class EstabelecimentoFatura(models.Model):
+    def __str__(self):
+        return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
+
+class Estabelecimento_Contrato_Item(models.Model):
+    contrato = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')
+    item = models.ForeignKey(Contrato_Item, on_delete=models.CASCADE)
+    valor = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ('contrato', 'item')
+
+    def __str__(self):
+        return f"{self.item.nome} = {self.valor}" 
+
+class Estabelecimento_Fatura(models.Model):
     estabelecimento = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
     data_referencia = models.DateField()
     valor_total = models.DecimalField(max_digits=10, decimal_places=2)
@@ -187,7 +226,7 @@ class EstabelecimentoFatura(models.Model):
 
 class Vaga(models.Model):
     id                 = models.AutoField(primary_key=True)
-    contrato           = models.ForeignKey(EstabelecimentoContrato, on_delete=models.CASCADE, null=True, blank=True)
+    contrato           = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, null=True, blank=True)
     observacao         = models.CharField(max_length=300, null=True, blank=True)
     data_da_vaga       = models.DateField(null=True, blank=True)
     status = models.CharField(
@@ -210,7 +249,7 @@ class Vaga(models.Model):
         f"Status: {self.get_status_display()}"
     )
 
-class SupervisorMotoboy(models.Model):
+class Supervisor_Motoboy(models.Model):
     supervisor  = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     created_at  = models.DateTimeField(auto_now_add=True)
@@ -220,7 +259,7 @@ class SupervisorMotoboy(models.Model):
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Motoboy {self.motoboy.nome}"
 
-class SupervisorEstabelecimento(models.Model):
+class Supervisor_Estabelecimento(models.Model):
     supervisor      = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     estabelecimento = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
     created_at      = models.DateTimeField(auto_now_add=True)
@@ -230,9 +269,9 @@ class SupervisorEstabelecimento(models.Model):
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
 
-class AlocacaoMotoboy(models.Model):
+class Motoboy_Alocacao(models.Model):
     vaga                = models.ForeignKey(Vaga, on_delete=models.CASCADE)
-    turno               = models.ForeignKey(EstabelecimentoContrato, on_delete=models.CASCADE)  # onde o turno está definido
+    turno               = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE)  # onde o turno está definido
     motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     entregas_realizadas = models.PositiveIntegerField(default=0)
     status              = models.CharField(
@@ -246,7 +285,7 @@ class AlocacaoMotoboy(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} - {self.turno} - {self.status}"
 
-class CandidaturaMotoboy(models.Model):
+class Motoboy_Candidatura(models.Model):
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
     status      = models.CharField(
@@ -264,7 +303,7 @@ class CandidaturaMotoboy(models.Model):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
 
 """  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
-class RankingMotoboy(models.Model):
+class Motoboy_Ranking(models.Model):
     motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
                                                       ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
@@ -279,15 +318,6 @@ class RankingMotoboy(models.Model):
     
     def __str__(self):
         return f"{self.motoboy.nome} - {self.nivel}"
-
-"""Essa tabela armazena a comissão da MotoPro por cada vaga."""
-class ComissaoMotopro(models.Model):
-    vaga           = models.ForeignKey(Vaga, on_delete=models.CASCADE)
-    comissao       = models.DecimalField(max_digits=8, decimal_places=2)  # Exemplo: 15% da vaga
-    data_pagamento = models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return f"Comissão Vaga {self.vaga.id} - R${self.comissao}"
 
 class Configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[
@@ -335,7 +365,7 @@ class Slot(models.Model):
     def __str__(self):
         return f"{self.estabelecimento.nome} | {self.data} | {self.hora_inicio}-{self.hora_fim}"
 
-class CandidaturaSlot(models.Model):
+class Slot_Candidatura(models.Model):
     STATUS_CHOICES = [
         ('pendente', 'Pendente'),
         ('confirmado', 'Confirmado'),
@@ -354,8 +384,8 @@ class CandidaturaSlot(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} → {self.slot}"
 
-class VagaSlot(models.Model):
-    contrato    = models.ForeignKey(EstabelecimentoContrato, on_delete=models.CASCADE)
+class Slot_Vaga(models.Model):
+    contrato    = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE)
     data        = models.DateField()
     hora_inicio = models.TimeField()
     hora_fim    = models.TimeField()

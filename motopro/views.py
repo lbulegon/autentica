@@ -7,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, EstabelecimentoContrato
+from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelecimento_Contrato
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
 
 
