@@ -128,10 +128,29 @@ class Motoboy(models.Model):
     def __str__(self):
         return self.nome
     
+class Motoboy_Contrato(models.Model):
+    motoboy               = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='contracts')
+    data_inicio           = models.DateField()
+    data_fim              = models.DateField(null=True, blank=True)  # Pode ser em aberto
+    valor_mensal          = models.DecimalField(max_digits=10, decimal_places=2)
+    carga_horaria_semanal = models.IntegerField(help_text="Horas por semana")
+    tipo_contrato         = models.CharField(
+        max_length=50,
+        choices=[
+            ('PJ', 'Pessoa Jurídica'),
+            ('Intermitente', 'Intermitente'),
+            ('Freelancer', 'Freelancer'),
+        ]
+    )
+    descricao_atividades  = models.TextField()
+    ativo                 = models.BooleanField(default=True)
+    criado_em             = models.DateTimeField(auto_now_add=True)
+    atualizado_em         = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
 
-
-
+    
 class Contrato_Item(models.Model):
     TIPO_DADO_CHOICES = [
         ('boolean', 'Booleano'),
@@ -170,18 +189,7 @@ class Estabelecimento(models.Model):
         return self.nome
 
 class Estabelecimento_Contrato(models.Model):
-    TURNO_CHOICES = [
-        ('dia', 'Turno do Dia'),
-        ('noite', 'Turno da Noite'),
-        ('madrugada', 'Turno da Madrugada'),
-    ]   
-
     estabelecimento    = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)  # MUDANÇA AQUI
-    turno              = models.CharField(max_length=10, choices=TURNO_CHOICES)
-    valor_atribuido    = models.FloatField(blank=False, null=False)
-    horario_inicio     = models.TimeField()
-    horario_fim        = models.TimeField()
-    quantidade_vagas   = models.PositiveIntegerField()
     data_inicio        = models.DateField(null=True, blank=True)
     data_fim           = models.DateField(null=True, blank=True)
     status             = models.CharField(
@@ -196,7 +204,7 @@ class Estabelecimento_Contrato(models.Model):
     )
 
     def __str__(self):
-        return f'{self.estabelecimento.nome} - {self.get_turno_display()}'
+        return f'{self.estabelecimento.nome} '
 
 class Estabelecimento_Contrato_Item(models.Model):
     contrato = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')

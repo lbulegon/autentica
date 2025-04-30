@@ -18,7 +18,7 @@ admin.site.register(Estabelecimento_Contrato_Item)
 admin.site.register(Supervisor)
 admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
-@admin.register(Motoboy)
+#@admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     search_fields = ["nome", "cpf", "telefone"]  # Campo de busca no topo
     list_display = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
