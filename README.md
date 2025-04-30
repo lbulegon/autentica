@@ -5,7 +5,10 @@ Para configurar e rodar o ambiente, siga os passos abaixo:
 
 ```bash
 - python -m venv .venv
+Windows
 - .venv\Scripts\activate  
+Linux
+- source .venv/bin/activate
 - railway --version  
 - pip freeze > requirements.txt
 - pip install -r requirements.txt
