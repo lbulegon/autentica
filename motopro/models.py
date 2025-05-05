@@ -182,42 +182,53 @@ class Estabelecimento(models.Model):
                         ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
-
 class Estabelecimento_Contrato(models.Model):
-    estabelecimento    = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)  # MUDANÇA AQUI
-    data_inicio        = models.DateField(null=True, blank=True)
-    data_fim           = models.DateField(null=True, blank=True)
-    status             = models.CharField(
+    estabelecimento   = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)
+    data_inicio       = models.DateField(null=True, blank=True)
+    data_fim          = models.DateField(null=True, blank=True)
+    status = models.CharField(
         max_length=20,
         choices=[
             ("vigente", "Vigente"),
             ("vencido", "Vencido"),
             ("encerrada", "Encerrada"),
-            ("bloqueado", "Bloqueado")
+            ("bloqueado", "Bloqueado"),
         ],
         default="vigente"
     )
 
     def clean(self):
-        if self.itens.filter(item__chave_sistema='permitir_vagas_fixas').exists():
-            chaves_obrigatorias = [
-                'max_vagas_fixas_dia',
-                'max_vagas_fixas_noite',
-                'hora_inicio_dia',
-                'hora_fim_dia',
-                'hora_inicio_noite',
-                'hora_fim_noite',
-            ]
-            faltando = []
-            for chave in chaves_obrigatorias:
-                if not self.itens.filter(item__chave_sistema=chave).exists():
-                    faltando.append(chave)
-            if faltando:
-                raise ValidationError(f"Itens obrigatórios faltando para vagas fixas: {', '.join(faltando)}")
+        chaves_obrigatorias_horarios = [
+            "hora_inicio_dia",
+            "hora_fim_dia",
+            "hora_inicio_noite",
+            "hora_fim_noite",
+        ]
 
+        erros = []
+
+        if self.itens.filter(item__chave_sistema="permite_vaga_fixa").exists():
+            chaves_fixas = ["max_vagas_fixas_dia", "max_vagas_fixas_noite"] + chaves_obrigatorias_horarios
+            faltantes_fixas = [
+                chave for chave in chaves_fixas
+                if not self.itens.filter(item__chave_sistema=chave).exists()
+            ]
+            if faltantes_fixas:
+                erros.append(f"Itens obrigatórios faltando para vagas fixas: {', '.join(faltantes_fixas)}")
+
+        if self.itens.filter(item__chave_sistema="permite_vaga_spot").exists():
+            faltantes_spot = [
+                chave for chave in chaves_obrigatorias_horarios
+                if not self.itens.filter(item__chave_sistema=chave).exists()
+            ]
+            if faltantes_spot:
+                erros.append(f"Itens obrigatórios faltando para vaga spot: {', '.join(faltantes_spot)}")
+
+        if erros:
+            raise ValidationError(" | ".join(erros))
 
     def __str__(self):
-        return f'{self.estabelecimento.nome} '
+        return f'{self.estabelecimento.nome}'
 
 class Estabelecimento_Contrato_Item(models.Model):
     contrato  = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')
