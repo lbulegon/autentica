@@ -78,7 +78,7 @@ class View_VagaList(ListView):
     context_object_name = 'vagas'
 
     def get_queryset(self):
-        return Vaga.objects.select_related('estabelecimento', 'motoboy').all()
+        return Vaga.objects.select_related('Estabelecimento', 'Motoboy').all()
 
 
     def get_context_data(self, **kwargs):
@@ -87,7 +87,7 @@ class View_VagaList(ListView):
 
         # Anexa o contrato do estabelecimento a cada vaga
         for v in vagas:
-            v.contrato = EstabelecimentoContrato.objects.filter(
+            v.contrato = Estabelecimento_Contrato.objects.filter(
                 estabelecimento=v.estabelecimento
             ).first()
 
