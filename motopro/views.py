@@ -88,7 +88,7 @@ class View_VagaList(ListView):
         # Anexa o contrato do estabelecimento a cada vaga
         for v in vagas:
             v.contrato = Estabelecimento_Contrato.objects.filter(
-                estabelecimento=v.estabelecimento
+                estabelecimento = v.contrato.estabelecimento if v.contrato else None
             ).first()
 
         context['vagas'] = vagas
