@@ -80,7 +80,6 @@ class Supervisor(models.Model):
     def __str__(self):
         return self.nome
 
-
 class Contrato_Item(models.Model):
     TIPO_DADO_CHOICES = [
         ('boolean', 'Booleano'),

@@ -74,71 +74,17 @@ def View_Dashboard(request):
 
 class View_VagaList(ListView):
     model = Vaga
-    template_name = 'vagas/vaga_list.html'
-    context_object_name = 'vagas'
+    template_name = 'vagas/vaga_list.html'  # ajuste conforme seu template
+    context_object_name = 'vagas'  # nome da variável usada no template
 
     def get_queryset(self):
-        return Vaga.objects.select_related('Estabelecimento', 'Motoboy').all()
-
+        # Usa select_related para otimizar as consultas ao contrato e estabelecimento
+        return Vaga.objects.select_related('contrato__estabelecimento').all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        vagas = context['vagas']
-
-        # Anexa o contrato do estabelecimento a cada vaga
-        for v in vagas:
-            v.contrato = Estabelecimento_Contrato.objects.filter(
-                estabelecimento=v.estabelecimento
-            ).first()
-
-        context['vagas'] = vagas
-        context['motoboys'] = Motoboy.objects.all()
+        # Aqui você já tem 'vagas' no context, pois foi definido via context_object_name
         return context
-
-    def post(self, request, *args, **kwargs):
-        if 'salvar_vaga' in request.POST:
-            vaga_id = request.POST.get("vaga_id")
-            motoboy_id = request.POST.get("motoboy_id")
-
-            try:
-                vaga_obj = Vaga.objects.get(id=vaga_id)
-            except Vaga.DoesNotExist:
-                messages.error(request, "Vaga não encontrada.")
-                return redirect('vaga-list')
-
-            if motoboy_id:
-                try:
-                    motoboy_selecionado = Motoboy.objects.get(id=motoboy_id)
-                    if motoboy_selecionado.status == "livre":
-                        vaga_obj.motoboy = motoboy_selecionado
-                        vaga_obj.save()
-
-                        motoboy_selecionado.status = "alocado"
-                        motoboy_selecionado.save()
-
-                        messages.success(request, f"Motoboy {motoboy_selecionado} alocado com sucesso!")
-                    else:
-                        messages.error(request, f"Motoboy {motoboy_selecionado} já está alocado.")
-                except Motoboy.DoesNotExist:
-                    messages.error(request, "Motoboy não encontrado.")
-            else:
-                motoboy_anterior = vaga_obj.motoboy
-                print("Motoboy anterior:", motoboy_anterior)
-
-                if motoboy_anterior:
-                    motoboy_anterior.status = "livre"
-                    motoboy_anterior.save()
-                    print(f"Status do motoboy {motoboy_anterior} após save:", motoboy_anterior.status)
-
-                vaga_obj.motoboy = None
-                vaga_obj.save()
-                print("Motoboy removido da vaga:", vaga_obj.id)
-
-                messages.success(request, "Motoboy removido da vaga.")
-
-            return redirect('vaga-list')
-
-        return super().post(request, *args, **kwargs)
 
 
 class View_VagaCreate(CreateView):
