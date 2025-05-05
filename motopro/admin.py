@@ -2,16 +2,16 @@ from django.contrib import admin
 from django.contrib.admin import DateFieldListFilter
 from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
 from .models import Motoboy, Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item, Motoboy_Alocacao,Motoboy_Ranking
-from .models import Slot, Slot_Candidatura, Slot_Vaga
+#from .models import Slot, Slot_Candidatura, Slot_Vaga
 from .models import Configuracao,  Contrato_Item 
 
 
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
-admin.site.register(Slot)
-admin.site.register(Slot_Candidatura)
-admin.site.register(Slot_Vaga)
+# admin.site.register(Slot)
+# admin.site.register(Slot_Candidatura)
+# admin.site.register(Slot_Vaga)
 admin.site.register(Estabelecimento)
 admin.site.register(Estabelecimento_Contrato)
 admin.site.register(Estabelecimento_Contrato_Item)

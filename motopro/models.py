@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -24,7 +23,6 @@ def validate_placa(value):
     placa_regex = r'^[A-Z]{3}-[A-Z0-9]{4}$'  # Regex para verificar formato de placa (ex: ABC-1234 ou ABC-1A2B)
     if not re.match(placa_regex, value):
         raise ValidationError("Placa da moto deve seguir o formato ABC-1234 ou ABC-1A2B.")
-
 
 class Estado(models.Model):
     id     = models.AutoField(primary_key=True)
@@ -67,7 +65,6 @@ class Supervisor(models.Model):
                         ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
-
 
 class Motoboy_Nivel(models.Model):
     nome      = models.CharField(max_length=20, unique=True)
@@ -231,26 +228,32 @@ class Estabelecimento_Fatura(models.Model):
         return f'Fatura - ({self.estabelecimento.nome}) {self.data_referencia.strftime("%m/%Y")}'
 
 class Vaga(models.Model):
-    id                 = models.AutoField(primary_key=True)
-    contrato           = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, null=True, blank=True)
-    observacao         = models.CharField(max_length=300, null=True, blank=True)
-    data_da_vaga       = models.DateField(null=True, blank=True)
-    status             = models.CharField(
+    TIPO_VAGA_CHOICES = [
+        ('fixa', 'Fixa'),
+        ('spot', 'Spot'),
+    ]
+
+    id                    = models.AutoField(primary_key=True)
+    contrato              = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, null=True, blank=True)
+    tipo_vaga             = models.CharField(max_length=10, choices=TIPO_VAGA_CHOICES,  blank=True,    null=True,)
+    observacao            = models.CharField(max_length=300, null=True, blank=True)
+    data_da_vaga          = models.DateField(null=True, blank=True)
+    hora_inicio_padrao    = models.TimeField(default='00:00')
+    hora_fim_padrao       = models.TimeField(default='00:00')
+    status                = models.CharField(
         max_length=20,
         choices=[
-            ("disponivel", "Disponível"),
+            ("aberta", "Aberta"),
             ("reservada", "Reservada"),
-            ("ocupada", "Ocupada"),
             ("finalizada", "Finalizada"),
             ("cancelada", "Cancelada")
         ],
-        default="disponivel"
+        default="aberta"
     )
     def __str__(self):
         return (
         f"Vaga {self.id} - "
         f"{self.contrato.estabelecimento.nome if self.contrato and self.contrato.estabelecimento else 'Sem estabelecimento'} | "
-        f"Turno: {self.contrato.turno if self.contrato and self.contrato.turno else 'Sem turno'} | "
         f"Data: {self.data_da_vaga.strftime('%d/%m/%Y') if self.data_da_vaga else 'Sem data'} | "
         f"Status: {self.get_status_display()}"
     )
@@ -277,7 +280,6 @@ class Supervisor_Estabelecimento(models.Model):
 
 class Motoboy_Alocacao(models.Model):
     vaga                = models.ForeignKey(Vaga, on_delete=models.CASCADE)
-    turno               = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE)  # onde o turno está definido
     motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     entregas_realizadas = models.PositiveIntegerField(default=0)
     status              = models.CharField(
@@ -286,10 +288,10 @@ class Motoboy_Alocacao(models.Model):
         default='livre'
     )
     class Meta:
-        unique_together = ('motoboy', 'vaga', 'turno')
+        unique_together = ('motoboy', 'vaga')
 
     def __str__(self):
-        return f"{self.motoboy.nome} - {self.turno} - {self.status}"
+        return f"{self.motoboy.nome} - {self.status}"
 
 class Motoboy_Candidatura(models.Model):
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
@@ -341,69 +343,13 @@ class Configuracao(models.Model):
     def __str__(self):
         return "Configurações do Sistema"
 
-class Slot(models.Model):
-    TIPO_SLOT_CHOICES = [
-        ('previsto', 'Previsto'),
-        ('extra', 'Extra'),
-        ('urgente', 'Urgente'),
-    ]
 
-    STATUS_CHOICES = [
-        ('ativo', 'Ativo'),
-        ('preenchido', 'Preenchido'),
-        ('cancelado', 'Cancelado'),
-    ]
 
-    estabelecimento     = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE, related_name='slots')
-    data                = models.DateField()
-    hora_inicio         = models.TimeField()
-    hora_fim            = models.TimeField()
-    quantidade_motoboys = models.PositiveIntegerField()
-    tipo_slot           = models.CharField(max_length=10, choices=TIPO_SLOT_CHOICES, default='previsto')
-    status              = models.CharField(max_length=12, choices=STATUS_CHOICES, default='ativo')
-    criado_em           = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(check=models.Q(quantidade_motoboys__gt=0), name='quantidade_motoboys_positiva')
-        ]
 
-    def __str__(self):
-        return f"{self.estabelecimento.nome} | {self.data} | {self.hora_inicio}-{self.hora_fim}"
 
-class Slot_Candidatura(models.Model):
-    STATUS_CHOICES = [
-        ('pendente', 'Pendente'),
-        ('confirmado', 'Confirmado'),
-        ('recusado', 'Recusado'),
-        ('cancelado', 'Cancelado'),
-    ]
 
-    slot             = models.ForeignKey(Slot, on_delete=models.CASCADE, related_name='candidaturas')
-    motoboy          = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='candidaturas_slot')
-    status           = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
-    data_candidatura = models.DateTimeField(default=timezone.now)
 
-    class Meta:
-        unique_together = ('slot', 'motoboy')
 
-    def __str__(self):
-        return f"{self.motoboy.nome} → {self.slot}"
 
-class Slot_Vaga(models.Model):
-    contrato    = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE)
-    data        = models.DateField()
-    hora_inicio = models.TimeField()
-    hora_fim    = models.TimeField()
-    motoboy     = models.ForeignKey(Motoboy, null=True, blank=True, on_delete=models.SET_NULL)
-    status      = models.CharField(
-        max_length=20,
-        choices=[("disponivel", "Disponível"), ("ocupada", "Ocupada"), ("cancelada", "Cancelada")],
-        default="disponivel"
-    )
 
-    class Meta:
-        unique_together = ('contrato', 'data', 'hora_inicio')
-
-    def __str__(self):
-        return f'{self.contrato.estabelecimento.nome} | {self.data} | {self.hora_inicio} - {self.hora_fim}'
