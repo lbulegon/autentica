@@ -78,8 +78,8 @@ class View_VagaList(ListView):
     context_object_name = 'vagas'
 
     def get_queryset(self):
-        return Vaga.objects.select_related('Estabelecimento_Contrato').all()
-
+        # Usa select_related para otimizar as consultas ao contrato e estabelecimento
+        return Vaga.objects.select_related('contrato__estabelecimento').all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -94,6 +94,8 @@ class View_VagaList(ListView):
         context['vagas'] = vagas
         context['motoboys'] = Motoboy.objects.all()
         return context
+
+
 
     def post(self, request, *args, **kwargs):
         if 'salvar_vaga' in request.POST:
@@ -139,6 +141,8 @@ class View_VagaList(ListView):
             return redirect('vaga-list')
 
         return super().post(request, *args, **kwargs)
+
+
 
 
 class View_VagaCreate(CreateView):
