@@ -198,6 +198,24 @@ class Estabelecimento_Contrato(models.Model):
         default="vigente"
     )
 
+    def clean(self):
+        if self.itens.filter(item__chave_sistema='permitir_vagas_fixas').exists():
+            chaves_obrigatorias = [
+                'max_vagas_fixas_dia',
+                'max_vagas_fixas_noite',
+                'hora_inicio_dia',
+                'hora_fim_dia',
+                'hora_inicio_noite',
+                'hora_fim_noite',
+            ]
+            faltando = []
+            for chave in chaves_obrigatorias:
+                if not self.itens.filter(item__chave_sistema=chave).exists():
+                    faltando.append(chave)
+            if faltando:
+                raise ValidationError(f"Itens obrigatórios faltando para vagas fixas: {', '.join(faltando)}")
+
+
     def __str__(self):
         return f'{self.estabelecimento.nome} '
 
