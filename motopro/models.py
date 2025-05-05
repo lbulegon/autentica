@@ -4,7 +4,10 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 import re
-from django.utils import timezone
+
+from decimal import Decimal
+
+from sympy import Sum
 
 # Função de validação para CPF
 def validate_cpf(value):
@@ -23,6 +26,17 @@ def validate_placa(value):
     placa_regex = r'^[A-Z]{3}-[A-Z0-9]{4}$'  # Regex para verificar formato de placa (ex: ABC-1234 ou ABC-1A2B)
     if not re.match(placa_regex, value):
         raise ValidationError("Placa da moto deve seguir o formato ABC-1234 ou ABC-1A2B.")
+
+
+class Categoria_Desconto(models.Model):
+    nome         = models.CharField(max_length=100, unique=True)
+    descricao    = models.TextField(blank=True)
+    ativo        = models.BooleanField(default=True)
+    criado_em    = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nome
 
 class Estado(models.Model):
     id     = models.AutoField(primary_key=True)
@@ -66,6 +80,24 @@ class Supervisor(models.Model):
     def __str__(self):
         return self.nome
 
+
+class Contrato_Item(models.Model):
+    TIPO_DADO_CHOICES = [
+        ('boolean', 'Booleano'),
+        ('integer', 'Inteiro'),
+        ('string', 'Texto'),
+        ('float', 'Decimal'),
+    ]
+
+    nome          = models.CharField(max_length=100)
+    chave_sistema = models.SlugField(unique=True, help_text="Chave usada pelo sistema para leitura do item")
+    tipo_dado     = models.CharField(max_length=10, choices=TIPO_DADO_CHOICES)
+    valor_padrao  = models.CharField(max_length=100, blank=True, null=True)
+    obrigatorio   = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.nome
+
 class Motoboy_Nivel(models.Model):
     nome      = models.CharField(max_length=20, unique=True)
     descricao = models.TextField(blank=True)
@@ -76,7 +108,6 @@ class Motoboy_Nivel(models.Model):
 
     class Meta:
         ordering = ['ordem']
-
 
 class Motoboy(models.Model):
     id                = models.AutoField(primary_key=True)
@@ -146,23 +177,21 @@ class Motoboy_Contrato(models.Model):
 
     def __str__(self):
         return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
-    
-class Contrato_Item(models.Model):
-    TIPO_DADO_CHOICES = [
-        ('boolean', 'Booleano'),
-        ('integer', 'Inteiro'),
-        ('string', 'Texto'),
-        ('float', 'Decimal'),
-    ]
 
-    nome          = models.CharField(max_length=100)
-    chave_sistema = models.SlugField(unique=True, help_text="Chave usada pelo sistema para leitura do item")
-    tipo_dado     = models.CharField(max_length=10, choices=TIPO_DADO_CHOICES)
-    valor_padrao  = models.CharField(max_length=100, blank=True, null=True)
-    obrigatorio   = models.BooleanField(default=False)
+class Motoboy_Desconto(models.Model):
+    motoboy         = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='descontos')
+    categoria       = models.ForeignKey(Categoria_Desconto, on_delete=models.PROTECT, related_name='descontos')
+    data            = models.DateField()
+    descricao       = models.TextField(help_text="Motivo do desconto ou observações")
+    valor           = models.DecimalField(max_digits=10, decimal_places=2)
+    aplicado_por    = models.CharField(max_length=100, help_text="Nome do responsável pelo desconto")
+    ativo           = models.BooleanField(default=True)
+    criado_em       = models.DateTimeField(auto_now_add=True)
+    atualizado_em   = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.nome
+        return f"{self.tipo_desconto} - {self.motoboy.nome_completo} - R$ {self.valor:.2f}"
+
 class Estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -186,7 +215,10 @@ class Estabelecimento_Contrato(models.Model):
     estabelecimento   = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)
     data_inicio       = models.DateField(null=True, blank=True)
     data_fim          = models.DateField(null=True, blank=True)
-    status = models.CharField(
+    valor_vaga_fixa   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Vaga Fixa"    )
+    valor_vaga_spot   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Vaga Spot"    )
+    valor_tele_extra   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Tele Extra"    )
+    status            = models.CharField(
         max_length=20,
         choices=[
             ("vigente", "Vigente"),
@@ -227,6 +259,71 @@ class Estabelecimento_Contrato(models.Model):
         if erros:
             raise ValidationError(" | ".join(erros))
 
+    def get_valor_item(self, chave):
+        item = self.itens.filter(item__chave_sistema=chave).first()
+        if item:
+            return Decimal(item.valor)
+    
+        # fallback para campo direto
+        if hasattr(self, chave):
+            valor = getattr(self, chave)
+            return valor if valor is not None else Decimal("0.00")
+    
+        return Decimal("0.00")
+
+
+    def calcular_pagamentos(self, motoboy, data_inicio, data_fim):
+        """
+        Função para calcular os valores que o estabelecimento deve pagar
+        e o valor que o motoboy deve receber durante um período específico.
+        """
+        # Verificar se o contrato está ativo
+        if self.status != "vigente":
+            return {"erro": "Contrato não está ativo para cálculo."}
+
+        # Recuperar valores do contrato
+        valor_fixa   = self.get_valor_item("valor_vaga_fixa")
+        valor_spot   = self.get_valor_item("valor_vaga_spot")
+        valor_extra  = self.get_valor_item("valor_tele_extra")
+
+        # Calcular quantidade de vagas (fixas, spot e tele extra)
+        vagas = motoboy.vagas.filter(data__range=(data_inicio, data_fim))
+
+        total_fixas      = vagas.filter(tipo_vaga="fixa").count()
+        total_spot       = vagas.filter(tipo_vaga="spot").count()
+        total_extras     = vagas.filter(tipo_vaga="extra").count()
+
+        # Calcular descontos
+        total_descontos = motoboy.descontos.filter(
+            data__range=(data_inicio, data_fim),
+            ativo=True
+        ).aggregate(total=Sum('valor'))['total'] or Decimal("0.00")
+
+        # Cálculo total do pagamento para o estabelecimento
+        total_estab_paga = (
+            (total_fixas * valor_fixa) +
+            (total_spot * valor_spot) +
+            (total_extras * valor_extra)
+        )
+
+        # Cálculo total a ser recebido pelo motoboy
+        total_motoboy_recebe = total_estab_paga - total_descontos
+
+        return {
+            "motoboy": motoboy.nome_completo,
+            "estabelecimento": self.estabelecimento.nome,
+            "período": f"{data_inicio} a {data_fim}",
+            "vagas_fixas": total_fixas,
+            "vagas_spot": total_spot,
+            "teles_extra": total_extras,
+            "valor_unit_fixa": valor_fixa,
+            "valor_unit_spot": valor_spot,
+            "valor_unit_extra": valor_extra,
+            "total_estabelecimento_paga": total_estab_paga,
+            "total_descontos": total_descontos,
+            "total_motoboy_recebe": total_motoboy_recebe,
+        }
+
     def __str__(self):
         return f'{self.estabelecimento.nome}'
 
@@ -242,11 +339,14 @@ class Estabelecimento_Contrato_Item(models.Model):
         return f"{self.item.nome} = {self.valor}" 
 
 class Estabelecimento_Fatura(models.Model):
-    estabelecimento      = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
-    data_referencia      = models.DateField()
-    valor_total          = models.DecimalField(max_digits=10, decimal_places=2)
-    quantidade_alocacoes = models.PositiveIntegerField(default=0)  
-    status               = models.CharField(
+    estabelecimento                 = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
+    data_referencia                 = models.DateField()
+    valor_vaga_fixa                 = models.DecimalField(max_digits=10, decimal_places=2,  default=Decimal("0.00"))
+    valor_tele_extra                = models.DecimalField(max_digits=10, decimal_places=2,  default=Decimal("0.00"))
+    valor_vaga_spot                 = models.DecimalField(max_digits=10, decimal_places=2,  default=Decimal("0.00"))
+    valor_total                     = models.DecimalField(max_digits=10, decimal_places=2,  default=Decimal("0.00"))
+    quantidade_alocacoes            = models.PositiveIntegerField(default=0)  
+    status                          = models.CharField(
         max_length=20,
         choices=[("aberta", "Aberta"), ("paga", "Paga"), ("vencida", "Vencida")],
         default="aberta"
@@ -260,6 +360,7 @@ class Vaga(models.Model):
     TIPO_VAGA_CHOICES = [
         ('fixa', 'Fixa'),
         ('spot', 'Spot'),
+        ('extra', 'Tele Extra'), #
     ]
 
     id                    = models.AutoField(primary_key=True)
