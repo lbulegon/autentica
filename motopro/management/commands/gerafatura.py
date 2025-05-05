@@ -4,8 +4,6 @@ from django.db.models import Q
 from decimal import Decimal
 from datetime import date
 from motopro.models import Vaga, Estabelecimento_Fatura, Estabelecimento_Contrato, Estabelecimento
-
-
 class Command(BaseCommand):
     help = 'Gera faturas mensais por estabelecimento com base nas vagas utilizadas no mês corrente'
 
