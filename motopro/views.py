@@ -95,8 +95,6 @@ class View_VagaList(ListView):
         context['motoboys'] = Motoboy.objects.all()
         return context
 
-
-
     def post(self, request, *args, **kwargs):
         if 'salvar_vaga' in request.POST:
             vaga_id = request.POST.get("vaga_id")
@@ -141,9 +139,6 @@ class View_VagaList(ListView):
             return redirect('vaga-list')
 
         return super().post(request, *args, **kwargs)
-
-
-
 
 class View_VagaCreate(CreateView):
     model         = Vaga
