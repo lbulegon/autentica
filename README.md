@@ -22,9 +22,7 @@ Linux
 - python manage.py gerafatura
 - python manage.py escanear_portas --host 127.0.0.1 --inicio 31400 --fim 31409
 
-
 https://autentica-desenvolvimento.up.railway.app/
-
 
 ## 🏢 Persona: Estabelecimento
 

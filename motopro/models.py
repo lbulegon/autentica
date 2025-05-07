@@ -373,6 +373,7 @@ class Vaga(models.Model):
         max_length=20,
         choices=[
             ("aberta", "Aberta"),
+            ("alocado", "Alocado"),
             ("reservada", "Reservada"),
             ("finalizada", "Finalizada"),
             ("cancelada", "Cancelada")
@@ -419,6 +420,17 @@ class Motoboy_Alocacao(models.Model):
     class Meta:
         unique_together = ('motoboy', 'vaga')
 
+
+    def save(self, *args, **kwargs):
+        # Salva o Motoboy_Alocacao
+        super().save(*args, **kwargs)
+
+        # Atualiza o status da vaga, se necessário
+        if self.status == 'alocado' and self.vaga.status != 'alocado':
+            self.vaga.status = 'alocado'
+            self.vaga.save()
+
+    
     def __str__(self):
         return f"{self.motoboy.nome} - {self.status}"
 
