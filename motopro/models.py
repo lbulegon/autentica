@@ -407,27 +407,28 @@ class Supervisor_Estabelecimento(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
-
 class Motoboy_Alocacao(models.Model):
-    vaga                = models.ForeignKey(Vaga, on_delete=models.CASCADE)
+    vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
     motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     entregas_realizadas = models.PositiveIntegerField(default=0)
-    class Meta:
-        unique_together = ('motoboy', 'vaga')
-
 
     def save(self, *args, **kwargs):
-        # Salva o Motoboy_Alocacao
         super().save(*args, **kwargs)
-
-        # Atualiza o status da vaga, se necessário
-        if self.status == 'alocado' and self.vaga.status != 'alocado':
+        # Atualiza o status da vaga para 'alocado'
+        if self.vaga.status != 'alocado':
             self.vaga.status = 'alocado'
             self.vaga.save()
 
-    
+    def delete(self, *args, **kwargs):
+        vaga = self.vaga  # guarda referência antes de deletar
+        super().delete(*args, **kwargs)
+        # Como só pode haver um motoboy, ao deletar volta para 'aberta'
+        vaga.status = 'aberta'
+        vaga.save()
+
     def __str__(self):
-        return f"{self.motoboy.nome} - {self.status}"
+        return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
+
 
 class Motoboy_Candidatura(models.Model):
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")

@@ -4,7 +4,9 @@ from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motob
 from .models import Motoboy, Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item, Motoboy_Alocacao,Motoboy_Ranking
 #from .models import Slot, Slot_Candidatura, Slot_Vaga
 from .models import Configuracao,  Contrato_Item 
-
+from django.shortcuts import redirect, get_object_or_404
+from django.utils.html import format_html
+from django.urls import path
 
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy)
@@ -28,16 +30,49 @@ class MotoboyAdmin(admin.ModelAdmin):
 #admin.site.register(alocacaomotoboy)
 
 #@admin.register(alocacaomotoboy)
-class AlocacaoMotoboyAdmin(admin.ModelAdmin):
-    fields = ['vaga', 'motoboy', 'entregas_realizadas' ,'status']  # Exibe só o que você quer
 
-    def save_model(self, request, obj, form, change):
-        # Preenche o campo 'turno' automaticamente a partir da vaga
-        if obj.vaga and obj.vaga.contrato:
-            obj.turno = obj.vaga.contrato
-        super().save_model(request, obj, form, change)
+class MotoboyAlocacaoAdmin(admin.ModelAdmin):
+    list_display = ('vaga', 'motoboy', 'entregas_realizadas', 'desalocar_botao')
+    list_filter = ('vaga__status', 'motoboy')
+    search_fields = ('vaga__id', 'motoboy__nome')
 
-admin.site.register(Motoboy_Alocacao,AlocacaoMotoboyAdmin)
+    def get_form(self, request, obj=None, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        if not obj:
+            form.base_fields['vaga'].queryset = Vaga.objects.filter(status='aberta')
+        else:
+            form.base_fields['vaga'].queryset = Vaga.objects.filter(pk=obj.vaga.pk)
+            form.base_fields['vaga'].disabled = True
+        return form
+
+    def desalocar_botao(self, obj):
+        return format_html(
+            '<a class="button" href="{}">Desalocar</a>',
+            f'../desalocar/{obj.id}/'
+        )
+    desalocar_botao.short_description = 'Ações'
+    desalocar_botao.allow_tags = True
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('desalocar/<int:alocacao_id>/', self.admin_site.admin_view(self.desalocar_view), name='desalocar_motoboy'),
+        ]
+        return custom_urls + urls
+
+    def desalocar_view(self, request, alocacao_id):
+        alocacao = get_object_or_404(Motoboy_Alocacao, pk=alocacao_id)
+        vaga = alocacao.vaga
+
+        # Remove a alocação
+        alocacao.delete()
+
+        # Atualiza status da vaga para aberta
+        vaga.status = 'aberta'
+        vaga.save()
+
+        self.message_user(request, f"Motoboy desalocado da vaga {vaga.id} com sucesso!", level=messages.SUCCESS)
+        return redirect(f'/admin/app_nome/motoboy_alocacao/')  # troque `app_nome` pelo nome real da sua app
 
 class VagaAdmin(admin.ModelAdmin):
     list_filter = [
