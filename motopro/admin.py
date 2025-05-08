@@ -6,12 +6,11 @@ from .models import Motoboy, Motoboy_Repasse, Motoboy_Alocacao, Motoboy_Ranking
 from .models import Configuracao, Contrato_Item
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.html import format_html
-from django.urls import path
+from django.urls import path, reverse
 from datetime import date
 from .utils import calcular_repasse_diario
 
-admin.site.register(Motoboy_Ranking)
-admin.site.register(Motoboy_Repasse)
+
 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
@@ -22,6 +21,8 @@ admin.site.register(Supervisor)
 admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
 
+admin.site.register(Motoboy_Ranking)
+admin.site.register(Motoboy_Repasse)
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'gerar_repasse_link')
@@ -43,12 +44,9 @@ class MotoboyAdmin(admin.ModelAdmin):
         hoje = date.today()
         repasse = calcular_repasse_diario(motoboy, hoje)
         messages.success(request, f"Repasse gerado: R$ {repasse.valor:.2f} em {repasse.data_referencia}")
-        return redirect(f'/admin/your_app/motoboy/{motoboy_id}/change/')
-
-
-
-
-
+        change_url = reverse('admin:motopro_motoboy_change', args=[motoboy_id])
+        return redirect(change_url)
+    
 admin.site.register(Motoboy_Alocacao)
 
 

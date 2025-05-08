@@ -435,7 +435,7 @@ class Motoboy_Alocacao(models.Model):
 class Motoboy_Repasse(models.Model):
     TIPO_REPASSE_CHOICES = [
         ('fixo', 'Repasse Fixo'),
-        ('extra', 'Repasse Extra'),
+        ('adiantamento', 'Repasse de Adiantamento'),
         ('bonus', 'Bônus'),
         ('ajuste', 'Ajuste Manual'),
         ('outro', 'Outro'),
