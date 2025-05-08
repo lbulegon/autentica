@@ -4,12 +4,12 @@ from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motob
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
 from .models import Motoboy, Motoboy_Repasse, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.html import format_html
 from django.urls import path, reverse
 from datetime import date
 from .utils import calcular_repasse_diario
-
+from .forms import RepasseManualForm  # você deve criar esse forms.py
 
 
 admin.site.register(Contrato_Item) 
@@ -23,6 +23,10 @@ admin.site.register(Supervisor_Motoboy)
 
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy_Repasse)
+
+
+
+
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'gerar_repasse_link')
@@ -30,23 +34,43 @@ class MotoboyAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('<int:motoboy_id>/gerar-repasse/', self.admin_site.admin_view(self.gerar_repasse_view), name='gerar-repasse'),
+            path('<int:motoboy_id>/gerar-repasse/', self.admin_site.admin_view(self.gerar_repasse_view), name='motoboy-gerar-repasse'),
         ]
         return custom_urls + urls
 
     def gerar_repasse_link(self, obj):
-        return format_html('<a class="button" href="{}">Gerar Repasse de Hoje</a>', f'{obj.id}/gerar-repasse/')
+        url = reverse('admin:motoboy-gerar-repasse', args=[obj.id])
+        return format_html('<a class="button" href="{}">Gerar Repasse Manual</a>', url)
     gerar_repasse_link.short_description = 'Repasse'
     gerar_repasse_link.allow_tags = True
 
     def gerar_repasse_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
-        hoje = date.today()
-        repasse = calcular_repasse_diario(motoboy, hoje)
-        messages.success(request, f"Repasse gerado: R$ {repasse.valor:.2f} em {repasse.data_referencia}")
-        changelist_url = reverse('admin:motopro_motoboy_changelist')
-        return redirect(changelist_url)
-    
+
+        if request.method == 'POST':
+            form = RepasseManualForm(request.POST)
+            if form.is_valid():
+                data_ref = date.today()
+
+                repasse = Motoboy_Repasse.objects.create(
+                    motoboy=motoboy,
+                    data_referencia=data_ref,
+                    valor=form.cleaned_data['valor'],
+                    tipo_repasse=form.cleaned_data['tipo_repasse'],
+                    observacao=form.cleaned_data['observacao'],
+                )
+
+                messages.success(request, f"Repasse registrado: R$ {repasse.valor:.2f} para {motoboy.nome}")
+                return redirect(reverse('admin:motopro_motoboy_changelist'))
+        else:
+            form = RepasseManualForm()
+
+        return render(request, 'admin/motoboy_gerar_repasse.html', {
+            'form': form,
+            'motoboy': motoboy,
+        })
+
+
 admin.site.register(Motoboy_Alocacao)
 
 

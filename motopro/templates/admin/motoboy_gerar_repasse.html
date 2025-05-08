@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h2>Gerar Repasse Manual para {{ motoboy.nome }}</h2>
+  <form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Registrar Repasse" class="default">
+    <a href="{% url 'admin:motopro_motoboy_changelist' %}">Cancelar</a>
+  </form>
+{% endblock %}

@@ -267,6 +267,13 @@ class View_SupervisorDelete(DeleteView):
     template_name = 'supervisor/supervisor_confirm_delete.html'
     success_url   = reverse_lazy('supervisor-list')
 
+
+
+
+
+
+
+
 ##class EmpresaListView(ListView):
 #    model = empresa
 #    template_name = 'empresa/empresa_list.html'
