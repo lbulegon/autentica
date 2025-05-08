@@ -29,9 +29,9 @@ class MotoboyAdmin(admin.ModelAdmin):
     ordering        = ["nome"]  # Ordenação padrão
 #admin.site.register(alocacaomotoboy)
 
-#@admin.register(alocacaomotoboy)
+admin.site.register(Motoboy_Alocacao)
 
-class MotoboyAlocacaoAdmin(admin.ModelAdmin):
+"""class MotoboyAlocacaoAdmin(admin.ModelAdmin):
     list_display = ('vaga', 'motoboy', 'entregas_realizadas', 'desalocar_botao')
     list_filter = ('vaga__status', 'motoboy')
     search_fields = ('vaga__id', 'motoboy__nome')
@@ -74,6 +74,8 @@ class MotoboyAlocacaoAdmin(admin.ModelAdmin):
         self.message_user(request, f"Motoboy desalocado da vaga {vaga.id} com sucesso!", level=messages.SUCCESS)
         return redirect(f'/admin/app_nome/motoboy_alocacao/')  # troque `app_nome` pelo nome real da sua app
 admin.site.register(Motoboy_Alocacao, MotoboyAlocacaoAdmin)
+
+"""
 
 
 class VagaAdmin(admin.ModelAdmin):
