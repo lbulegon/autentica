@@ -32,7 +32,7 @@
             <form method="post" action="{% url 'vaga-list' %}">
                 {% csrf_token %}
                 <input type="hidden" name="vaga_id" value="{{ vaga.id }}">
-                <td style="padding: 10px; border: 1px solid #ccc;">{{ vaga.estabelecimento }}</td>
+                <td style="padding: 10px; border: 1px solid #ccc;">{{ vaga.contrato.estabelecimento }}</td>
                 <td style="padding: 10px; border: 1px solid #ccc;">{{ vaga.data_da_vaga }}</td>
                 <td style="padding: 10px; border: 1px solid #ccc;">{{ vaga.contrato.turno  }}</td>
 

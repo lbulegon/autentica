@@ -412,11 +412,6 @@ class Motoboy_Alocacao(models.Model):
     vaga                = models.ForeignKey(Vaga, on_delete=models.CASCADE)
     motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
     entregas_realizadas = models.PositiveIntegerField(default=0)
-    status              = models.CharField(
-        max_length=20,
-        choices=[('livre', 'Livre'), ('alocado', 'Alocado')],
-        default='livre'
-    )
     class Meta:
         unique_together = ('motoboy', 'vaga')
 

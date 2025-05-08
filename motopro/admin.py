@@ -7,6 +7,7 @@ from .models import Configuracao,  Contrato_Item
 
 
 admin.site.register(Motoboy_Ranking)
+admin.site.register(Motoboy)
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
 # admin.site.register(Slot)
@@ -20,10 +21,10 @@ admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
 #@admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
-    search_fields = ["nome", "cpf", "telefone"]  # Campo de busca no topo
-    list_display = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
-    list_filter = [ "status"]  # Filtros laterais
-    ordering = ["nome"]  # Ordenação padrão
+    search_fields   = ["nome", "cpf", "telefone"]  # Campo de busca no topo
+    list_display    = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
+    list_filter     = [ "status"]  # Filtros laterais
+    ordering        = ["nome"]  # Ordenação padrão
 #admin.site.register(alocacaomotoboy)
 
 #@admin.register(alocacaomotoboy)
