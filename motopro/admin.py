@@ -73,6 +73,8 @@ class MotoboyAlocacaoAdmin(admin.ModelAdmin):
 
         self.message_user(request, f"Motoboy desalocado da vaga {vaga.id} com sucesso!", level=messages.SUCCESS)
         return redirect(f'/admin/app_nome/motoboy_alocacao/')  # troque `app_nome` pelo nome real da sua app
+admin.site.register(Motoboy_Alocacao, MotoboyAlocacaoAdmin)
+
 
 class VagaAdmin(admin.ModelAdmin):
     list_filter = [
