@@ -407,6 +407,8 @@ class Supervisor_Estabelecimento(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
+
+
 class Motoboy_Alocacao(models.Model):
     vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
     motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
@@ -428,6 +430,29 @@ class Motoboy_Alocacao(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
+
+
+class Motoboy_Repasse(models.Model):
+    TIPO_REPASSE_CHOICES = [
+        ('fixo', 'Repasse Fixo'),
+        ('extra', 'Repasse Extra'),
+        ('bonus', 'Bônus'),
+        ('ajuste', 'Ajuste Manual'),
+        ('outro', 'Outro'),
+    ]
+    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
+    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
+    data_pagamento  = models.DateField(auto_now_add=True)
+    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
+    observacao      = models.TextField(blank=True, null=True)
+    criado_em       = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-data_pagamento']
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
 
 
 class Motoboy_Candidatura(models.Model):

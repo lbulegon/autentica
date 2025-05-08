@@ -1,81 +1,57 @@
-from django.contrib import admin
+from django.contrib import admin, messages 
 from django.contrib.admin import DateFieldListFilter
 from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
-from .models import Motoboy, Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item, Motoboy_Alocacao,Motoboy_Ranking
-#from .models import Slot, Slot_Candidatura, Slot_Vaga
-from .models import Configuracao,  Contrato_Item 
+from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
+from .models import Motoboy, Motoboy_Repasse, Motoboy_Alocacao, Motoboy_Ranking 
+from .models import Configuracao, Contrato_Item
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.html import format_html
 from django.urls import path
+from datetime import date
+from .utils import calcular_repasse_diario
 
 admin.site.register(Motoboy_Ranking)
-admin.site.register(Motoboy)
+admin.site.register(Motoboy_Repasse)
+
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
-# admin.site.register(Slot)
-# admin.site.register(Slot_Candidatura)
-# admin.site.register(Slot_Vaga)
 admin.site.register(Estabelecimento)
 admin.site.register(Estabelecimento_Contrato)
 admin.site.register(Estabelecimento_Contrato_Item)
 admin.site.register(Supervisor)
 admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
-#@admin.register(Motoboy)
+
+@admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
-    search_fields   = ["nome", "cpf", "telefone"]  # Campo de busca no topo
-    list_display    = ["nome", "cpf", "telefone",  "status"]  # Colunas visíveis na listagem
-    list_filter     = [ "status"]  # Filtros laterais
-    ordering        = ["nome"]  # Ordenação padrão
-#admin.site.register(alocacaomotoboy)
-
-admin.site.register(Motoboy_Alocacao)
-
-"""class MotoboyAlocacaoAdmin(admin.ModelAdmin):
-    list_display = ('vaga', 'motoboy', 'entregas_realizadas', 'desalocar_botao')
-    list_filter = ('vaga__status', 'motoboy')
-    search_fields = ('vaga__id', 'motoboy__nome')
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        if not obj:
-            form.base_fields['vaga'].queryset = Vaga.objects.filter(status='aberta')
-        else:
-            form.base_fields['vaga'].queryset = Vaga.objects.filter(pk=obj.vaga.pk)
-            form.base_fields['vaga'].disabled = True
-        return form
-
-    def desalocar_botao(self, obj):
-        return format_html(
-            '<a class="button" href="{}">Desalocar</a>',
-            f'../desalocar/{obj.id}/'
-        )
-    desalocar_botao.short_description = 'Ações'
-    desalocar_botao.allow_tags = True
+    list_display = ('nome', 'status', 'nivel', 'gerar_repasse_link')
 
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('desalocar/<int:alocacao_id>/', self.admin_site.admin_view(self.desalocar_view), name='desalocar_motoboy'),
+            path('<int:motoboy_id>/gerar-repasse/', self.admin_site.admin_view(self.gerar_repasse_view), name='gerar-repasse'),
         ]
         return custom_urls + urls
 
-    def desalocar_view(self, request, alocacao_id):
-        alocacao = get_object_or_404(Motoboy_Alocacao, pk=alocacao_id)
-        vaga = alocacao.vaga
+    def gerar_repasse_link(self, obj):
+        return format_html('<a class="button" href="{}">Gerar Repasse de Hoje</a>', f'{obj.id}/gerar-repasse/')
+    gerar_repasse_link.short_description = 'Repasse'
+    gerar_repasse_link.allow_tags = True
 
-        # Remove a alocação
-        alocacao.delete()
+    def gerar_repasse_view(self, request, motoboy_id):
+        motoboy = Motoboy.objects.get(pk=motoboy_id)
+        hoje = date.today()
+        repasse = calcular_repasse_diario(motoboy, hoje)
+        messages.success(request, f"Repasse gerado: R$ {repasse.valor:.2f} em {repasse.data_referencia}")
+        return redirect(f'/admin/your_app/motoboy/{motoboy_id}/change/')
 
-        # Atualiza status da vaga para aberta
-        vaga.status = 'aberta'
-        vaga.save()
 
-        self.message_user(request, f"Motoboy desalocado da vaga {vaga.id} com sucesso!", level=messages.SUCCESS)
-        return redirect(f'/admin/app_nome/motoboy_alocacao/')  # troque `app_nome` pelo nome real da sua app
-admin.site.register(Motoboy_Alocacao, MotoboyAlocacaoAdmin)
 
-"""
+
+
+admin.site.register(Motoboy_Alocacao)
+
+
 
 
 class VagaAdmin(admin.ModelAdmin):
@@ -118,6 +94,4 @@ class VagaAdmin(admin.ModelAdmin):
                     pass
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
 admin.site.register(Vaga, VagaAdmin)
