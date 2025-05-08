@@ -44,8 +44,8 @@ class MotoboyAdmin(admin.ModelAdmin):
         hoje = date.today()
         repasse = calcular_repasse_diario(motoboy, hoje)
         messages.success(request, f"Repasse gerado: R$ {repasse.valor:.2f} em {repasse.data_referencia}")
-        change_url = reverse('admin:motopro_motoboy_change', args=[motoboy_id])
-        return redirect(change_url)
+        changelist_url = reverse('admin:motopro_motoboy_changelist')
+        return redirect(changelist_url)
     
 admin.site.register(Motoboy_Alocacao)
 
