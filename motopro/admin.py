@@ -10,7 +10,7 @@ from django.urls import path, reverse
 from datetime import date
 from .utils import calcular_repasse_diario
 from .forms import RepasseManualForm  # você deve criar esse forms.py
-
+from django.db.models import Sum
 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
@@ -73,12 +73,13 @@ class MotoboyAdmin(admin.ModelAdmin):
     def ver_repasses_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
         repasses = Motoboy_Repasse.objects.filter(motoboy=motoboy).order_by('-data_referencia')
+        total = repasses.aggregate(total=Sum('valor'))['total'] or 0
 
         return render(request, 'admin/motoboy_lista_repasses.html', {
             'motoboy': motoboy,
             'repasses': repasses,
-        })
-
+            'total': total,
+    })
 
 
 admin.site.register(Motoboy_Alocacao)

@@ -22,12 +22,11 @@
             <td>{{ r.observacao|default:"—" }}</td>
           </tr>
         {% endfor %}
+        
         <tr style="font-weight: bold; border-top: 2px solid #ccc;">
-          <td colspan="1">Total</td>
-          <td colspan="3">
-            R$ {{ repasses|map:"valor"|sum:"0.00" }}
-          </td>
-        </tr>
+            <td colspan="1">Total</td>
+            <td colspan="3">R$ {{ total }}</td>
+          </tr>
       </tbody>
     </table>
   {% else %}
