@@ -423,7 +423,6 @@ class Motoboy_BandaVaga(models.Model):
 class Motoboy_Adiantamento(models.Model):
     TIPO_ADIANTAMENTO_CHOICES = [
         ('adiantamento', ' Adiantamento'),
-        ('fixo', 'Adiantamento Fixo'),
         ('bonus', 'Bônus'),
         ('ajuste', 'Ajuste Manual'),
         ('outro', 'Outro'),
