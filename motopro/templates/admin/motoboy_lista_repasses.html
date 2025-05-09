@@ -1,0 +1,32 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+  <h2>Repasses para {{ motoboy.nome }}</h2>
+
+  {% if repasses %}
+    <table class="adminlist">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Valor</th>
+          <th>Tipo</th>
+          <th>Observação</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in repasses %}
+          <tr>
+            <td>{{ r.data_referencia|date:"d/m/Y" }}</td>
+            <td>R$ {{ r.valor }}</td>
+            <td>{{ r.get_tipo_repasse_display }}</td>
+            <td>{{ r.observacao|default:"—" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Nenhum repasse encontrado.</p>
+  {% endif %}
+
+  <a href="{% url 'admin:motopro_motoboy_changelist' %}">← Voltar à lista de motoboys</a>
+{% endblock %}

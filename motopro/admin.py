@@ -26,48 +26,36 @@ admin.site.register(Motoboy_Repasse)
 
 
 
-
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'status', 'nivel', 'gerar_repasse_link')
+    list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
 
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
             path('<int:motoboy_id>/gerar-repasse/', self.admin_site.admin_view(self.gerar_repasse_view), name='motoboy-gerar-repasse'),
+            path('<int:motoboy_id>/ver-repasses/', self.admin_site.admin_view(self.ver_repasses_view), name='motoboy-ver-repasses'),
         ]
         return custom_urls + urls
 
-    def gerar_repasse_link(self, obj):
-        url = reverse('admin:motoboy-gerar-repasse', args=[obj.id])
-        return format_html('<a class="button" href="{}">Gerar Repasse Manual</a>', url)
-    gerar_repasse_link.short_description = 'Repasse'
-    gerar_repasse_link.allow_tags = True
+    def acoes_personalizadas(self, obj):
+        gerar_url = reverse('admin:motoboy-gerar-repasse', args=[obj.id])
+        ver_url = reverse('admin:motoboy-ver-repasses', args=[obj.id])
+        return format_html(
+            '<a class="button" href="{}">Gerar Repasse</a>&nbsp;'
+            '<a class="button" href="{}">Ver Repasses</a>',
+            gerar_url, ver_url
+        )
+    acoes_personalizadas.short_description = 'Ações'
+    acoes_personalizadas.allow_tags = True
 
-    def gerar_repasse_view(self, request, motoboy_id):
+    def ver_repasses_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
+        repasses = Motoboy_Repasse.objects.filter(motoboy=motoboy).order_by('-data_referencia')
 
-        if request.method == 'POST':
-            form = RepasseManualForm(request.POST)
-            if form.is_valid():
-                data_ref = date.today()
-
-                repasse = Motoboy_Repasse.objects.create(
-                    motoboy=motoboy,
-                    data_referencia=data_ref,
-                    valor=form.cleaned_data['valor'],
-                    tipo_repasse=form.cleaned_data['tipo_repasse'],
-                    observacao=form.cleaned_data['observacao'],
-                )
-
-                messages.success(request, f"Repasse registrado: R$ {repasse.valor:.2f} para {motoboy.nome}")
-                return redirect(reverse('admin:motopro_motoboy_changelist'))
-        else:
-            form = RepasseManualForm()
-
-        return render(request, 'admin/motoboy_gerar_repasse.html', {
-            'form': form,
+        return render(request, 'admin/motoboy_lista_repasses.html', {
             'motoboy': motoboy,
+            'repasses': repasses,
         })
 
 
