@@ -291,8 +291,8 @@ class Vaga(models.Model):
         choices=[
             ("aberta", "Aberta"),
             ("alocado", "Alocado"),
-            ("reservada", "Reservada"),
-            ("finalizada", "Finalizada"),
+            ("finalizada", "Finalizada"), # finalizada mas não esta paga
+            ("paga", "Paga"),             # Já foi faturada e o repasse ja aconteceu
             ("cancelada", "Cancelada")
         ],
         default="aberta"
@@ -395,6 +395,26 @@ class Motoboy_Alocacao(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
+
+
+class Motoboy_BandaVaga(models.Model):
+    alocacao = models.ForeignKey('Motoboy_Alocacao', on_delete=models.CASCADE, related_name='bandas')
+    
+    faixa_km = models.PositiveSmallIntegerField(choices=[
+        (6, '6 km'),
+        (7, '7 km'),
+        (8, '8 km'),
+        (9, '9 km'),
+        (10, '10 km'),
+    ])
+    quantidade = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('alocacao', 'faixa_km')
+
+    def __str__(self):
+        return f"{self.alocacao} - {self.faixa_km}km x{self.quantidade}"
+
 
 
 class Motoboy_Repasse(models.Model):

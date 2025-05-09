@@ -3,7 +3,7 @@ from django.contrib.admin import DateFieldListFilter
 from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
 from .models import Motoboy, Motoboy_Repasse, Motoboy_Alocacao, Motoboy_Ranking 
-from .models import Configuracao, Contrato_Item
+from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga
 from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.html import format_html
 from django.urls import path, reverse
@@ -24,6 +24,17 @@ admin.site.register(Supervisor_Motoboy)
 
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy_Repasse)
+
+
+
+class BandaInline(admin.TabularInline):
+    model = Motoboy_BandaVaga
+    extra = 0
+
+class Motoboy_AlocacaoAdmin(admin.ModelAdmin):
+    list_display = ('motoboy', 'vaga', 'entregas_realizadas')
+    inlines = [BandaInline]
+
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
