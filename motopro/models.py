@@ -108,169 +108,6 @@ class Motoboy_Nivel(models.Model):
     class Meta:
         ordering = ['ordem']
 
-class Motoboy(models.Model):
-    id                = models.AutoField(primary_key=True)
-    nome              = models.CharField(max_length=255, null=False, blank=False)
-    apelido           = models.CharField(max_length=255, null=True, blank=True)
-    cpf               = models.CharField(max_length=11, unique=False, validators=[validate_cpf])  # CNH do motoboy
-    cnh               = models.CharField(max_length=11, unique=False, validators=[validate_cnh])  # CNH do motoboy
-    categoria         = models.CharField(max_length=3, null=True, blank=True)
-    telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    telefone1         = models.CharField(max_length=15, blank=True)  # Telefone de contato
-    email             = models.EmailField(max_length=255, blank=True)  # Email do motoboy
-    placa_moto        = models.CharField(max_length=10, unique=False, validators=[validate_placa])  # Placa da moto
-    modelo_moto       = models.CharField(max_length=100)  # Modelo da moto
-    ano_moto          = models.IntegerField(
-        validators=[
-            MinValueValidator(2000),  # Ano mínimo para a moto
-            MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
-        ]
-    )  # Ano de fabricação da moto
-    
-    cep         = models.CharField(max_length=10)
-    estado      = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    cidade      = models.ForeignKey(Cidade, on_delete=models.PROTECT)
-    bairro      = models.ForeignKey(Bairro, on_delete=models.PROTECT)
-    logradouro  = models.CharField(max_length=255)
-    numero      = models.CharField(max_length=10)
-    complemento = models.CharField(max_length=100, blank=True)
-    
-    # Status do motoboy
-    status = models.CharField(max_length=20, choices=[
-        ('alocado', 'Alocado'),
-        ('livre', 'Livre'),
-        ('inativo', 'Inativo'),
-        ('em_viagem', 'Em viagem'),
-    ], default='livre') 
-    
-    created_at   = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
-    updated_at   = models.DateTimeField(auto_now=True)  # Data da última atualização
-    nivel        = models.ForeignKey(Motoboy_Nivel, on_delete=models.PROTECT)
-    aceitacao    = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
-    cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
-    
-    # Supervisor deve aprovar a mudança de nível
-    supervisor_aprovado = models.BooleanField(default=False)
-    
-    def __str__(self):
-        return self.nome
-    
-class Motoboy_Contrato(models.Model):
-    motoboy               = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='contracts')
-    data_inicio           = models.DateField()
-    data_fim              = models.DateField(null=True, blank=True)  # Pode ser em aberto
-    valor_mensal          = models.DecimalField(max_digits=10, decimal_places=2)
-    carga_horaria_semanal = models.IntegerField(help_text="Horas por semana")
-    tipo_contrato         = models.CharField(
-        max_length=50,
-        choices=[
-            ('PJ', 'Pessoa Jurídica'),
-            ('Intermitente', 'Intermitente'),
-            ('Freelancer', 'Freelancer'),
-        ]
-    )
-    descricao_atividades  = models.TextField()
-    ativo                 = models.BooleanField(default=True)
-    criado_em             = models.DateTimeField(auto_now_add=True)
-    atualizado_em         = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
-
-class Motoboy_Alocacao(models.Model):
-    vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
-    motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
-    entregas_realizadas = models.PositiveIntegerField(default=0)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        # Atualiza o status da vaga para 'alocado'
-        if self.vaga.status != 'alocado':
-            self.vaga.status = 'alocado'
-            self.vaga.save()
-
-    def delete(self, *args, **kwargs):
-        vaga = self.vaga  # guarda referência antes de deletar
-        super().delete(*args, **kwargs)
-        # Como só pode haver um motoboy, ao deletar volta para 'aberta'
-        vaga.status = 'aberta'
-        vaga.save()
-
-    def __str__(self):
-        return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
-
-
-class Motoboy_Repasse(models.Model):
-    TIPO_REPASSE_CHOICES = [
-        ('fixo', 'Repasse Fixo'),
-        ('adiantamento', 'Repasse de Adiantamento'),
-        ('bonus', 'Bônus'),
-        ('ajuste', 'Ajuste Manual'),
-        ('outro', 'Outro'),
-    ]
-    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
-    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
-    data_pagamento  = models.DateField(auto_now_add=True)
-    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
-    observacao      = models.TextField(blank=True, null=True)
-    criado_em       = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-data_pagamento']
-
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
-
-
-class Motoboy_Candidatura(models.Model):
-    motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
-    vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
-    status      = models.CharField(
-        max_length=20,
-        choices=[
-            ("pendente", "Pendente"),
-            ("aprovada", "Aprovada"),
-            ("recusada", "Recusada")
-        ],
-        default="Pendente"
-    )
-    data_candidatura = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
-"""  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
-class Motoboy_Ranking(models.Model):
-    motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
-    nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
-                                                      ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
-                                                      ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
-                                                      ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
-                                                      ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
-                                                      ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
-                                                      default='Novato')
-    aceitacao         = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    cancelamento      = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
-    
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.nivel}"
-
-class Motoboy_Desconto(models.Model):
-    motoboy         = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='descontos')
-    categoria       = models.ForeignKey(Categoria_Desconto, on_delete=models.PROTECT, related_name='descontos')
-    data            = models.DateField()
-    descricao       = models.TextField(help_text="Motivo do desconto ou observações")
-    valor           = models.DecimalField(max_digits=10, decimal_places=2)
-    aplicado_por    = models.CharField(max_length=100, help_text="Nome do responsável pelo desconto")
-    ativo           = models.BooleanField(default=True)
-    criado_em       = models.DateTimeField(auto_now_add=True)
-    atualizado_em   = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.tipo_desconto} - {self.motoboy.nome_completo} - R$ {self.valor:.2f}"
-
 class Estabelecimento(models.Model):
     id                 = models.AutoField(primary_key=True)
     nome               = models.CharField(max_length=255, null=False, blank=False)
@@ -467,6 +304,171 @@ class Vaga(models.Model):
         f"Data: {self.data_da_vaga.strftime('%d/%m/%Y') if self.data_da_vaga else 'Sem data'} | "
         f"Status: {self.get_status_display()}"
     )
+
+
+
+class Motoboy(models.Model):
+    id                = models.AutoField(primary_key=True)
+    nome              = models.CharField(max_length=255, null=False, blank=False)
+    apelido           = models.CharField(max_length=255, null=True, blank=True)
+    cpf               = models.CharField(max_length=11, unique=False, validators=[validate_cpf])  # CNH do motoboy
+    cnh               = models.CharField(max_length=11, unique=False, validators=[validate_cnh])  # CNH do motoboy
+    categoria         = models.CharField(max_length=3, null=True, blank=True)
+    telefone          = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    telefone1         = models.CharField(max_length=15, blank=True)  # Telefone de contato
+    email             = models.EmailField(max_length=255, blank=True)  # Email do motoboy
+    placa_moto        = models.CharField(max_length=10, unique=False, validators=[validate_placa])  # Placa da moto
+    modelo_moto       = models.CharField(max_length=100)  # Modelo da moto
+    ano_moto          = models.IntegerField(
+        validators=[
+            MinValueValidator(2000),  # Ano mínimo para a moto
+            MaxValueValidator(datetime.datetime.now().year + 1)  # Ano máximo é o atual +1 para modelo novo
+        ]
+    )  # Ano de fabricação da moto
+    
+    cep         = models.CharField(max_length=10)
+    estado      = models.ForeignKey(Estado, on_delete=models.PROTECT)
+    cidade      = models.ForeignKey(Cidade, on_delete=models.PROTECT)
+    bairro      = models.ForeignKey(Bairro, on_delete=models.PROTECT)
+    logradouro  = models.CharField(max_length=255)
+    numero      = models.CharField(max_length=10)
+    complemento = models.CharField(max_length=100, blank=True)
+    
+    # Status do motoboy
+    status = models.CharField(max_length=20, choices=[
+        ('alocado', 'Alocado'),
+        ('livre', 'Livre'),
+        ('inativo', 'Inativo'),
+        ('em_viagem', 'Em viagem'),
+    ], default='livre') 
+    
+    created_at   = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
+    updated_at   = models.DateTimeField(auto_now=True)  # Data da última atualização
+    nivel        = models.ForeignKey(Motoboy_Nivel, on_delete=models.PROTECT)
+    aceitacao    = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Aceitação em %
+    cancelamento = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)  # Cancelamento em %
+    
+    # Supervisor deve aprovar a mudança de nível
+    supervisor_aprovado = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.nome
+    
+class Motoboy_Contrato(models.Model):
+    motoboy               = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='contracts')
+    data_inicio           = models.DateField()
+    data_fim              = models.DateField(null=True, blank=True)  # Pode ser em aberto
+    valor_mensal          = models.DecimalField(max_digits=10, decimal_places=2)
+    carga_horaria_semanal = models.IntegerField(help_text="Horas por semana")
+    tipo_contrato         = models.CharField(
+        max_length=50,
+        choices=[
+            ('PJ', 'Pessoa Jurídica'),
+            ('Intermitente', 'Intermitente'),
+            ('Freelancer', 'Freelancer'),
+        ]
+    )
+    descricao_atividades  = models.TextField()
+    ativo                 = models.BooleanField(default=True)
+    criado_em             = models.DateTimeField(auto_now_add=True)
+    atualizado_em         = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
+
+class Motoboy_Alocacao(models.Model):
+    vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
+    motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
+    entregas_realizadas = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Atualiza o status da vaga para 'alocado'
+        if self.vaga.status != 'alocado':
+            self.vaga.status = 'alocado'
+            self.vaga.save()
+
+    def delete(self, *args, **kwargs):
+        vaga = self.vaga  # guarda referência antes de deletar
+        super().delete(*args, **kwargs)
+        # Como só pode haver um motoboy, ao deletar volta para 'aberta'
+        vaga.status = 'aberta'
+        vaga.save()
+
+    def __str__(self):
+        return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
+
+
+class Motoboy_Repasse(models.Model):
+    TIPO_REPASSE_CHOICES = [
+        ('fixo', 'Repasse Fixo'),
+        ('adiantamento', 'Repasse de Adiantamento'),
+        ('bonus', 'Bônus'),
+        ('ajuste', 'Ajuste Manual'),
+        ('outro', 'Outro'),
+    ]
+    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
+    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
+    data_pagamento  = models.DateField(auto_now_add=True)
+    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
+    observacao      = models.TextField(blank=True, null=True)
+    criado_em       = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-data_pagamento']
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
+
+
+class Motoboy_Candidatura(models.Model):
+    motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
+    status      = models.CharField(
+        max_length=20,
+        choices=[
+            ("pendente", "Pendente"),
+            ("aprovada", "Aprovada"),
+            ("recusada", "Recusada")
+        ],
+        default="Pendente"
+    )
+    data_candidatura = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
+"""  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
+class Motoboy_Ranking(models.Model):
+    motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
+    nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
+                                                      ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
+                                                      ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
+                                                      ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
+                                                      ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
+                                                      ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
+                                                      default='Novato')
+    aceitacao         = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cancelamento      = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
+    
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.nivel}"
+
+class Motoboy_Desconto(models.Model):
+    motoboy         = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='descontos')
+    categoria       = models.ForeignKey(Categoria_Desconto, on_delete=models.PROTECT, related_name='descontos')
+    data            = models.DateField()
+    descricao       = models.TextField(help_text="Motivo do desconto ou observações")
+    valor           = models.DecimalField(max_digits=10, decimal_places=2)
+    aplicado_por    = models.CharField(max_length=100, help_text="Nome do responsável pelo desconto")
+    ativo           = models.BooleanField(default=True)
+    criado_em       = models.DateTimeField(auto_now_add=True)
+    atualizado_em   = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.tipo_desconto} - {self.motoboy.nome_completo} - R$ {self.valor:.2f}"
 
 class Supervisor_Motoboy(models.Model):
     supervisor  = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
