@@ -24,8 +24,6 @@ admin.site.register(Supervisor_Motoboy)
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy_Repasse)
 
-
-
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
@@ -46,8 +44,31 @@ class MotoboyAdmin(admin.ModelAdmin):
             '<a class="button" href="{}">Ver Repasses</a>',
             gerar_url, ver_url
         )
-    acoes_personalizadas.short_description = 'Ações'
-    acoes_personalizadas.allow_tags = True
+
+    def gerar_repasse_view(self, request, motoboy_id):
+        motoboy = Motoboy.objects.get(pk=motoboy_id)
+
+        if request.method == 'POST':
+            form = RepasseManualForm(request.POST)
+            if form.is_valid():
+                data_ref = date.today()
+
+                Motoboy_Repasse.objects.create(
+                    motoboy=motoboy,
+                    data_referencia=data_ref,
+                    valor=form.cleaned_data['valor'],
+                    tipo_repasse=form.cleaned_data['tipo_repasse'],
+                    observacao=form.cleaned_data['observacao'],
+                )
+                messages.success(request, f"Repasse registrado com sucesso.")
+                return redirect(reverse('admin:motopro_motoboy_changelist'))
+        else:
+            form = RepasseManualForm()
+
+        return render(request, 'admin/motoboy_gerar_repasse.html', {
+            'form': form,
+            'motoboy': motoboy,
+        })
 
     def ver_repasses_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
@@ -57,6 +78,7 @@ class MotoboyAdmin(admin.ModelAdmin):
             'motoboy': motoboy,
             'repasses': repasses,
         })
+
 
 
 admin.site.register(Motoboy_Alocacao)
