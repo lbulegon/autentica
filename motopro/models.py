@@ -305,8 +305,6 @@ class Vaga(models.Model):
         f"Status: {self.get_status_display()}"
     )
 
-
-
 class Motoboy(models.Model):
     id                = models.AutoField(primary_key=True)
     nome              = models.CharField(max_length=255, null=False, blank=False)
@@ -401,8 +399,8 @@ class Motoboy_Alocacao(models.Model):
 
 class Motoboy_Repasse(models.Model):
     TIPO_REPASSE_CHOICES = [
-        ('fixo', 'Repasse Fixo'),
         ('adiantamento', 'Repasse de Adiantamento'),
+        ('fixo', 'Repasse Fixo'),
         ('bonus', 'Bônus'),
         ('ajuste', 'Ajuste Manual'),
         ('outro', 'Outro'),
@@ -411,7 +409,7 @@ class Motoboy_Repasse(models.Model):
     data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
     data_pagamento  = models.DateField(auto_now_add=True)
     valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
+    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='adiantamento')
     observacao      = models.TextField(blank=True, null=True)
     criado_em       = models.DateTimeField(auto_now_add=True)
 
