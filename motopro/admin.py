@@ -32,7 +32,8 @@ class MotoboyAdmin(admin.ModelAdmin):
     list_filter = (
         'nome', 
         'status',              # Filtro por status (livre, alocado, etc.)
-        'nivel',               # Filtro por FK para Motoboy_Nivel        
+        'nivel',               # Filtro por FK para Motoboy_Nivel
+      
     )
     
     def get_urls(self):
