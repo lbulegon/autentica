@@ -30,11 +30,10 @@ class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
    
     list_filter = (
+        'nome', 
         'status',              # Filtro por status (livre, alocado, etc.)
         'nivel',               # Filtro por FK para Motoboy_Nivel
-        'estado',              # Filtro por estado (caso tenha o campo)
-        'cidade',              # Filtro por cidade
-        'created_at',          # Filtro por data de cadastro
+        
     )
     
     def get_urls(self):
