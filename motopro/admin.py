@@ -7,14 +7,12 @@ from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga
 from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.html import format_html
 from django.urls import path, reverse
-from datetime import date
+from datetime import date, datetime
 from .utils import calcular_repasse_diario
 from .forms import RepasseManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
-from datetime import datetime
 
 
-admin.site.register(Motoboy_BandaVaga) 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
 admin.site.register(Estabelecimento)
@@ -23,10 +21,9 @@ admin.site.register(Estabelecimento_Contrato_Item)
 admin.site.register(Supervisor)
 admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
-
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy_Repasse)
-
+admin.site.register(Motoboy_BandaVaga) 
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
@@ -108,8 +105,6 @@ class MotoboyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Motoboy_Alocacao)
-
-
 
 
 class VagaAdmin(admin.ModelAdmin):

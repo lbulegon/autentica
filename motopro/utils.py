@@ -56,3 +56,14 @@ def calcular_repasse_diario(motoboy, data):
     )
 
     return repasse
+
+def calcular_repasse_por_bandas(alocacao):
+    contrato = alocacao.vaga.contrato
+    total = Decimal('0.00')
+
+    for banda in alocacao.bandas.all():
+        chave_valor = f'faixa_km_{banda.faixa_km}'
+        valor_unitario = contrato.get_valor_item(chave_valor) or Decimal('0.00')
+        total += valor_unitario * banda.quantidade
+
+    return total

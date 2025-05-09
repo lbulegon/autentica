@@ -396,7 +396,6 @@ class Motoboy_Alocacao(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
 
-
 class Motoboy_BandaVaga(models.Model):
     alocacao = models.ForeignKey('Motoboy_Alocacao', on_delete=models.CASCADE, related_name='bandas')
     
