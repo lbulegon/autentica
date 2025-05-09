@@ -406,6 +406,11 @@ class Motoboy_BandaVaga(models.Model):
         (8, '8 km'),
         (9, '9 km'),
         (10, '10 km'),
+        (11, '11 km'),
+        (12, '12 km'),
+        (13, '13 km'),
+        (14, '14 km'),
+        (15, '15 km'),
     ])
     quantidade = models.PositiveIntegerField(default=0)
 
