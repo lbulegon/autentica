@@ -13,6 +13,8 @@ from .forms import RepasseManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
 from datetime import datetime
 
+
+admin.site.register(Motoboy_BandaVaga) 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
 admin.site.register(Estabelecimento)
@@ -24,16 +26,6 @@ admin.site.register(Supervisor_Motoboy)
 
 admin.site.register(Motoboy_Ranking)
 admin.site.register(Motoboy_Repasse)
-
-
-
-class BandaInline(admin.TabularInline):
-    model = Motoboy_BandaVaga
-    extra = 0
-
-class Motoboy_AlocacaoAdmin(admin.ModelAdmin):
-    list_display = ('motoboy', 'vaga', 'entregas_realizadas')
-    inlines = [BandaInline]
 
 
 @admin.register(Motoboy)
