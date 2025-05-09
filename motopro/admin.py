@@ -52,11 +52,9 @@ class MotoboyAdmin(admin.ModelAdmin):
         if request.method == 'POST':
             form = RepasseManualForm(request.POST)
             if form.is_valid():
-                data_ref = date.today()
-
                 Motoboy_Repasse.objects.create(
                     motoboy=motoboy,
-                    data_referencia=data_ref,
+                    data_referencia=form.cleaned_data['data_referencia'],
                     valor=form.cleaned_data['valor'],
                     tipo_repasse=form.cleaned_data['tipo_repasse'],
                     observacao=form.cleaned_data['observacao'],
