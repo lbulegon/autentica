@@ -177,6 +177,86 @@ class Motoboy_Contrato(models.Model):
     def __str__(self):
         return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
 
+class Motoboy_Alocacao(models.Model):
+    vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
+    motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
+    entregas_realizadas = models.PositiveIntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Atualiza o status da vaga para 'alocado'
+        if self.vaga.status != 'alocado':
+            self.vaga.status = 'alocado'
+            self.vaga.save()
+
+    def delete(self, *args, **kwargs):
+        vaga = self.vaga  # guarda referência antes de deletar
+        super().delete(*args, **kwargs)
+        # Como só pode haver um motoboy, ao deletar volta para 'aberta'
+        vaga.status = 'aberta'
+        vaga.save()
+
+    def __str__(self):
+        return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
+
+
+class Motoboy_Repasse(models.Model):
+    TIPO_REPASSE_CHOICES = [
+        ('fixo', 'Repasse Fixo'),
+        ('adiantamento', 'Repasse de Adiantamento'),
+        ('bonus', 'Bônus'),
+        ('ajuste', 'Ajuste Manual'),
+        ('outro', 'Outro'),
+    ]
+    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
+    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
+    data_pagamento  = models.DateField(auto_now_add=True)
+    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
+    observacao      = models.TextField(blank=True, null=True)
+    criado_em       = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-data_pagamento']
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
+
+
+class Motoboy_Candidatura(models.Model):
+    motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
+    vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
+    status      = models.CharField(
+        max_length=20,
+        choices=[
+            ("pendente", "Pendente"),
+            ("aprovada", "Aprovada"),
+            ("recusada", "Recusada")
+        ],
+        default="Pendente"
+    )
+    data_candidatura = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
+
+"""  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
+class Motoboy_Ranking(models.Model):
+    motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
+    nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
+                                                      ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
+                                                      ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
+                                                      ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
+                                                      ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
+                                                      ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
+                                                      default='Novato')
+    aceitacao         = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    cancelamento      = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
+    
+    def __str__(self):
+        return f"{self.motoboy.nome} - {self.nivel}"
+
 class Motoboy_Desconto(models.Model):
     motoboy         = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='descontos')
     categoria       = models.ForeignKey(Categoria_Desconto, on_delete=models.PROTECT, related_name='descontos')
@@ -408,86 +488,6 @@ class Supervisor_Estabelecimento(models.Model):
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
 
-
-class Motoboy_Alocacao(models.Model):
-    vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
-    motoboy             = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
-    entregas_realizadas = models.PositiveIntegerField(default=0)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        # Atualiza o status da vaga para 'alocado'
-        if self.vaga.status != 'alocado':
-            self.vaga.status = 'alocado'
-            self.vaga.save()
-
-    def delete(self, *args, **kwargs):
-        vaga = self.vaga  # guarda referência antes de deletar
-        super().delete(*args, **kwargs)
-        # Como só pode haver um motoboy, ao deletar volta para 'aberta'
-        vaga.status = 'aberta'
-        vaga.save()
-
-    def __str__(self):
-        return f"{self.motoboy.nome} alocado na Vaga {self.vaga.id}"
-
-
-class Motoboy_Repasse(models.Model):
-    TIPO_REPASSE_CHOICES = [
-        ('fixo', 'Repasse Fixo'),
-        ('adiantamento', 'Repasse de Adiantamento'),
-        ('bonus', 'Bônus'),
-        ('ajuste', 'Ajuste Manual'),
-        ('outro', 'Outro'),
-    ]
-    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
-    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
-    data_pagamento  = models.DateField(auto_now_add=True)
-    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='fixo')
-    observacao      = models.TextField(blank=True, null=True)
-    criado_em       = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-data_pagamento']
-
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
-
-
-class Motoboy_Candidatura(models.Model):
-    motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
-    vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
-    status      = models.CharField(
-        max_length=20,
-        choices=[
-            ("pendente", "Pendente"),
-            ("aprovada", "Aprovada"),
-            ("recusada", "Recusada")
-        ],
-        default="Pendente"
-    )
-    data_candidatura = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
-"""  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
-class Motoboy_Ranking(models.Model):
-    motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
-    nivel             = models.CharField(max_length=100, choices=[('Novato', 'Novato'), ('Aspirante', 'Aspirante'), 
-                                                      ('Bronze I', 'Bronze I'), ('Bronze II', 'Bronze II'),
-                                                      ('Prata I', 'Prata I'), ('Prata II', 'Prata II'),
-                                                      ('Ouro I', 'Ouro I'), ('Ouro II', 'Ouro II'),
-                                                      ('Platina I', 'Platina I'), ('Platina II', 'Platina II'),
-                                                      ('Diamante I', 'Diamante I'), ('Diamante II', 'Diamante II')],
-                                                      default='Novato')
-    aceitacao         = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    cancelamento      = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    bonus_por_entrega = models.DecimalField(max_digits=5, decimal_places=2, default=6.00)  # Inicia com R$6,00 por entrega
-    
-    def __str__(self):
-        return f"{self.motoboy.nome} - {self.nivel}"
 
 class Configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[

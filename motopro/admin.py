@@ -11,6 +11,7 @@ from datetime import date
 from .utils import calcular_repasse_diario
 from .forms import RepasseManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
+from datetime import datetime
 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
@@ -72,13 +73,35 @@ class MotoboyAdmin(admin.ModelAdmin):
 
     def ver_repasses_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
-        repasses = Motoboy_Repasse.objects.filter(motoboy=motoboy).order_by('-data_referencia')
+
+        inicio_str = request.GET.get('inicio')
+        fim_str = request.GET.get('fim')
+
+        repasses = Motoboy_Repasse.objects.filter(motoboy=motoboy)
+
+        if inicio_str:
+            try:
+                data_inicio = datetime.strptime(inicio_str, '%Y-%m-%d').date()
+                repasses = repasses.filter(data_referencia__gte=data_inicio)
+            except ValueError:
+                messages.warning(request, "Data de início inválida")
+
+        if fim_str:
+            try:
+                data_fim = datetime.strptime(fim_str, '%Y-%m-%d').date()
+                repasses = repasses.filter(data_referencia__lte=data_fim)
+            except ValueError:
+              messages.warning(request, "Data de fim inválida")
+
+        repasses = repasses.order_by('-data_referencia')
         total = repasses.aggregate(total=Sum('valor'))['total'] or 0
 
         return render(request, 'admin/motoboy_lista_repasses.html', {
             'motoboy': motoboy,
             'repasses': repasses,
             'total': total,
+            'inicio': inicio_str or '',
+            'fim': fim_str or '',
     })
 
 

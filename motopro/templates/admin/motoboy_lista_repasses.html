@@ -3,6 +3,17 @@
 {% block content %}
   <h2>Repasses para {{ motoboy.nome }}</h2>
 
+  <form method="get" style="margin-bottom: 20px;">
+    <label>Início:
+      <input type="date" name="inicio" value="{{ inicio }}">
+    </label>
+    <label>Fim:
+      <input type="date" name="fim" value="{{ fim }}">
+    </label>
+    <button type="submit">Filtrar</button>
+  </form>
+
+
   {% if repasses %}
     <table class="adminlist">
       <thead>
