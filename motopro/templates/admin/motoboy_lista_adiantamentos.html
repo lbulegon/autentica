@@ -1,7 +1,7 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-  <h2>Repasses para {{ motoboy.nome }}</h2>
+  <h2>Adiantamento para {{ motoboy.nome }}</h2>
 
   <form method="get" style="margin-bottom: 20px;">
     <label>Início:
@@ -14,7 +14,7 @@
   </form>
 
 
-  {% if repasses %}
+  {% if adiantamentos %}
     <table class="adminlist">
       <thead>
         <tr>
@@ -25,11 +25,11 @@
         </tr>
       </thead>
       <tbody>
-        {% for r in repasses %}
+        {% for r in adiantamentos %}
           <tr>
             <td>{{ r.data_referencia|date:"d/m/Y" }}</td>
             <td>R$ {{ r.valor }}</td>
-            <td>{{ r.get_tipo_repasse_display }}</td>
+            <td>{{ r.get_tipo_adiantamento_display }}</td>
             <td>{{ r.observacao|default:"—" }}</td>
           </tr>
         {% endfor %}
@@ -41,7 +41,7 @@
       </tbody>
     </table>
   {% else %}
-    <p>Nenhum repasse encontrado.</p>
+    <p>Nenhum adiantamento encontrado.</p>
   {% endif %}
 
   <a href="{% url 'admin:motopro_motoboy_changelist' %}">← Voltar à lista de motoboys</a>

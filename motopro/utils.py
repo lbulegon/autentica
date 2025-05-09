@@ -2,7 +2,7 @@
 from decimal import Decimal
 from django.db.models import Sum
 from decimal import Decimal
-from motopro.models import Motoboy, Vaga, Motoboy_Desconto, Motoboy_Repasse, Motoboy_Ranking, Motoboy_Alocacao
+from motopro.models import Motoboy, Vaga, Motoboy_Desconto, Motoboy_Adiantamento, Motoboy_Ranking, Motoboy_Alocacao
 
 def calcular_pagamento(estabelecimento, motoboy, data_inicio, data_fim):
     vagas = Vaga.objects.filter(
@@ -27,7 +27,7 @@ def calcular_pagamento(estabelecimento, motoboy, data_inicio, data_fim):
     }
 
 
-def calcular_repasse_diario(motoboy, data):
+def calcular_adiantamento_diario(motoboy, data):
     # Buscar as vagas alocadas no dia
     alocacoes = motoboy.motoboy_alocacao_set.filter(vaga__data_da_vaga=data)
     total_entregas = alocacoes.aggregate(total=Sum('entregas_realizadas'))['total'] or 0
@@ -43,21 +43,21 @@ def calcular_repasse_diario(motoboy, data):
     descontos = Motoboy_Desconto.objects.filter(motoboy=motoboy, data=data, ativo=True)
     total_descontos = descontos.aggregate(total=Sum('valor'))['total'] or Decimal('0.00')
 
-    # Valor final a repassar
+    # Valor final a adiantamento
     valor_final = valor_bruto - total_descontos
 
-    # Criar registro de repasse
-    repasse = Motoboy_Repasse.objects.create(
+    # Criar registro de adiantamento
+    adiantamento = Motoboy_Adiantamento.objects.create(
         motoboy=motoboy,
         data_referencia=data,
         valor=valor_final,
-        tipo_repasse='fixo',
+        tipo_adiantamento='fixo',
         observacao=f"Entregas: {total_entregas}, Bônus: R$ {bonus_por_entrega}, Descontos: R$ {total_descontos}"
     )
 
-    return repasse
+    return adiantamento
 
-def calcular_repasse_por_bandas(alocacao):
+def calcular_adiantamento_por_bandas(alocacao):
     contrato = alocacao.vaga.contrato
     total = Decimal('0.00')
 

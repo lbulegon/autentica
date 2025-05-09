@@ -292,7 +292,7 @@ class Vaga(models.Model):
             ("aberta", "Aberta"),
             ("alocado", "Alocado"),
             ("finalizada", "Finalizada"), # finalizada mas não esta paga
-            ("paga", "Paga"),             # Já foi faturada e o repasse ja aconteceu
+            ("paga", "Paga"),             # Já foi faturada e o pagamento ja aconteceu
             ("cancelada", "Cancelada")
         ],
         default="aberta"
@@ -420,22 +420,21 @@ class Motoboy_BandaVaga(models.Model):
         return f"{self.alocacao} - {self.faixa_km}km x{self.quantidade}"
 
 
-
-class Motoboy_Repasse(models.Model):
-    TIPO_REPASSE_CHOICES = [
-        ('adiantamento', 'Repasse de Adiantamento'),
-        ('fixo', 'Repasse Fixo'),
+class Motoboy_Adiantamento(models.Model):
+    TIPO_ADIANTAMENTO_CHOICES = [
+        ('adiantamento', ' Adiantamento'),
+        ('fixo', 'Adiantamento Fixo'),
         ('bonus', 'Bônus'),
         ('ajuste', 'Ajuste Manual'),
         ('outro', 'Outro'),
     ]
-    motoboy         = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='repasses')
-    data_referencia = models.DateField(help_text="Data a que se refere o repasse (ex: dia do serviço)")
-    data_pagamento  = models.DateField(auto_now_add=True)
-    valor           = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
-    tipo_repasse    = models.CharField(max_length=20, choices=TIPO_REPASSE_CHOICES, default='adiantamento')
-    observacao      = models.TextField(blank=True, null=True)
-    criado_em       = models.DateTimeField(auto_now_add=True)
+    motoboy              = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='adiantamentos')
+    data_referencia      = models.DateField(help_text="Data a que se refere o adiantamento (ex: dia do serviço)")
+    data_pagamento       = models.DateField(auto_now_add=True)
+    valor                = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"))
+    tipo_adiantamento    = models.CharField(max_length=20, choices=TIPO_ADIANTAMENTO_CHOICES, default='adiantamento')
+    observacao           = models.TextField(blank=True, null=True)
+    criado_em            = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-data_pagamento']

@@ -269,11 +269,6 @@ class View_SupervisorDelete(DeleteView):
 
 
 
-
-
-
-
-
 ##class EmpresaListView(ListView):
 #    model = empresa
 #    template_name = 'empresa/empresa_list.html'

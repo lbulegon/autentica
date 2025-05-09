@@ -2,14 +2,14 @@ from django.contrib import admin, messages
 from django.contrib.admin import DateFieldListFilter
 from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
-from .models import Motoboy, Motoboy_Repasse, Motoboy_Alocacao, Motoboy_Ranking 
+from .models import Motoboy, Motoboy_Adiantamento, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga
 from django.shortcuts import redirect, get_object_or_404, render
 from django.utils.html import format_html
 from django.urls import path, reverse
 from datetime import date, datetime
-from .utils import calcular_repasse_diario
-from .forms import RepasseManualForm  # você deve criar esse forms.py
+from .utils import calcular_adiantamento_diario
+from .forms import AdiantamentoManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
 
 
@@ -22,7 +22,7 @@ admin.site.register(Supervisor)
 admin.site.register(Supervisor_Estabelecimento)
 admin.site.register(Supervisor_Motoboy)
 admin.site.register(Motoboy_Ranking)
-admin.site.register(Motoboy_Repasse)
+admin.site.register(Motoboy_Adiantamento)
 admin.site.register(Motoboy_BandaVaga) 
 
 @admin.register(Motoboy)
@@ -33,71 +33,71 @@ class MotoboyAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('<int:motoboy_id>/gerar-repasse/', self.admin_site.admin_view(self.gerar_repasse_view), name='motoboy-gerar-repasse'),
-            path('<int:motoboy_id>/ver-repasses/', self.admin_site.admin_view(self.ver_repasses_view), name='motoboy-ver-repasses'),
+            path('<int:motoboy_id>/gerar-adiantamento/', self.admin_site.admin_view(self.gerar_adiantamento_view), name='motoboy-gerar-adiantamento'),
+            path('<int:motoboy_id>/ver-adiantamentos/', self.admin_site.admin_view(self.ver_adiantamentos_view), name='motoboy-ver-adiantamentos'),
         ]
         return custom_urls + urls
 
     def acoes_personalizadas(self, obj):
-        gerar_url = reverse('admin:motoboy-gerar-repasse', args=[obj.id])
-        ver_url = reverse('admin:motoboy-ver-repasses', args=[obj.id])
+        gerar_url = reverse('admin:motoboy-gerar-adiantamento', args=[obj.id])
+        ver_url = reverse('admin:motoboy-ver-adiantamentos', args=[obj.id])
         return format_html(
-            '<a class="button" href="{}">Gerar Repasse</a>&nbsp;'
-            '<a class="button" href="{}">Ver Repasses</a>',
+            '<a class="button" href="{}">Gerar Adiantamento</a>&nbsp;'
+            '<a class="button" href="{}">Ver Adiantamentos</a>',
             gerar_url, ver_url
         )
 
-    def gerar_repasse_view(self, request, motoboy_id):
+    def gerar_adiantamento_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
 
         if request.method == 'POST':
-            form = RepasseManualForm(request.POST)
+            form = AdiantamentoManualForm(request.POST)
             if form.is_valid():
-                Motoboy_Repasse.objects.create(
+                Motoboy_Adiantamento.objects.create(
                     motoboy=motoboy,
                     data_referencia=form.cleaned_data['data_referencia'],
                     valor=form.cleaned_data['valor'],
-                    tipo_repasse=form.cleaned_data['tipo_repasse'],
+                    tipo_adiantamento=form.cleaned_data['tipo_adiantamento'],
                     observacao=form.cleaned_data['observacao'],
                 )
-                messages.success(request, f"Repasse registrado com sucesso.")
+                messages.success(request, f"Adiantamento registrado com sucesso.")
                 return redirect(reverse('admin:motopro_motoboy_changelist'))
         else:
-            form = RepasseManualForm()
+            form = AdiantamentoManualForm()
 
-        return render(request, 'admin/motoboy_gerar_repasse.html', {
+        return render(request, 'admin/motoboy_gerar_adiantamento.html', {
             'form': form,
             'motoboy': motoboy,
         })
 
-    def ver_repasses_view(self, request, motoboy_id):
+    def ver_adiantamentos_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
 
         inicio_str = request.GET.get('inicio')
         fim_str = request.GET.get('fim')
 
-        repasses = Motoboy_Repasse.objects.filter(motoboy=motoboy)
+        adiantamentos = Motoboy_Adiantamento.objects.filter(motoboy=motoboy)
 
         if inicio_str:
             try:
                 data_inicio = datetime.strptime(inicio_str, '%Y-%m-%d').date()
-                repasses = repasses.filter(data_referencia__gte=data_inicio)
+                adiantamentos = adiantamentos.filter(data_referencia__gte=data_inicio)
             except ValueError:
                 messages.warning(request, "Data de início inválida")
 
         if fim_str:
             try:
                 data_fim = datetime.strptime(fim_str, '%Y-%m-%d').date()
-                repasses = repasses.filter(data_referencia__lte=data_fim)
+                adiantamentos = adiantamentos.filter(data_referencia__lte=data_fim)
             except ValueError:
               messages.warning(request, "Data de fim inválida")
 
-        repasses = repasses.order_by('-data_referencia')
-        total = repasses.aggregate(total=Sum('valor'))['total'] or 0
+        adiantamentos = adiantamentos.order_by('-data_referencia')
+        total = adiantamentos.aggregate(total=Sum('valor'))['total'] or 0
 
-        return render(request, 'admin/motoboy_lista_repasses.html', {
+        return render(request, 'admin/motoboy_lista_adiantamentos.html', {
             'motoboy': motoboy,
-            'repasses': repasses,
+            'adiantamentos': adiantamentos,
             'total': total,
             'inicio': inicio_str or '',
             'fim': fim_str or '',
