@@ -28,13 +28,7 @@ admin.site.register(Motoboy_Repasse)
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
-   
-    list_filter = (
-        'nome', 
-        'status',              # Filtro por status (livre, alocado, etc.)
-        'nivel',               # Filtro por FK para Motoboy_Nivel
-      
-    )
+    search_fields = ('nome', 'apelido', 'cpf', 'telefone')  
     
     def get_urls(self):
         urls = super().get_urls()
