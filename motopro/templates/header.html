@@ -11,7 +11,7 @@
         <p>Bem-vindo, {{ user.username }} |
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
-            <button type="submit">Sair</button>
+            <button type="submit">Logout</button>
         </form>
         </p>
         {% endif %}
