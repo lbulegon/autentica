@@ -5,6 +5,36 @@
     box-sizing: border-box;
 }
 
+
+
+
+/* Estilo normal do link */
+a {
+    color: #1a73e8; /* Cor do link */
+    text-decoration: none; /* Remove o sublinhado */
+    font-weight: bold; /* Deixa o texto em negrito */
+}
+
+/* Estilo do link quando o mouse passa sobre ele */
+a:hover {
+    color: #1abc9c; /* Cor ao passar o mouse */
+    text-decoration: underline; /* Sublinha o link */
+}
+
+/* Estilo do link quando ele foi visitado */
+a:visited {
+   color: dimgray; /* Cor após o link ser visitado */
+}
+
+/* Estilo do link quando ele é clicado */
+a:active {
+    color: #1abc9c; /* Cor durante o clique */
+}
+
+
+
+
+
 /* Fonte limpa e moderna */
 body {
     font-family: 'Poppins', Arial, sans-serif;
