@@ -5,8 +5,11 @@
     <h2>Login</h2>
     <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Acessar</button>
+        <div class="input-group">
+            {{ form.as_p }}
+        </div>
+        <button type="submit" class="submit-btn">Acessar</button>
     </form>
+<h1>hehehehe</h1>
 </div>
 {% endblock %}
