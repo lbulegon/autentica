@@ -5,30 +5,6 @@
     box-sizing: border-box;
 }
 
-/* Estilo normal do link */
-a {
-    color: dimgray; /* Cor do link */
-    text-decoration: none; /* Remove o sublinhado */
-    font-weight: bold; /* Deixa o texto em negrito */
-}
-
-/* Estilo do link quando o mouse passa sobre ele */
-a:hover {
-    color: #1abc9c; /* Cor ao passar o mouse */
-    text-decoration: underline; /* Sublinha o link */
-}
-
-/* Estilo do link quando ele foi visitado */
-a:visited {
-   color: dimgray; /* Cor após o link ser visitado */
-}
-
-/* Estilo do link quando ele é clicado */
-a:active {
-    color: #1abc9c; /* Cor durante o clique */
-}
-
-
 /* Fonte limpa e moderna */
 body {
     font-family: 'Poppins', Arial, sans-serif;
@@ -43,12 +19,9 @@ body {
 header {
     background: #2c3e50;
     color: white;
+   
     padding: 20px;
     text-align: center;
-}
-/* Estilo do título no cabeçalho */
-header h1 {
-    padding-top: 30px; /* Aumenta o espaço entre o título e a margem superior */
 }
 
 /* Navegação */
@@ -107,7 +80,7 @@ main {
 }
 
 /* Rodapé */
-footer {
+.footer {
     background:#2c3e50;
     color: white;
     text-align: center;
@@ -115,3 +88,25 @@ footer {
     font-size: 14px;
     margin-top: auto;
 }
+
+/* Estilo normal do link */
+.footer a {
+    color: dimgray; /* Cor do link */
+    text-decoration: none; /* Remove o sublinhado */
+    font-weight: bold; /* Deixa o texto em negrito */
+}
+
+/* Estilo do link quando o mouse passa sobre ele */
+.footer a:hover {
+    color: #1abc9c; /* Cor ao passar o mouse */
+    text-decoration: underline; /* Sublinha o link */
+}
+
+/* Estilo do link quando ele foi visitado */
+
+
+/* Estilo do link quando ele é clicado */
+.footer a:active {
+    color: #1abc9c; /* Cor durante o clique */
+}
+
