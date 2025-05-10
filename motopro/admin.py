@@ -4,13 +4,17 @@ from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motob
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
 from .models import Motoboy, Motoboy_Adiantamento, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404, render,redirect
 from django.utils.html import format_html
 from django.urls import path, reverse
 from datetime import date, datetime
 from .utils import calcular_adiantamento_diario
 from .forms import AdiantamentoManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
+
+from django.utils.safestring import mark_safe
+from motopro.services.repasses import gerar_repasses_semanais
+from datetime import date, timedelta
 
 
 admin.site.register(Contrato_Item) 
@@ -69,6 +73,13 @@ class MotoboyAdmin(admin.ModelAdmin):
             'form': form,
             'motoboy': motoboy,
         })
+
+    def changelist_view(self, request, extra_context=None):
+        if not extra_context:
+            extra_context = {}
+        repasse_url = reverse('admin:gerar-repasses-semanais')
+        extra_context['botao_repasses'] = repasse_url
+        return super().changelist_view(request, extra_context=extra_context)
 
     def ver_adiantamentos_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
@@ -148,3 +159,28 @@ class VagaAdmin(admin.ModelAdmin):
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(Vaga, VagaAdmin)
+
+
+
+
+class RelatorioAdminView(admin.ModelAdmin):
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('gerar-repasses-semanais/', self.admin_site.admin_view(self.executar_repasses), name='executar-repasses-semanais'),
+        ]
+        return custom_urls + urls
+
+    def executar_repasses(self, request):
+        hoje = date.today()
+        semana_passada = hoje - timedelta(days=6)
+
+        resultado = gerar_repasses_semanais(data_inicio=semana_passada, data_fim=hoje)
+
+        if resultado:
+            html_lista = "<ul>" + "".join([f"<li>{r}</li>" for r in resultado]) + "</ul>"
+            messages.success(request, mark_safe(f"Repasses gerados:<br>{html_lista}"))
+        else:
+            messages.warning(request, "Nenhum repasse pendente para a semana.")
+
+        return redirect(reverse('admin:motopro_motoboy_changelist'))

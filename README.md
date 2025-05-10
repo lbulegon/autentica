@@ -23,6 +23,10 @@ Linux
 - python manage.py gerafatura
 - python manage.py escanear_portas --host 127.0.0.1 --inicio 31400 --fim 31409
 
+# Calculo dos repasses para motoboy
+- python manage.py gerar_repasses_semanais
+- python manage.py gerar_repasses_semanais --inicio 2025-04-29 --fim 2025-05-05
+
 https://autentica-desenvolvimento.up.railway.app/
 
 ## 🏢 Persona: Estabelecimento
