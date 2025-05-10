@@ -34,6 +34,8 @@ admin.site.register(Motoboy_BandaVaga)
 class MotoboyAdmin(admin.ModelAdmin):
     list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
     search_fields = ('nome', 'apelido')  
+
+
     
     def get_urls(self):
         urls = super().get_urls()
@@ -75,6 +77,13 @@ class MotoboyAdmin(admin.ModelAdmin):
             'motoboy': motoboy,
         })
     
+
+    def link_repasse(self, obj):
+        url = reverse('gerar-repasses-semanais')
+        return format_html('<a class="button" href="{}">Repasse Semanal</a>', url)
+
+    link_repasse.short_description = 'Repasse'
+
     def ver_adiantamentos_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
 

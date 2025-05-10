@@ -1,9 +1,11 @@
+from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django import forms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -11,8 +13,19 @@ from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelec
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, Motoboy_Adiantamento, SupervisorForm, LoginForm
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse
-from decimal import Decimal
+
+
+
+
+@staff_member_required
+def View_gerar_repasses_semanais(request):
+    # Aqui vai a lógica do cálculo real — por enquanto, vamos só simular
+    # Exemplo: calcular e salvar repasses para cada motoboy ativo
+    print("Calculando repasses...")  # Substitua depois por lógica real
+
+    # Mensagem de sucesso simples para admin
+    return HttpResponse("Repasses semanais gerados com sucesso.")
+
 
 
 def View_Index_Abertura(request):
