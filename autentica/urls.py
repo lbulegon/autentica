@@ -9,16 +9,15 @@ from motopro.views import View_EstabelecimentoCreate, View_EstabelecimentoUpdate
 from motopro.views import View_MotoboyCreate, View_MotoboyUpdate, View_MotoboyDelete, View_MotoboyList
 from motopro.views import View_SupervisorCreate, View_SupervisorUpdate, View_SupervisorDelete, View_SupervisorList
 from motopro.views import View_VagaList 
-from motopro.views import View_Index_Abertura, View_Home, View_Logout, View_Login
+from motopro.views import View_Index_Abertura, View_Home, View_Logout, View_Login 
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("", View_Index_Abertura, name="index"),  # Defina o  como rota padrão
-    
-    
-    path('admin/',  admin.site.urls),
     path('home/', View_Home, name='home'),
-  
+
+
+    path('admin/',  admin.site.urls),
     re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
        
@@ -27,6 +26,9 @@ urlpatterns = [
  
     path('accounts/', include('django.contrib.auth.urls')),  # Inclui URLs de login, logout, etc.
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+
+ 
+
 
 ########## vagas ################
     path('vagas/',                 View_VagaList.as_view(),   name='vaga-list'),

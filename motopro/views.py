@@ -6,9 +6,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelecimento_Contrato
-from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, SupervisorForm, LoginForm
+from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, Motoboy_Adiantamento, SupervisorForm, LoginForm
+
+from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponse
+from decimal import Decimal
 
 
 def View_Index_Abertura(request):

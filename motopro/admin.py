@@ -12,8 +12,9 @@ from .utils import calcular_adiantamento_diario
 from .forms import AdiantamentoManualForm  # você deve criar esse forms.py
 from django.db.models import Sum
 
+from decimal import Decimal
 from django.utils.safestring import mark_safe
-from motopro.services.repasses import gerar_repasses_semanais
+
 from datetime import date, timedelta
 
 
@@ -73,14 +74,7 @@ class MotoboyAdmin(admin.ModelAdmin):
             'form': form,
             'motoboy': motoboy,
         })
-
-    def changelist_view(self, request, extra_context=None):
-        if not extra_context:
-            extra_context = {}
-        repasse_url = reverse('admin:gerar-repasses-semanais')
-        extra_context['botao_repasses'] = repasse_url
-        return super().changelist_view(request, extra_context=extra_context)
-
+    
     def ver_adiantamentos_view(self, request, motoboy_id):
         motoboy = Motoboy.objects.get(pk=motoboy_id)
 
@@ -159,8 +153,6 @@ class VagaAdmin(admin.ModelAdmin):
 
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 admin.site.register(Vaga, VagaAdmin)
-
-
 
 
 class RelatorioAdminView(admin.ModelAdmin):
