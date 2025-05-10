@@ -16,7 +16,8 @@ Linux
 - railway login
 - railway link -p 50594409-8ec3-4211-9cf7-6f4ef2f9afc8
 - railway up
-- railway reload 
+- railway reload
+- python manage.py collectstatic
 - python manage.py makemigrations  
 - python manage.py migrate
 - python manage.py createsuperuser
