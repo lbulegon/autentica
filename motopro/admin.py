@@ -32,11 +32,10 @@ admin.site.register(Motoboy_BandaVaga)
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas')
+    list_display = ('nome', 'status', 'nivel', 'acoes_personalizadas', 'link_repasse')
+
     search_fields = ('nome', 'apelido')  
 
-
-    
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
