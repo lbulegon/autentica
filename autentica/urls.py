@@ -15,7 +15,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
 
-    path('.', include('motopro.urls')),  # Garante que urls do app estão ativas
+    path('', include('motopro.urls')),  # Garante que urls do app estão ativas
     path("", View_Index_Abertura, name="index"),  # Defina o  como rota padrão
     path('home/', View_Home, name='home'),
     path('admin/',  admin.site.urls),
