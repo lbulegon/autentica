@@ -20,12 +20,11 @@ def calcular_pagamento(estabelecimento, motoboy, data_inicio, data_fim):
     total = valor_por_vaga * alocacoes.count()
 
     return {
-        'motoboy': motoboy.nome_completo,
+        'motoboy': motoboy.nome,
         'estabelecimento': estabelecimento.nome,
         'quantidade_vagas': alocacoes.count(),
         'total_motoboy_recebe': round(total, 2)
     }
-
 
 def calcular_adiantamento_diario(motoboy, data):
     # Buscar as vagas alocadas no dia

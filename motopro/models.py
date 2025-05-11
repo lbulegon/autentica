@@ -226,7 +226,7 @@ class Estabelecimento_Contrato(models.Model):
         total_motoboy_recebe = total_estab_paga - total_descontos
 
         return {
-            "motoboy": motoboy.nome_completo,
+            "motoboy": motoboy.nome,
             "estabelecimento": self.estabelecimento.nome,
             "período": f"{data_inicio} a {data_fim}",
             "vagas_fixas": total_fixas,
@@ -334,11 +334,12 @@ class Motoboy(models.Model):
     
     # Status do motoboy
     status = models.CharField(max_length=20, choices=[
+        ('ativo', 'Ativo'),
         ('alocado', 'Alocado'),
         ('livre', 'Livre'),
         ('inativo', 'Inativo'),
         ('em_viagem', 'Em viagem'),
-    ], default='livre') 
+    ], default='inativo') 
     
     created_at   = models.DateTimeField(auto_now_add=True)  # Data de criação do registro
     updated_at   = models.DateTimeField(auto_now=True)  # Data da última atualização
@@ -356,8 +357,7 @@ class Motoboy_Contrato(models.Model):
     motoboy               = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='contracts')
     data_inicio           = models.DateField()
     data_fim              = models.DateField(null=True, blank=True)  # Pode ser em aberto
-    valor_mensal          = models.DecimalField(max_digits=10, decimal_places=2)
-    carga_horaria_semanal = models.IntegerField(help_text="Horas por semana")
+    
     tipo_contrato         = models.CharField(
         max_length=50,
         choices=[
@@ -366,13 +366,25 @@ class Motoboy_Contrato(models.Model):
             ('Freelancer', 'Freelancer'),
         ]
     )
-    descricao_atividades  = models.TextField()
+    descricao_atividades  = models.TextField(null=True, blank=True)
     ativo                 = models.BooleanField(default=True)
     criado_em             = models.DateTimeField(auto_now_add=True)
     atualizado_em         = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Contrato de {self.motoboy.nome_completo} - {self.tipo_contrato}"
+        return f"Contrato de {self.motoboy.nome} - {self.tipo_contrato}"
+
+class Motoboy_Contrato_Item(models.Model):
+    contrato       = models.ForeignKey(Motoboy_Contrato, on_delete=models.CASCADE, related_name='itens')
+    item           = models.ForeignKey(Contrato_Item, on_delete=models.CASCADE)
+    ativo          = models.BooleanField(default=True)
+    observacao     = models.TextField(null=True, blank=True)
+    criado_em      = models.DateTimeField(auto_now_add=True)
+    atualizado_em  = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.item.nome} - {self.contrato.motoboy.nome}"
+
 
 class Motoboy_Alocacao(models.Model):
     vaga                = models.OneToOneField(Vaga, on_delete=models.CASCADE)  # agora só permite uma alocação por vaga
@@ -441,7 +453,6 @@ class Motoboy_Adiantamento(models.Model):
     def __str__(self):
         return f"{self.motoboy.nome} - {self.data_referencia.strftime('%d/%m/%Y')} - R$ {self.valor:.2f}"
 
-
 class Motoboy_Candidatura(models.Model):
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name="candidaturas")
     vaga        = models.ForeignKey(Vaga, on_delete=models.CASCADE, related_name="candidaturas")
@@ -488,7 +499,7 @@ class Motoboy_Desconto(models.Model):
     atualizado_em   = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.tipo_desconto} - {self.motoboy.nome_completo} - R$ {self.valor:.2f}"
+        return f"{self.tipo_desconto} - {self.motoboy.nome} - R$ {self.valor:.2f}"
 
 class Supervisor_Motoboy(models.Model):
     supervisor  = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
