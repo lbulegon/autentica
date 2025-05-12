@@ -437,6 +437,7 @@ class Motoboy_Adiantamento(models.Model):
         ('adiantamento', ' Adiantamento'),
         ('bonus', 'Bônus'),
         ('ajuste', 'Ajuste Manual'),
+        ('ajuste', 'Ajuste Manual'),
         ('outro', 'Outro'),
     ]
     motoboy              = models.ForeignKey( Motoboy, on_delete=models.CASCADE, related_name='adiantamentos')

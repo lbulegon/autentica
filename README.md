@@ -370,3 +370,31 @@ Ao criar uma nova função com mais responsabilidades (e possível remuneração
 
 > A criação da figura do sub supervisor local é uma excelente solução de gestão operacional, **desde que implementada com segurança jurídica**. O segredo está em documentar tudo, evitar subordinação direta ao cliente (estabelecimento) e adotar modelos de remuneração claros e transparentes.
 
+
+# Integração API Ifood
+https://developer.ifood.com.br/pt-BR/docs/guides/
+
+# IA 
+https://huggingface.co/learn/llm-course/pt/chapter1/3?fw=pt
+
+
+
+Você aprenderá a programar em Python do zero e a desenvolver sistemas baseados em inteligência artificial utilizando as principais LLMs do mercado (como ChatGPT, DeepSeek e Claude), LLMs Locais (Llama, Mistral) e modelos abertos do Hugging Face.
+Além dos cursos, a trilha conta com diversos projetos avançados, construídos passo a passo, para fixar seu conhecimento e colocar no seu portifólio.
+Entenda como as IAs pensam
+Aprenda como uma LLM interpreta informações e use este conhecimento para controlar a IA de uma forma muito mais eficiente.
+
+Molde o raciocínio das IA com Engenharia de Prompts
+Domine as técnicas mais avançadas de construção de prompts e eleve ABSURDAMENTE a qualidade das respostas da IA.
+
+Domine a API da OpenAI
+Construa aplicações avançadas usando modelos como GPT para gerar textos, Whisper para transcrever áudios com alta fidelidade e DALL·E para geração de imagens.
+
+
+Manipule o maior repositório de IA do mundo: o Hugging Face
+
+Utilize modelos pré-treinados do Hugging Face para desenvolver aplicações como análise de documentos, chatbots, análise de sentimentos e reconhecimento de imagem sem precisar treinar modelos do zero!
+
+Crie sistemas avançados com IA e LangChain
+
+Desenvolva agentes inteligentes com LangChain, usando RAG para buscar informações em tempo real, interagir com APIs e automatizar fluxos complexos de forma autônoma.
