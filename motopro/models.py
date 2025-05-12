@@ -292,8 +292,8 @@ class Vaga(models.Model):
             ("aberta", "Aberta"),
             ("alocado", "Alocado"),
             ("finalizada", "Finalizada"), # finalizada mas não esta paga
-            ("paga", "Paga"),             # Já foi faturada e o pagamento ja aconteceu
-            ("cancelada", "Cancelada")
+            ("cancelada", "Cancelada"),
+             ("paga", "Paga")             # Já foi faturada e o pagamento ja aconteceu
         ],
         default="aberta"
     )
