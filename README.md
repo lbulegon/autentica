@@ -23,6 +23,8 @@ Linux
 - python manage.py createsuperuser
 - python manage.py gerafatura
 - python manage.py escanear_portas --host 127.0.0.1 --inicio 31400 --fim 31409
+- python manage.py extrair_pdf docs/exemplo.pdf
+
 
 # Calculo dos repasses para motoboy
 - python manage.py gerar_repasses_semanais
@@ -398,3 +400,9 @@ Utilize modelos pré-treinados do Hugging Face para desenvolver aplicações com
 Crie sistemas avançados com IA e LangChain
 
 Desenvolva agentes inteligentes com LangChain, usando RAG para buscar informações em tempo real, interagir com APIs e automatizar fluxos complexos de forma autônoma.
+
+
+
+
+
+
