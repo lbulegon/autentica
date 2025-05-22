@@ -37,8 +37,6 @@ admin.site.register(Motoboy_BandaVaga)
 admin.site.register(Motoboy_Contrato)
 admin.site.register(Motoboy_Contrato_Item)  
 
-
-
 @admin.register(PedidoIfood)
 class PedidoIfoodAdmin(admin.ModelAdmin):
     list_display = ('id',  'cliente', 'criado_em')
