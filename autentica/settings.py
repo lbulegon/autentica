@@ -14,7 +14,7 @@ ALLOWED_HOSTS = [
     'autentica-desenvolvimento.up.railway.app',
     '127.0.0.1',  # Opcional: Para testes locais
     'localhost',  # Opcional: Para testes locais  
-    '192.168.0.30',  
+    '192.168.0.30', 
 ]
 
 CSRF_TRUSTED_ORIGINS = ['https://autentica-desenvolvimento.up.railway.app','https://autentica-production.up.railway.app']

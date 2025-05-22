@@ -17,6 +17,11 @@ from django.utils.safestring import mark_safe
 
 from datetime import date, timedelta
 
+from .models import PedidoIfood
+
+
+
+
 
 admin.site.register(Contrato_Item) 
 admin.site.register(Configuracao)
@@ -31,6 +36,14 @@ admin.site.register(Motoboy_Adiantamento)
 admin.site.register(Motoboy_BandaVaga) 
 admin.site.register(Motoboy_Contrato)
 admin.site.register(Motoboy_Contrato_Item)  
+
+
+
+@admin.register(PedidoIfood)
+class PedidoIfoodAdmin(admin.ModelAdmin):
+    list_display = ('id',  'cliente', 'criado_em')
+    list_filter = ('criado_em',)
+
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):

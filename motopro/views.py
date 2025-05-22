@@ -1,18 +1,71 @@
+import json
 from decimal import Decimal
 from django.shortcuts import render, redirect, get_object_or_404
 from django import forms
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelecimento_Contrato
+from motopro.models import PedidoIfood
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, Motoboy_Adiantamento, SupervisorForm, LoginForm
 
-from django.contrib.admin.views.decorators import staff_member_required
+
+
+@csrf_exempt
+def webhook_ifood(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            pedido_id = data.get('id')
+            cliente = data.get('customer', {}).get('name')
+            valor = data.get('totalPrice', {}).get('value')
+
+            print(f"Pedido {pedido_id} para {cliente} - R$ {valor}")
+
+            # 👇 Aqui é onde você SALVA o pedido no banco:
+            PedidoIfood.objects.create(
+                pedido_id=pedido_id,
+                cliente=cliente,
+                valor=valor
+            )
+
+            return JsonResponse({'status': 'ok'})
+
+        except Exception as e:
+            print(f"Erro: {e}")
+            return JsonResponse({'error': 'Erro interno'}, status=500)
+
+    else:
+        return JsonResponse({'error': 'Método não permitido'}, status=405)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
