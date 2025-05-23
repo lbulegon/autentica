@@ -3,7 +3,7 @@ from motopro.models import Vaga
 from motopro.models import Estabelecimento
 from motopro.models import Motoboy, Motoboy_Adiantamento
 from motopro.models import Supervisor
-from django.contrib.auth.forms import AuthenticationForm
+
 import datetime
 from decimal import Decimal
 class AdiantamentoManualForm(forms.Form):

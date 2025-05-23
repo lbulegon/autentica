@@ -51,6 +51,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+
+
 ROOT_URLCONF = 'autentica.urls'
 
 TEMPLATES = [
@@ -155,13 +166,20 @@ LOGOUT_REDIRECT_URL = 'login'  # Redireciona para a página de login após o log
 
 
 # settings.py
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://localhost:8000/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:8000/0'
 CELERY_TIMEZONE = 'America/Sao_Paulo'
 CELERY_TASK_TRACK_STARTED = True    
 
-
-
 DEBUG = True
+
+
+# Configurações do meu programa residente
+MY_PROGRAM_CONFIG = {
+    'INTERVAL': 15,  # Intervalo padrão de 15 segundos
+    'ENABLE_LOG': True,
+    'EXECUTION_TIMES': ['08:00', '14:00', '20:00'],
+    'LOG_FILE': '/tmp/meuprograma.log'
+}

@@ -20,6 +20,38 @@ from motopro.models import PedidoIfood
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, Motoboy_Adiantamento, SupervisorForm, LoginForm
 
 
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import TarefaConfig
+from .serializers import TarefaConfigSerializer
+
+class TarefaConfigViewSet(viewsets.ModelViewSet):
+    queryset = TarefaConfig.objects.all()
+    serializer_class = TarefaConfigSerializer
+
+    @action(detail=True, methods=['post'])
+    def ativar(self, request, pk=None):
+        tarefa = self.get_object()
+        tarefa.ativa = True
+        tarefa.save()
+        return Response({'status': 'Tarefa ativada'})
+
+    @action(detail=True, methods=['post'])
+    def desativar(self, request, pk=None):
+        tarefa = self.get_object()
+        tarefa.ativa = False
+        tarefa.save()
+        return Response({'status': 'Tarefa desativada'})
+
+
+
+
+
+
+
+
+
 
 @csrf_exempt
 def webhook_ifood(request):

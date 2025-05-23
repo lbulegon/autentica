@@ -1,26 +1,23 @@
-from django.contrib import admin, messages 
-from django.contrib.admin import DateFieldListFilter
+
 from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motoboy # ou o caminho correto se estiver em outro lugar
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
 from .models import Motoboy, Motoboy_Adiantamento, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga, Motoboy_Contrato, Motoboy_Contrato_Item
+from .models import PedidoIfood
+from .models import TarefaConfig
+from .utils  import calcular_adiantamento_diario
+from .forms  import AdiantamentoManualForm  # você deve criar esse forms.py
+
 from django.shortcuts import redirect, get_object_or_404, render,redirect
 from django.utils.html import format_html
 from django.urls import path, reverse
-from datetime import date, datetime
-from .utils import calcular_adiantamento_diario
-from .forms import AdiantamentoManualForm  # você deve criar esse forms.py
-from django.db.models import Sum
-
-from decimal import Decimal
 from django.utils.safestring import mark_safe
+from django.db.models import Sum
+from django.contrib import admin, messages 
+from django.contrib.admin import DateFieldListFilter
 
-from datetime import date, timedelta
-
-from .models import PedidoIfood
-
-
-
+from datetime import date, datetime,timedelta
+from decimal import Decimal
 
 
 admin.site.register(Contrato_Item) 
@@ -37,11 +34,19 @@ admin.site.register(Motoboy_BandaVaga)
 admin.site.register(Motoboy_Contrato)
 admin.site.register(Motoboy_Contrato_Item)  
 
+
+
+@admin.register(TarefaConfig)
+class TarefaConfigAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'horario', 'ativa')
+    list_editable = ('ativa', 'horario')
+
+
+
 @admin.register(PedidoIfood)
 class PedidoIfoodAdmin(admin.ModelAdmin):
     list_display = ('id',  'cliente', 'criado_em')
     list_filter = ('criado_em',)
-
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):

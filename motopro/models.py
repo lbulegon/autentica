@@ -547,7 +547,14 @@ class PedidoIfood(models.Model):
     criado_em = models.DateTimeField(auto_now_add=True)
   
 
+class TarefaConfig(models.Model):
+    nome = models.CharField(max_length=100)
+    horario = models.CharField(max_length=5, help_text="Formato HH:MM")
+    ativa = models.BooleanField(default=True)
 
+    def __str__(self):
+        status = "Ativa" if self.ativa else "Inativa"
+        return f"{self.nome} ({self.horario}) - {status}"
 
 
 
