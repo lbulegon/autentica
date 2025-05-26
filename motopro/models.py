@@ -521,8 +521,6 @@ class Supervisor_Estabelecimento(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
-
-
 class Configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[
         ('dia', 'Turno do Dia'),
@@ -539,13 +537,6 @@ class Configuracao(models.Model):
     def __str__(self):
         return "Configurações do Sistema"
 
-class PedidoIfood(models.Model):
-    pedido_id = models.CharField(max_length=100)
-    cliente = models.CharField(max_length=100)
-    valor = models.DecimalField(max_digits=10, decimal_places=2)
-    data_recebimento = models.DateTimeField(auto_now_add=True)
-    criado_em = models.DateTimeField(auto_now_add=True)
-  
 
 class TarefaConfig(models.Model):
     nome = models.CharField(max_length=100)
@@ -555,6 +546,21 @@ class TarefaConfig(models.Model):
     def __str__(self):
         status = "Ativa" if self.ativa else "Inativa"
         return f"{self.nome} ({self.horario}) - {status}"
+class IfoodWebhookEvent(models.Model):
+    EVENT_STATUS_CHOICES = [
+        ('received', 'Received'),
+        ('processed', 'Processed'),
+        ('failed', 'Failed'),
+    ]
 
+    event_id = models.UUIDField(unique=True)  # ID único do evento (field: 'id' do payload)
+    order_id = models.UUIDField()             # ID do pedido
+    merchant_id = models.UUIDField()          # ID do merchant
+    code = models.CharField(max_length=10)    # Exemplo: PLC
+    full_code = models.CharField(max_length=20)  # Exemplo: PLACED
+    payload = models.JSONField()              # Payload completo
+    received_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
 
-
+    def __str__(self):
+        return f"{self.full_code} - {self.order_id}"

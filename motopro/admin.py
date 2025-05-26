@@ -3,7 +3,6 @@ from .models import Estabelecimento, Supervisor_Estabelecimento,Supervisor_Motob
 from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento_Contrato_Item
 from .models import Motoboy, Motoboy_Adiantamento, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga, Motoboy_Contrato, Motoboy_Contrato_Item
-from .models import PedidoIfood
 from .models import TarefaConfig
 from .utils  import calcular_adiantamento_diario
 from .forms  import AdiantamentoManualForm  # você deve criar esse forms.py
@@ -41,12 +40,6 @@ class TarefaConfigAdmin(admin.ModelAdmin):
     list_display = ('nome', 'horario', 'ativa')
     list_editable = ('ativa', 'horario')
 
-
-
-@admin.register(PedidoIfood)
-class PedidoIfoodAdmin(admin.ModelAdmin):
-    list_display = ('id',  'cliente', 'criado_em')
-    list_filter = ('criado_em',)
 
 @admin.register(Motoboy)
 class MotoboyAdmin(admin.ModelAdmin):

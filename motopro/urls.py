@@ -13,10 +13,9 @@ router.register(r'tarefas', TarefaConfigViewSet)
 
 urlpatterns = [
     path('admin/gerar-repasses/', View_gerar_repasses_semanais, name='gerar-repasses-semanais'),
-    path('webhook/ifood/', views.webhook_ifood, name='webhook_ifood'),
     path('api/', include(router.urls)),
-     path('api-token-auth/', obtain_auth_token),
-
+    path('api-token-auth/', obtain_auth_token),
+    path('webhook/ifood/',  views.ifood_webhook, name='ifood_webhook'),
 ]
 
 

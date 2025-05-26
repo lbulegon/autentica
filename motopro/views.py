@@ -1,7 +1,8 @@
 import json
 from decimal import Decimal
+import hmac
+import hashlib
 from django.shortcuts import render, redirect, get_object_or_404
-from django import forms
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -16,7 +17,7 @@ from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
 
 from motopro.models import Vaga, Estabelecimento, Motoboy, Supervisor, Estabelecimento_Contrato
-from motopro.models import PedidoIfood
+
 from motopro.forms import VagaForm, EstabelecimentoForm, MotoboyForm, Motoboy_Adiantamento, SupervisorForm, LoginForm
 
 
@@ -25,7 +26,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from .models import TarefaConfig
 from .serializers import TarefaConfigSerializer
+# views.py
 
+from django.http import JsonResponse
+
+IFOOD_SECRET = 'SUA_CHAVE_SECRETA_DO_IFOOD'
 class TarefaConfigViewSet(viewsets.ModelViewSet):
     queryset = TarefaConfig.objects.all()
     serializer_class = TarefaConfigSerializer
@@ -47,42 +52,36 @@ class TarefaConfigViewSet(viewsets.ModelViewSet):
 
 
 
-
-
-
-
-
-
-@csrf_exempt
-def webhook_ifood(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-
-            pedido_id = data.get('id')
-            cliente = data.get('customer', {}).get('name')
-            valor = data.get('totalPrice', {}).get('value')
-
-            print(f"Pedido {pedido_id} para {cliente} - R$ {valor}")
-
-            # 👇 Aqui é onde você SALVA o pedido no banco:
-            PedidoIfood.objects.create(
-                pedido_id=pedido_id,
-                cliente=cliente,
-                valor=valor
-            )
-
-            return JsonResponse({'status': 'ok'})
-
-        except Exception as e:
-            print(f"Erro: {e}")
-            return JsonResponse({'error': 'Erro interno'}, status=500)
-
-    else:
+@csrf_exempt  # Desativa CSRF para permitir requisições externas
+def ifood_webhook(request):
+    if request.method != 'POST':
         return JsonResponse({'error': 'Método não permitido'}, status=405)
+    
+    # Recebe o corpo da requisição em bytes
+    payload = request.body
+    received_signature = request.headers.get('X-IFood-Signature')
 
+    # Valida assinatura
+    expected_signature = hmac.new(
+        key=IFOOD_SECRET.encode(),
+        msg=payload,
+        digestmod=hashlib.sha256
+    ).hexdigest()
 
+    if not hmac.compare_digest(received_signature, expected_signature):
+        return JsonResponse({'error': 'Assinatura inválida'}, status=403)
 
+    try:
+        data = json.loads(payload.decode('utf-8'))
+        print("Evento recebido:", data)
+
+        # Aqui você pode processar o evento, exemplo: salvar no banco
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+
+    # Responde 202 Accepted conforme requerido pelo iFood
+    return HttpResponse(status=202)
 
 
 
