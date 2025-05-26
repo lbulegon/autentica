@@ -470,7 +470,7 @@ class Motoboy_Candidatura(models.Model):
 
     def __str__(self):
         return f"{self.motoboy.nome} - {self.vaga.titulo} ({self.status})"
-
+ 
 """  Esta tabela armazena o ranking e os bônus de cada motoboy conforme o seu desempenho."""
 class Motoboy_Ranking(models.Model):
     motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
@@ -487,7 +487,6 @@ class Motoboy_Ranking(models.Model):
     
     def __str__(self):
         return f"{self.motoboy.nome} - {self.nivel}"
-
 class Motoboy_Desconto(models.Model):
     motoboy         = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='descontos')
     categoria       = models.ForeignKey(Categoria_Desconto, on_delete=models.PROTECT, related_name='descontos')
@@ -501,7 +500,6 @@ class Motoboy_Desconto(models.Model):
 
     def __str__(self):
         return f"{self.tipo_desconto} - {self.motoboy.nome} - R$ {self.valor:.2f}"
-
 class Supervisor_Motoboy(models.Model):
     supervisor  = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     motoboy     = models.ForeignKey(Motoboy, on_delete=models.CASCADE)
@@ -511,7 +509,6 @@ class Supervisor_Motoboy(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Motoboy {self.motoboy.nome}"
-
 class Supervisor_Estabelecimento(models.Model):
     supervisor      = models.ForeignKey(Supervisor, on_delete=models.CASCADE)
     estabelecimento = models.ForeignKey(Estabelecimento, on_delete=models.CASCADE)
@@ -521,6 +518,7 @@ class Supervisor_Estabelecimento(models.Model):
     
     def __str__(self):
         return f"Supervisor {self.supervisor.nome} - Estabelecimento {self.estabelecimento.nome}"
+
 class Configuracao(models.Model):
     turno_padrao = models.CharField(max_length=10, choices=[
         ('dia', 'Turno do Dia'),
@@ -539,13 +537,16 @@ class Configuracao(models.Model):
 
 
 class TarefaConfig(models.Model):
-    nome = models.CharField(max_length=100)
+    nome    = models.CharField(max_length=100)
     horario = models.CharField(max_length=5, help_text="Formato HH:MM")
-    ativa = models.BooleanField(default=True)
+    ativa   = models.BooleanField(default=True)
 
     def __str__(self):
         status = "Ativa" if self.ativa else "Inativa"
         return f"{self.nome} ({self.horario}) - {status}"
+
+
+
 class IfoodWebhookEvent(models.Model):
     EVENT_STATUS_CHOICES = [
         ('received', 'Received'),
@@ -553,14 +554,14 @@ class IfoodWebhookEvent(models.Model):
         ('failed', 'Failed'),
     ]
 
-    event_id = models.UUIDField(unique=True)  # ID único do evento (field: 'id' do payload)
-    order_id = models.UUIDField()             # ID do pedido
+    event_id    = models.UUIDField(unique=True)  # ID único do evento (field: 'id' do payload)
+    order_id    = models.UUIDField()             # ID do pedido
     merchant_id = models.UUIDField()          # ID do merchant
-    code = models.CharField(max_length=10)    # Exemplo: PLC
-    full_code = models.CharField(max_length=20)  # Exemplo: PLACED
-    payload = models.JSONField()              # Payload completo
+    code        = models.CharField(max_length=10)    # Exemplo: PLC
+    full_code   = models.CharField(max_length=20)  # Exemplo: PLACED
+    payload     = models.JSONField()              # Payload completo
     received_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
+    status      = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
 
     def __str__(self):
         return f"{self.full_code} - {self.order_id}"
