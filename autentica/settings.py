@@ -183,3 +183,6 @@ MY_PROGRAM_CONFIG = {
     'EXECUTION_TIMES': ['08:00', '14:00', '20:00'],
     'LOG_FILE': '/tmp/meuprograma.log'
 }
+
+
+GOOGLE_MAPS_API_KEY = 'SUA_API_KEY'

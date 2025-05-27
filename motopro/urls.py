@@ -18,6 +18,7 @@ urlpatterns = [
     path('webhook/ifood/',  views.ifood_webhook, name='ifood_webhook'),
     path('atribuir-pedido/', views.atribuir_pedido_a_motoboy, name='atribuir_pedido'),
     path('rota/', views.visualizar_rota, name='visualizar_rota'),
+    path('rota/<int:pedido_id>/', views.visualizar_rota, name='visualizar_rota_pedido'),
 ]
 
 
