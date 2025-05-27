@@ -31,6 +31,8 @@ from .serializers import TarefaConfigSerializer
 from django.http import JsonResponse
 
 IFOOD_SECRET = 'SUA_CHAVE_SECRETA_DO_IFOOD'
+
+
 class TarefaConfigViewSet(viewsets.ModelViewSet):
     queryset = TarefaConfig.objects.all()
     serializer_class = TarefaConfigSerializer

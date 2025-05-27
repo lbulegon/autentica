@@ -5,6 +5,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import datetime
 import re
 
+from typing import Dict, Union
+from datetime import date
 from decimal import Decimal
 
 from sympy import Sum
@@ -127,25 +129,57 @@ class Estabelecimento(models.Model):
                         ], default='ativo')  # Status do motoboy
     def __str__(self):
         return self.nome
+
+
 class Estabelecimento_Contrato(models.Model):
-    estabelecimento   = models.OneToOneField(Estabelecimento, on_delete=models.CASCADE)
-    data_inicio       = models.DateField(null=True, blank=True)
-    data_fim          = models.DateField(null=True, blank=True)
-    valor_vaga_fixa   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Vaga Fixa"    )
-    valor_vaga_spot   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Vaga Spot"    )
-    valor_tele_extra   = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal("0.00"), verbose_name="Valor da Tele Extra"    )
-    status            = models.CharField(
+    estabelecimento = models.OneToOneField(
+        Estabelecimento, 
+        on_delete=models.CASCADE
+    )
+    data_inicio = models.DateField(null=True, blank=True)
+    data_fim = models.DateField(null=True, blank=True)
+
+    valor_vaga_fixa = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=Decimal("0.00"), 
+        verbose_name="Valor da Vaga Fixa"
+    )
+    valor_vaga_spot = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=Decimal("0.00"), 
+        verbose_name="Valor da Vaga Spot"
+    )
+    valor_tele_extra = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=Decimal("0.00"), 
+        verbose_name="Valor da Tele Extra"
+    )
+
+    STATUS_CHOICES = [
+        ("vigente", "Vigente"),
+        ("vencido", "Vencido"),
+        ("encerrada", "Encerrada"),
+        ("bloqueado", "Bloqueado"),
+    ]
+
+    status = models.CharField(
         max_length=20,
-        choices=[
-            ("vigente", "Vigente"),
-            ("vencido", "Vencido"),
-            ("encerrada", "Encerrada"),
-            ("bloqueado", "Bloqueado"),
-        ],
+        choices=STATUS_CHOICES,
         default="vigente"
     )
 
-    def clean(self):
+    def clean(self) -> None:
+        """
+        Valida se todos os itens obrigatórios existem de acordo com o tipo de vaga permitido.
+        """
+
+        # Só tenta validar itens se o objeto já existir no banco
+        if not self.pk:
+            return
+
         chaves_obrigatorias_horarios = [
             "hora_inicio_dia",
             "hora_fim_dia",
@@ -162,7 +196,9 @@ class Estabelecimento_Contrato(models.Model):
                 if not self.itens.filter(item__chave_sistema=chave).exists()
             ]
             if faltantes_fixas:
-                erros.append(f"Itens obrigatórios faltando para vagas fixas: {', '.join(faltantes_fixas)}")
+                erros.append(
+                    f"Itens obrigatórios faltando para vagas fixas: {', '.join(faltantes_fixas)}"
+                )
 
         if self.itens.filter(item__chave_sistema="permite_vaga_spot").exists():
             faltantes_spot = [
@@ -170,59 +206,62 @@ class Estabelecimento_Contrato(models.Model):
                 if not self.itens.filter(item__chave_sistema=chave).exists()
             ]
             if faltantes_spot:
-                erros.append(f"Itens obrigatórios faltando para vaga spot: {', '.join(faltantes_spot)}")
+                erros.append(
+                    f"Itens obrigatórios faltando para vaga spot: {', '.join(faltantes_spot)}"
+                )
 
         if erros:
             raise ValidationError(" | ".join(erros))
 
-    def get_valor_item(self, chave):
+    def get_valor_item(self, chave: str) -> Decimal:
+        """
+        Retorna o valor do item pelo chave_sistema ou, caso não exista, pelo atributo direto.
+        """
         item = self.itens.filter(item__chave_sistema=chave).first()
-        if item:
+        if item and item.valor is not None:
             return Decimal(item.valor)
-    
-        # fallback para campo direto
-        if hasattr(self, chave):
-            valor = getattr(self, chave)
-            return valor if valor is not None else Decimal("0.00")
-    
-        return Decimal("0.00")
+        
+        valor = getattr(self, chave, None)
+        return valor if isinstance(valor, Decimal) else Decimal("0.00")
 
-
-    def calcular_pagamentos(self, motoboy, data_inicio, data_fim):
+    def calcular_pagamentos(
+        self, 
+        motoboy, 
+        data_inicio: date, 
+        data_fim: date
+    ) -> Dict[str, Union[str, Decimal, int]]:
         """
-        Função para calcular os valores que o estabelecimento deve pagar
-        e o valor que o motoboy deve receber durante um período específico.
+        Calcula valores a pagar pelo estabelecimento e a receber pelo motoboy.
         """
-        # Verificar se o contrato está ativo
         if self.status != "vigente":
             return {"erro": "Contrato não está ativo para cálculo."}
 
-        # Recuperar valores do contrato
-        valor_fixa   = self.get_valor_item("valor_vaga_fixa")
-        valor_spot   = self.get_valor_item("valor_vaga_spot")
-        valor_extra  = self.get_valor_item("valor_tele_extra")
+        # Recuperar valores configurados
+        valor_fixa = self.get_valor_item("valor_vaga_fixa")
+        valor_spot = self.get_valor_item("valor_vaga_spot")
+        valor_extra = self.get_valor_item("valor_tele_extra")
 
-        # Calcular quantidade de vagas (fixas, spot e tele extra)
+        # Filtra vagas do motoboy no período
         vagas = motoboy.vagas.filter(data__range=(data_inicio, data_fim))
 
-        total_fixas      = vagas.filter(tipo_vaga="fixa").count()
-        total_spot       = vagas.filter(tipo_vaga="spot").count()
-        total_extras     = vagas.filter(tipo_vaga="extra").count()
+        total_fixas = vagas.filter(tipo_vaga="fixa").count()
+        total_spot = vagas.filter(tipo_vaga="spot").count()
+        total_extras = vagas.filter(tipo_vaga="extra").count()
 
-        # Calcular descontos
+        # Soma descontos ativos
         total_descontos = motoboy.descontos.filter(
             data__range=(data_inicio, data_fim),
             ativo=True
         ).aggregate(total=Sum('valor'))['total'] or Decimal("0.00")
 
-        # Cálculo total do pagamento para o estabelecimento
+        # Calcula total que o estabelecimento paga
         total_estab_paga = (
             (total_fixas * valor_fixa) +
             (total_spot * valor_spot) +
             (total_extras * valor_extra)
         )
 
-        # Cálculo total a ser recebido pelo motoboy
+        # Valor líquido para o motoboy
         total_motoboy_recebe = total_estab_paga - total_descontos
 
         return {
@@ -240,14 +279,14 @@ class Estabelecimento_Contrato(models.Model):
             "total_motoboy_recebe": total_motoboy_recebe,
         }
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.estabelecimento.nome}'
+
 
 class Estabelecimento_Contrato_Item(models.Model):
     contrato  = models.ForeignKey(Estabelecimento_Contrato, on_delete=models.CASCADE, related_name='itens')
     item      = models.ForeignKey(Contrato_Item, on_delete=models.CASCADE)
-    valor     = models.CharField(max_length=100)
-
+    valor     = models.CharField(max_length=40)
     class Meta:
         unique_together = ('contrato', 'item')
 

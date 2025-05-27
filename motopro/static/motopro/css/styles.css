@@ -1,0 +1,89 @@
+/* Reset global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Fonte limpa e moderna */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #2c3e50;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Cabeçalho */
+header {
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Navegação */
+nav {
+   
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Links do nav */
+nav a:link,
+nav a:visited {
+    margin: 0 15px;
+    text-decoration: none;
+    color: dimgray;
+    font-weight: bold;
+}
+
+nav a:hover,
+nav a:active {
+    color: #1abc9c;
+    text-decoration: underline;
+}
+
+/* Corpo principal */
+main {
+    flex: 1;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Conteúdo */
+.content {
+    max-width: 800px;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+    color: #2c3e50;
+}
+
+/* Links dentro do conteúdo */
+.content a:link,
+.content a:visited {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.content a:hover,
+.content a:active {
+    color: #1abc9c;
+    text-decoration: underline;
+}
+
+/* Rodapé */
+footer {
+    
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    margin-top: auto;
+}
