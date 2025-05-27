@@ -29,6 +29,18 @@ from .serializers import TarefaConfigSerializer
 # views.py
 
 from django.http import JsonResponse
+from motopro.services.pedido import atribuir_pedido_a_motoboy, atualizar_status_pedido
+from motopro.services.roteirizacao import calcular_rota_google
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import IfoodWebhookEvent, Motoboy
+from motopro.serializers import IfoodWebhookEventSerializer
+
+
+
+
 
 IFOOD_SECRET = 'SUA_CHAVE_SECRETA_DO_IFOOD'
 
@@ -84,23 +96,6 @@ def ifood_webhook(request):
 
     # Responde 202 Accepted conforme requerido pelo iFood
     return HttpResponse(status=202)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @staff_member_required
@@ -279,13 +274,11 @@ class View_EstabelecimentoCreate(CreateView):
     template_name  = 'estabelecimento/estabelecimento_form.html'
     success_url    = reverse_lazy('estabelecimento-list')
 
-
 class View_EstabelecimentoUpdate(UpdateView):
     model         = Estabelecimento
     form_class    = EstabelecimentoForm
     template_name = 'estabelecimento/estabelecimento_form.html'
     success_url   = reverse_lazy('estabelecimento-list')
-
 
 class View_EstabelecimentoDelete(DeleteView):
     model         = Estabelecimento
@@ -364,12 +357,10 @@ class View_SupervisorUpdate(UpdateView):
     template_name = 'supervisor/supervisor_form.html'
     success_url   = reverse_lazy('supervisor-list')
 
-
 class View_SupervisorDelete(DeleteView):
     model         = Supervisor
     template_name = 'supervisor/supervisor_confirm_delete.html'
     success_url   = reverse_lazy('supervisor-list')
-
 
 
 ##class EmpresaListView(ListView):
@@ -397,3 +388,53 @@ class View_SupervisorDelete(DeleteView):
 #    model = empresa
 #    template_name = 'empresa/empresa_confirm_delete.html'
 #    success_url = reverse_lazy('empresa-list')    
+
+
+# views.py
+
+def minha_view(request):
+    atribuir_pedido_a_motoboy(pedido_id=1, motoboy_id=2)
+    rota = calcular_rota_google(["Endereço A", "Endereço B"], api_key="minha_key")
+    return JsonResponse({"rota": rota})
+
+
+
+
+
+@api_view(['POST'])
+def atribuir_pedido_a_motoboy(request):
+    """
+    Atribui um pedido (IfoodWebhookEvent) a um motoboy.
+    Espera: { "pedido_id": "...", "motoboy_id": "..." }
+    """
+    pedido_id = request.data.get('pedido_id')
+    motoboy_id = request.data.get('motoboy_id')
+
+    try:
+        pedido = IfoodWebhookEvent.objects.get(id=pedido_id)
+        motoboy = Motoboy.objects.get(id=motoboy_id)
+
+        pedido.motoboy = motoboy
+        pedido.save()
+
+        return Response({'status': 'Pedido atribuído com sucesso'}, status=status.HTTP_200_OK)
+
+    except IfoodWebhookEvent.DoesNotExist:
+        return Response({'error': 'Pedido não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    except Motoboy.DoesNotExist:
+        return Response({'error': 'Motoboy não encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
+def visualizar_rota(request):
+    context = {
+        'api_key': 'SUA_GOOGLE_MAPS_API_KEY',
+        'origem': 'Av. Paulista, 1000, São Paulo, SP',
+        'destino': 'Praça da Sé, São Paulo, SP',
+        'waypoints': [
+            'Rua Augusta, São Paulo, SP',
+            'Mercadão Municipal, São Paulo, SP'
+        ]
+    }
+    return render(request, 'rota.html', context)

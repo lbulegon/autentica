@@ -570,7 +570,8 @@ class Configuracao(models.Model):
     sistema_ativo         = models.BooleanField(default=True)
     ultima_atualizacao    = models.DateTimeField(auto_now=True)
     versao                = models.CharField(max_length=20, default='1.0.0')
-
+    google_api_key        = models.CharField(max_length=120, blank=True)
+    ifood_secret          = models.CharField(max_length=120, blank=True)
     def __str__(self):
         return "Configurações do Sistema"
 
@@ -584,23 +585,47 @@ class TarefaConfig(models.Model):
         status = "Ativa" if self.ativa else "Inativa"
         return f"{self.nome} ({self.horario}) - {status}"
 
-
-
 class IfoodWebhookEvent(models.Model):
     EVENT_STATUS_CHOICES = [
         ('received', 'Received'),
         ('processed', 'Processed'),
         ('failed', 'Failed'),
     ]
-
-    event_id    = models.UUIDField(unique=True)  # ID único do evento (field: 'id' do payload)
-    order_id    = models.UUIDField()             # ID do pedido
-    merchant_id = models.UUIDField()          # ID do merchant
-    code        = models.CharField(max_length=10)    # Exemplo: PLC
-    full_code   = models.CharField(max_length=20)  # Exemplo: PLACED
-    payload     = models.JSONField()              # Payload completo
-    received_at = models.DateTimeField(auto_now_add=True)
-    status      = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
+    event_id = models.UUIDField(unique=True)
+    order_id = models.UUIDField()
+    merchant_id = models.UUIDField()
+    code = models.CharField(max_length=10)
+    full_code = models.CharField(max_length=20)
+    payload = models.JSONField()
+    endereco_entrega = models.TextField(blank=True, null=True)  # <--- Novo campo
+    motoboy = models.ForeignKey(
+        Motoboy, 
+        on_delete=models.CASCADE, 
+        related_name='ifood_webhook_events'
+    )
+   # received_at = models.DateTimeField(auto_now_add=False)
+    status = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.full_code} - {self.order_id}"
+
+class PedidoMotoboy(models.Model):
+    pedido            = models.OneToOneField(IfoodWebhookEvent, on_delete=models.CASCADE, related_name="pedido_motoboy"    )
+    motoboy = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='pedidos_motoboy' )
+  #  atribuido_em      = models.DateTimeField(auto_now_add=False)
+   
+    route_position    = models.IntegerField(default=0)  # Posição na rota, se tiver múltiplos pedidos
+    status_atribuicao = models.CharField(
+        max_length=50,
+        choices=[
+            ('pendente', 'Pendente'),
+            ('aceito', 'Aceito'),
+            ('recusado', 'Recusado')
+        ],
+        default='pendente'
+    )
+
+    def __str__(self):
+        return f"Pedido {self.pedido.pedido_id} → Motoboy {self.motoboy.nome} ({self.status_atribuicao})"

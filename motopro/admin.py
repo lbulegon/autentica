@@ -4,6 +4,7 @@ from .models import  Vaga, Supervisor, Estabelecimento_Contrato, Estabelecimento
 from .models import Motoboy, Motoboy_Adiantamento, Motoboy_Alocacao, Motoboy_Ranking 
 from .models import Configuracao, Contrato_Item, Motoboy_BandaVaga, Motoboy_Contrato, Motoboy_Contrato_Item
 from .models import TarefaConfig
+from .models import IfoodWebhookEvent, Motoboy
 from .utils  import calcular_adiantamento_diario
 from .forms  import AdiantamentoManualForm  # você deve criar esse forms.py
 
@@ -17,6 +18,16 @@ from django.contrib.admin import DateFieldListFilter
 
 from datetime import date, datetime,timedelta
 from decimal import Decimal
+
+from django.contrib import admin
+
+
+@admin.register(IfoodWebhookEvent)
+class IfoodWebhookEventAdmin(admin.ModelAdmin):
+    list_display = ('id', 'full_code', 'order_id', 'motoboy', 'status', 'endereco_entrega')
+    search_fields = ('order_id', 'full_code', 'motoboy__nome')
+    list_filter = ('status', 'full_code')
+
 
 
 admin.site.register(Contrato_Item) 
@@ -126,6 +137,9 @@ class MotoboyAdmin(admin.ModelAdmin):
             'inicio': inicio_str or '',
             'fim': fim_str or '',
     })
+
+
+
 
 
 admin.site.register(Motoboy_Alocacao)
