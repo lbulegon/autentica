@@ -427,9 +427,6 @@ def visualizar_rota(request):
     return render(request, 'rota.html', context)
 
 
-
-
-
 @api_view(['POST'])
 def ifood_webhook(request):
     serializer = OrderSerializer(data=request.data)
