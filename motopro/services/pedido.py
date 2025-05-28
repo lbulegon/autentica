@@ -2,7 +2,7 @@
 # services/pedido.py
 
 from django.utils import timezone
-from ..models import IfoodWebhookEvent, PedidoMotoboy, Motoboy
+from ..models import IfoodWebhookEvent, OrderMotoboy, Motoboy
 
 def atribuir_pedido_a_motoboy(pedido_id, motoboy_id):
     pedido = IfoodWebhookEvent.objects.get(id=pedido_id)

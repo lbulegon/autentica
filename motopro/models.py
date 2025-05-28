@@ -591,29 +591,79 @@ class IfoodWebhookEvent(models.Model):
         ('processed', 'Processed'),
         ('failed', 'Failed'),
     ]
-    event_id = models.UUIDField(unique=True)
-    order_id = models.UUIDField()
-    merchant_id = models.UUIDField()
-    code = models.CharField(max_length=10)
-    full_code = models.CharField(max_length=20)
-    payload = models.JSONField()
+    event_id         = models.UUIDField(unique=True)
+    order_id         = models.UUIDField()
+    merchant_id      = models.UUIDField()
+    code             = models.CharField(max_length=10)
+    full_code        = models.CharField(max_length=20)
+    payload          = models.JSONField()
     endereco_entrega = models.TextField(blank=True, null=True)  # <--- Novo campo
-    motoboy = models.ForeignKey(
+    motoboy          = models.ForeignKey(
         Motoboy, 
         on_delete=models.CASCADE, 
         related_name='ifood_webhook_events'
     )
    # received_at = models.DateTimeField(auto_now_add=False)
-    status = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
-    latitude = models.FloatField(null=True, blank=True)
-    longitude = models.FloatField(null=True, blank=True)
+    status           = models.CharField(max_length=10, choices=EVENT_STATUS_CHOICES, default='received')
+    latitude         = models.FloatField(null=True, blank=True)
+    longitude        = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.full_code} - {self.order_id}"
 
-class PedidoMotoboy(models.Model):
-    pedido            = models.OneToOneField(IfoodWebhookEvent, on_delete=models.CASCADE, related_name="pedido_motoboy"    )
-    motoboy = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='pedidos_motoboy' )
+
+class Customer(models.Model):
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+
+class DeliveryAddress(models.Model):
+    street = models.CharField(max_length=255)
+    number = models.CharField(max_length=20)
+    complement = models.CharField(max_length=255, blank=True, null=True)
+    neighborhood = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=50)
+    postal_code = models.CharField(max_length=20)
+
+class Order(models.Model):
+    EVENT_CHOICES = [
+        ('ORDER_CREATED', 'Order Created'),
+        ('ORDER_STATUS_CHANGED', 'Status Changed'),
+        ('ORDER_CANCELED', 'Order Canceled'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('RECEIVED', 'Received'),
+        ('PREPARING', 'Preparing'),
+        ('READY', 'Ready'),
+        ('DELIVERED', 'Delivered'),
+        ('CANCELED', 'Canceled'),
+    ]
+    
+    event = models.CharField(max_length=50, choices=EVENT_CHOICES)
+    order_id = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField()
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='orders')
+    delivery_address = models.OneToOneField(DeliveryAddress, on_delete=models.CASCADE, related_name='order')
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES)
+
+class Item(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    item_id = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField()
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+
+
+
+
+class OrderMotoboy(models.Model):
+    order            = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="order_motoboy"    )
+    motoboy           = models.ForeignKey(Motoboy, on_delete=models.CASCADE, related_name='orders_motoboy' )
   #  atribuido_em      = models.DateTimeField(auto_now_add=False)
    
     route_position    = models.IntegerField(default=0)  # Posição na rota, se tiver múltiplos pedidos
@@ -629,3 +679,6 @@ class PedidoMotoboy(models.Model):
 
     def __str__(self):
         return f"Pedido {self.pedido.pedido_id} → Motoboy {self.motoboy.nome} ({self.status_atribuicao})"
+    
+
+

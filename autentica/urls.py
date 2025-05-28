@@ -12,9 +12,7 @@ from motopro.views import View_VagaList
 from motopro.views import View_Index_Abertura, View_Home, View_Logout, View_Login 
 from django.contrib.auth import views as auth_views
 
-
 urlpatterns = [
-
     path('', include('motopro.urls')),  # Garante que urls do app estão ativas
     path("", View_Index_Abertura, name="index"),  # Defina o  como rota padrão
     path('home/', View_Home, name='home'),
@@ -27,10 +25,7 @@ urlpatterns = [
  
     path('accounts/', include('django.contrib.auth.urls')),  # Inclui URLs de login, logout, etc.
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-
  
-
-
 ########## vagas ################
     path('vagas/',                 View_VagaList.as_view(),   name='vaga-list'),
     path('vagas/create/',          View_VagaCreate.as_view(), name='vaga-create'),

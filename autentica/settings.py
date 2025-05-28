@@ -164,7 +164,6 @@ LOGIN_URL           = '/accounts/login/'
 LOGIN_REDIRECT_URL  = 'home'  # Redireciona para a página 'home' após o login
 LOGOUT_REDIRECT_URL = 'login'  # Redireciona para a página de login após o logout
 
-
 # settings.py
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -175,7 +174,6 @@ CELERY_TASK_TRACK_STARTED = True
 
 DEBUG = True
 
-
 # Configurações do meu programa residente
 MY_PROGRAM_CONFIG = {
     'INTERVAL': 15,  # Intervalo padrão de 15 segundos
@@ -184,5 +182,5 @@ MY_PROGRAM_CONFIG = {
     'LOG_FILE': '/tmp/meuprograma.log'
 }
 
-
-GOOGLE_MAPS_API_KEY = 'SUA_API_KEY'
+GOOGLE_MAPS_API_KEY  = 'AIzaSyD30AKY4fZlu-RaYu6FQBuWBVxgyauhXw4'
+IFOOD_WEBHOOK_SECRET = 'b4fbef0a8a703123ea95219c66b88fb4c69c638879cedc10714628dbf0673655'

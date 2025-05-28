@@ -38,13 +38,8 @@ from rest_framework import status
 from .models import IfoodWebhookEvent, Motoboy
 from motopro.serializers import IfoodWebhookEventSerializer
 
-
-
-
-
-IFOOD_SECRET = 'SUA_CHAVE_SECRETA_DO_IFOOD'
-
-
+from django.conf import settings
+from .serializers import OrderSerializer
 class TarefaConfigViewSet(viewsets.ModelViewSet):
     queryset = TarefaConfig.objects.all()
     serializer_class = TarefaConfigSerializer
@@ -63,9 +58,6 @@ class TarefaConfigViewSet(viewsets.ModelViewSet):
         tarefa.save()
         return Response({'status': 'Tarefa desativada'})
 
-
-
-
 @csrf_exempt  # Desativa CSRF para permitir requisições externas
 def ifood_webhook(request):
     if request.method != 'POST':
@@ -77,7 +69,7 @@ def ifood_webhook(request):
 
     # Valida assinatura
     expected_signature = hmac.new(
-        key=IFOOD_SECRET.encode(),
+      #  key=IFOOD_SECRET.encode(),
         msg=payload,
         digestmod=hashlib.sha256
     ).hexdigest()
@@ -398,9 +390,6 @@ def minha_view(request):
     return JsonResponse({"rota": rota})
 
 
-
-
-
 @api_view(['POST'])
 def atribuir_pedido_a_motoboy(request):
     """
@@ -425,11 +414,9 @@ def atribuir_pedido_a_motoboy(request):
         return Response({'error': 'Motoboy não encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
 
-
-
 def visualizar_rota(request):
     context = {
-        'api_key': 'SUA_GOOGLE_MAPS_API_KEY',
+        'api_key': settings.GOOGLE_MAPS_API_KEY,
         'origem': 'Av. Paulista, 1000, São Paulo, SP',
         'destino': 'Praça da Sé, São Paulo, SP',
         'waypoints': [
@@ -438,3 +425,15 @@ def visualizar_rota(request):
         ]
     }
     return render(request, 'rota.html', context)
+
+
+
+
+
+@api_view(['POST'])
+def ifood_webhook(request):
+    serializer = OrderSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Pedido recebido com sucesso.'}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

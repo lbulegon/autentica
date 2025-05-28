@@ -376,6 +376,9 @@ Ao criar uma nova função com mais responsabilidades (e possível remuneração
 # Integração API Ifood
 https://developer.ifood.com.br/pt-BR/docs/guides/
 
+https://developer.ifood.com.br/pt-BR/docs/guides/order/events/delivery-methods/webhook/overview
+
+
 # IA 
 https://huggingface.co/learn/llm-course/pt/chapter1/3?fw=pt
 
