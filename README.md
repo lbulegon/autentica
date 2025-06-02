@@ -25,11 +25,6 @@ Linux
 - python manage.py escanear_portas --host 127.0.0.1 --inicio 31400 --fim 31409
 - python manage.py extrair_pdf docs/exemplo.pdf
 
-
-
-
-
-
 # Calculo dos repasses para motoboy
 - python manage.py gerar_repasses_semanais
 - python manage.py gerar_repasses_semanais --inicio 2025-04-29 --fim 2025-05-05
