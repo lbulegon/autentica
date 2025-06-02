@@ -26,6 +26,10 @@ Linux
 - python manage.py extrair_pdf docs/exemplo.pdf
 
 
+
+
+
+
 # Calculo dos repasses para motoboy
 - python manage.py gerar_repasses_semanais
 - python manage.py gerar_repasses_semanais --inicio 2025-04-29 --fim 2025-05-05
