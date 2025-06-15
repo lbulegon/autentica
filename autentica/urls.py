@@ -13,12 +13,16 @@ from motopro.views import View_Index_Abertura, View_Home, View_Logout, View_Logi
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
+
+    re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+    
+    
     path('', include('motopro.urls')),  # Garante que urls do app estão ativas
     path("", View_Index_Abertura, name="index"),  # Defina o  como rota padrão
     path('home/', View_Home, name='home'),
     path('admin/',  admin.site.urls),
-    re_path('api/v1/', include('api_v01.urls')),  # Inclui todas as APIs na pasta api_v01
-    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}), 
+    
        
     path('login/',  View_Login, name='login'),
     path('logout/', View_Logout, name='logout'),

@@ -36,12 +36,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'api_v01',
-    'motopro',
-   
+    'motopro',    
+    'corsheaders',   
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # <-- deve ser o primeiro middleware externo
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -54,12 +56,12 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',  # Para desenvolvimento
     ],
 }
-
 
 
 ROOT_URLCONF = 'autentica.urls'
